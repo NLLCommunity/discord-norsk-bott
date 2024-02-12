@@ -1,0 +1,16 @@
+{
+  "name": "discord-norsk-bott",
+  "private": true,
+  "packageManager": "yarn@4.1.0",
+  "type": "module",
+  "bin": "main.js",
+  "scripts": {
+    "start": "node main.js"
+  },
+  "dependencies": {
+    "discord.js": "^14.14.1"
+  },
+  "devDependencies": {
+    "typescript": "^5.3.3"
+  }
+}
