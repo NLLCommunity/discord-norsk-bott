@@ -23,6 +23,16 @@ const formatGender = (gender) => {
   }
 };
 
+const formatDict = (dict) => {
+  switch (dict) {
+    case Dictionary.Bokmål:
+      return 'Bokmålsordboka';
+
+    case Dictionary.Nynorsk:
+      return 'Nynorskordboka';
+  }
+};
+
 const getUrl = (article) =>
   `https://ordbokene.no/${
     article.dictionary === Dictionary.Bokmål ? 'bm' : 'nn'
@@ -97,9 +107,9 @@ export function register(client) {
                 ? `, ${formatGender(article.gender)}`
                 : '';
 
-              const articleHeader = `_frå ${article.dictionary}_\n<${getUrl(
-                article
-              )}>\n`;
+              const articleHeader = `_frå ${formatDict(
+                article.dictionary
+              )}_\n<${getUrl(article)}>\n`;
 
               return `${articleHeader}**${lemmas}** (${article.wordClass}${genderString})\n${definitions}`;
             })
@@ -108,7 +118,7 @@ export function register(client) {
           await interaction.editReply(message || 'Ingen treff');
         } catch (err) {
           console.error('Feil under ordboksøk:', err);
-          interaction.editReply('Det skjedde ein feil under ordbokauka');
+          interaction.editReply('Det skjedde ein feil under ordboksøket');
         }
       },
     },

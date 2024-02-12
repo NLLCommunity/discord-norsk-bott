@@ -131,7 +131,7 @@ export class OrdbokApiService {
       { word, dictionaries }
     );
 
-    return response.data.word.articles;
+    return response.data.word?.articles ?? [];
   }
 
   /**
