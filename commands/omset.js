@@ -10,7 +10,7 @@ const apertium = new ApertiumService();
  * @param {string} text
  */
 async function translate(interaction, from, to, text) {
-  if (text.length > 2000) {
+  if (text.length > 1800) {
     await interaction.reply(
       'Teksten er for lang til å bli sendt. Prøv å korta ned teksten.'
     );
@@ -22,7 +22,7 @@ async function translate(interaction, from, to, text) {
   try {
     const finalText = await apertium.translate(from, to, text);
 
-    if (finalText.length > 2000) {
+    if (finalText.length > 1800) {
       await interaction.editReply(
         'Omsett tekst er for lang til å bli sendt. Prøv å korta ned teksten.'
       );

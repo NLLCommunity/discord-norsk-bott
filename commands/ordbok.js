@@ -4,6 +4,9 @@ import {
   Dictionary,
   Gender,
 } from '../providers/ordbokapi.js';
+import { NorskSlashCommandBuilder } from '../helpers/command-builder.js';
+import { OptionParser } from '../helpers/option-parser.js';
+import { reply } from '../helpers/reply.js';
 
 const ordbokApi = new OrdbokApiService();
 
@@ -44,31 +47,12 @@ const getUrl = (article) =>
  */
 export function register(client) {
   client.application.commands.create(
-    new SlashCommandBuilder()
+    new NorskSlashCommandBuilder()
       .setName('ordbok')
       .setDescription('Søk etter ord i ordbøkene')
-      .addStringOption((option) =>
-        option
-          .setName('ord')
-          .setDescription('Ordet du vil søkja etter')
-          .setRequired(true)
-      )
-      .addStringOption((option) =>
-        option
-          .setName('ordbok')
-          .setDescription(
-            'Ordboka du vil søkja i. Viss du ikkje vel noko, søkjer du i alle ordbøkene.'
-          )
-          .addChoices(
-            { name: 'nynorsk', value: 'Nynorsk' },
-            { name: 'bokmål', value: 'Bokmål' },
-            {
-              name: 'nynorsk og bokmål',
-              value: 'Nynorsk,Bokmål',
-            }
-          )
-          .setRequired(false)
-      )
+      .addWordOption()
+      .addDictionaryOption()
+      .addWordClassOption()
   );
 
   return {
@@ -80,15 +64,18 @@ export function register(client) {
       async execute(interaction) {
         await interaction.deferReply();
 
-        const word = interaction.options.getString('ord');
-        const dicts = interaction.options.getString('ordbok');
+        const options = new OptionParser(interaction);
 
-        const dictionaries = dicts
-          ? dicts.split(',').map((d) => Dictionary[d])
-          : Object.values(Dictionary);
+        const word = options.getWordOption();
+        const dictionaries = options.getDictionaryOption();
+        const wordClass = options.getWordClassOption();
 
         try {
-          const response = await ordbokApi.definitions(word, dictionaries);
+          const response = await ordbokApi.definitions(
+            word,
+            dictionaries,
+            wordClass
+          );
           const message = response
             .map((article) => {
               const lemmas = article.lemmas
@@ -115,7 +102,12 @@ export function register(client) {
             })
             .join('\n\n---\n\n');
 
-          await interaction.editReply(message || 'Ingen treff');
+          if (!message) {
+            interaction.editReply('Ingen treff');
+            return;
+          }
+
+          await reply(interaction, message);
         } catch (err) {
           console.error('Feil under ordboksøk:', err);
           interaction.editReply('Det skjedde ein feil under ordboksøket');

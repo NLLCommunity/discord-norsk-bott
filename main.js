@@ -2,6 +2,7 @@ import { Client, Events, GatewayIntentBits } from 'discord.js';
 import { promises as fs } from 'fs';
 import * as oversett from './commands/omset.js';
 import * as ordbok from './commands/ordbok.js';
+import * as bøying from './commands/bøying.js';
 
 const token =
   process.env.DISCORD_TOKEN?.trim() ||
@@ -19,7 +20,8 @@ client.once(Events.ClientReady, (readyClient) => {
   Object.assign(
     commands,
     oversett.register(readyClient),
-    ordbok.register(readyClient)
+    ordbok.register(readyClient),
+    bøying.register(readyClient)
   );
 });
 

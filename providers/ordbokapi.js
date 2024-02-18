@@ -101,13 +101,14 @@ export class OrdbokApiService {
    *
    * @param {string} word The word to retrieve definitions for.
    * @param {Dictionary[]} dictionaries The dictionaries to search for definitions in.
+   * @param {string} [wordClass] The word class to filter definitions by.
    * @returns {Promise<DefinitionArticle[]>} An array of articles containing the word's definitions.
    */
-  async definitions(word, dictionaries) {
+  async definitions(word, dictionaries, wordClass) {
     const response = await this.fetch(
       `
-      query WordDefinitions($word: String!, $dictionaries: [Dictionary!]) {
-        word(word: $word, dictionaries: $dictionaries) {
+      query WordDefinitions($word: String!, $dictionaries: [Dictionary!], $wordClass: WordClass) {
+        word(word: $word, dictionaries: $dictionaries, wordClass: $wordClass) {
           articles {
             id
             dictionary
@@ -128,7 +129,7 @@ export class OrdbokApiService {
         }
       }
     `,
-      { word, dictionaries }
+      { word, dictionaries, wordClass }
     );
 
     return response.data.word?.articles ?? [];
@@ -138,16 +139,18 @@ export class OrdbokApiService {
    * Retrieves inflections of a word from the specified dictionaries.
    * @param {string} word The word to retrieve inflections for.
    * @param {Dictionary[]} dictionaries The dictionaries to search for inflections in.
+   * @param {string} [wordClass] The word class to filter inflections by.
    * @returns {Promise<InflectionArticle[]>} A promise that resolves to an array of inflection objects.
    */
-  async inflections(word, dictionaries) {
+  async inflections(word, dictionaries, wordClass) {
     const response = await this.fetch(
       `
-      query WordInflections($word: String!, $dictionaries: [Dictionary!]) {
-        word(word: $word, dictionaries: $dictionaries) {
+      query WordInflections($word: String!, $dictionaries: [Dictionary!], $wordClass: WordClass) {
+        word(word: $word, dictionaries: $dictionaries, wordClass: $wordClass) {
           articles {
             id
             dictionary
+            wordClass
             lemmas {
               lemma
               paradigms {
@@ -162,9 +165,9 @@ export class OrdbokApiService {
         }
       }
     `,
-      { word, dictionaries }
+      { word, dictionaries, wordClass }
     );
 
-    return response.data.word.articles;
+    return response.data.word?.articles ?? [];
   }
 }
