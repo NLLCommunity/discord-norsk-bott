@@ -39,12 +39,14 @@ export const Gender = {
 /**
  * @typedef {Object} InflectionArticle
  * @property {string} id The ID of the article.
+ * @property {string} wordClass The word class of the word.
  * @property {InflectionLemma[]} lemmas The lemmas of the word.
  */
 
 /**
  * @typedef {Object} InflectionLemma
  * @property {string} lemma The lemma of the word.
+ * @property {boolean} splitInfinitive Whether the infinitive is split.
  * @property {InflectionParadigm[]} paradigms The paradigms of the word.
  */
 
@@ -153,6 +155,7 @@ export class OrdbokApiService {
             wordClass
             lemmas {
               lemma
+              splitInfinitive
               paradigms {
                 inflections {
                   tags

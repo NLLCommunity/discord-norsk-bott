@@ -164,7 +164,13 @@ export function register(client) {
 
             const fields = [];
 
+            let splitInfinitive = false;
+
             for (const lemma of article.lemmas) {
+              if (lemma.splitInfinitive) {
+                splitInfinitive = true;
+              }
+
               for (const [index, paradigm] of lemma.paradigms.entries()) {
                 let text = '';
                 if (index > 0) {
@@ -218,17 +224,19 @@ export function register(client) {
               continue;
             }
 
-            const articleHeader = `_frå ${formatDict(
+            let articleHeader = `_frå ${formatDict(
               article.dictionary
             )}_\n[Les meir](${getUrl(article)})`;
+
+            if (splitInfinitive) {
+              articleHeader += '\n\nKløyvd infinitiv: -a\n';
+            }
 
             const title = article.lemmas.reduce((acc, lemma) => {
               const lemmaText =
                 article.wordClass === 'Verb' ? `å ${lemma.lemma}` : lemma.lemma;
               return acc ? `${acc}, ${lemmaText}` : lemmaText;
             }, '');
-
-            console.log(fields);
 
             embeds.push(
               new EmbedBuilder()
