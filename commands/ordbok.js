@@ -1,4 +1,4 @@
-import { SlashCommandBuilder, EmbedBuilder } from 'discord.js';
+import { EmbedBuilder } from 'discord.js';
 import {
   OrdbokApiService,
   Dictionary,
@@ -6,7 +6,6 @@ import {
 } from '../providers/ordbokapi.js';
 import { NorskSlashCommandBuilder } from '../helpers/command-builder.js';
 import { OptionParser } from '../helpers/option-parser.js';
-import { reply } from '../helpers/reply.js';
 
 const ordbokApi = new OrdbokApiService();
 
