@@ -1,3 +1,4 @@
+import { EmbedBuilder } from 'discord.js';
 import {
   OrdbokApiService,
   Dictionary,
@@ -150,62 +151,110 @@ export function register(client) {
             dictionaries,
             wordClass
           );
-          const message = response
-            .map((article) => {
-              let text = '';
 
-              for (const lemma of article.lemmas) {
-                text += `**${lemma.lemma}** (${article.wordClass})\n\n`;
+          /** @type {EmbedBuilder[]} */
+          const embeds = [];
 
-                for (const [index, paradigm] of lemma.paradigms.entries()) {
-                  if (index > 0) {
-                    text += '\n';
-                  }
+          let overLimit = false;
 
-                  if (paradigm.tags.length) {
-                    text += `**${paradigm.tags
-                      .map(formatInflectionTag)
-                      .join(', ')}**:\n`;
-                  }
+          for (const [index, article] of response.entries()) {
+            if (index === 10) {
+              overLimit = true;
+              break;
+            }
 
-                  /** @type {Map<string, { tags: string[], wordForms: string[] }>} */
-                  const groupedInflections = paradigm.inflections.reduce(
-                    (acc, inflection) => {
-                      const key = inflection.tags.sort().join('|');
-                      if (!acc.has(key)) {
-                        acc.set(key, { tags: inflection.tags, wordForms: [] });
-                      }
-                      acc.get(key).wordForms.push(inflection.wordForm);
-                      return acc;
-                    },
-                    new Map()
-                  );
+            const fields = [];
 
-                  for (const {
-                    tags,
-                    wordForms,
-                  } of groupedInflections.values()) {
-                    text += `${wordForms.join(', ')} (_${tags
-                      .map(formatInflectionTag)
-                      .join(', ')}_)\n`;
-                  }
+            for (const lemma of article.lemmas) {
+              for (const [index, paradigm] of lemma.paradigms.entries()) {
+                let text = '';
+                if (index > 0) {
+                  text += '\n';
                 }
+
+                let paradigmText = '';
+
+                if (paradigm.tags.length) {
+                  paradigmText = `**${paradigm.tags
+                    .map(formatInflectionTag)
+                    .join(', ')}**`;
+                } else {
+                  paradigmText =
+                    lemma.paradigms.length > 1
+                      ? `Bøyingsmønster ${index + 1}`
+                      : 'Bøyingsmønster';
+                }
+
+                /** @type {Map<string, { tags: string[], wordForms: string[] }>} */
+                const groupedInflections = paradigm.inflections.reduce(
+                  (acc, inflection) => {
+                    const key = inflection.tags.sort().join('|');
+                    if (!acc.has(key)) {
+                      acc.set(key, { tags: inflection.tags, wordForms: [] });
+                    }
+                    acc.get(key).wordForms.push(inflection.wordForm);
+                    return acc;
+                  },
+                  new Map()
+                );
+
+                for (const { tags, wordForms } of groupedInflections.values()) {
+                  text += `${wordForms.join(', ')} (_${tags
+                    .map(formatInflectionTag)
+                    .join(', ')}_)\n`;
+                }
+
+                if (!text) {
+                  continue;
+                }
+
+                fields.push({
+                  name: paradigmText,
+                  value: text,
+                });
               }
+            }
 
-              const articleHeader = `_frå ${formatDict(
-                article.dictionary
-              )}_\n<${getUrl(article)}>\n`;
+            if (!fields.length) {
+              continue;
+            }
 
-              return `${articleHeader}${text}`;
-            })
-            .join('\n---\n\n');
+            const articleHeader = `_frå ${formatDict(
+              article.dictionary
+            )}_\n[Les meir](${getUrl(article)})`;
 
-          if (!message) {
+            const title = article.lemmas.reduce((acc, lemma) => {
+              const lemmaText =
+                article.wordClass === 'Verb' ? `å ${lemma.lemma}` : lemma.lemma;
+              return acc ? `${acc}, ${lemmaText}` : lemmaText;
+            }, '');
+
+            console.log(fields);
+
+            embeds.push(
+              new EmbedBuilder()
+                .setTitle(title)
+                .setDescription(articleHeader)
+                .addFields(fields)
+            );
+          }
+
+          if (!embeds.length) {
             await interaction.editReply('Ingen treff');
             return;
           }
 
-          await reply(interaction, message);
+          await interaction.editReply({
+            body: `Fann ${embeds.length} treff`,
+            embeds,
+          });
+
+          if (overLimit) {
+            await interaction.followUp({
+              content:
+                'Viser berre dei 10 første treffa. For meir treff, gå til ordbokene.no, eller bruk kommandoen med meir spesifikke søkekriterium.',
+            });
+          }
         } catch (err) {
           console.error('Feil under ordboksøk:', err);
           interaction.editReply('Det skjedde ein feil under ordboksøket');

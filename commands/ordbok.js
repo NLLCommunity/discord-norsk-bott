@@ -76,38 +76,67 @@ export function register(client) {
             dictionaries,
             wordClass
           );
-          const message = response
-            .map((article) => {
-              const lemmas = article.lemmas
-                .map((lemma) => lemma.lemma)
-                .join(', ');
 
-              const definitions = article.definitions
-                .map(
-                  (definition, definitionIndex) =>
-                    `${definitionIndex + 1}. ` +
-                    definition.content.map((c) => c.textContent).join('; ')
-                )
-                .join('\n');
+          /** @type {EmbedBuilder[]} */
+          const embeds = [];
 
-              const genderString = article.gender
-                ? `, ${formatGender(article.gender)}`
-                : '';
+          let overLimit = false;
 
-              const articleHeader = `_frå ${formatDict(
-                article.dictionary
-              )}_\n<${getUrl(article)}>\n`;
+          for (const [index, article] of response.entries()) {
+            if (index === 10) {
+              overLimit = true;
+              break;
+            }
 
-              return `${articleHeader}**${lemmas}** (${article.wordClass}${genderString})\n${definitions}`;
-            })
-            .join('\n\n---\n\n');
+            const definitions = article.definitions
+              .map(
+                (definition, definitionIndex) =>
+                  `${definitionIndex + 1}. ` +
+                  definition.content.map((c) => c.textContent).join('; ')
+              )
+              .join('\n');
 
-          if (!message) {
-            interaction.editReply('Ingen treff');
+            const genderString = article.gender
+              ? `, ${formatGender(article.gender)}`
+              : '';
+
+            const title = article.lemmas.reduce((acc, lemma) => {
+              const lemmaText =
+                article.wordClass === 'Verb' ? `å ${lemma.lemma}` : lemma.lemma;
+              return acc ? `${acc}, ${lemmaText}` : lemmaText;
+            }, '');
+
+            const articleHeader = `${
+              article.wordClass
+            }${genderString}\n_frå ${formatDict(
+              article.dictionary
+            )}_\n[Les meir](${getUrl(article)})`;
+
+            const body = `${articleHeader}\n${definitions}`;
+
+            const embed = new EmbedBuilder()
+              .setTitle(title)
+              .setDescription(body);
+
+            embeds.push(embed);
+          }
+
+          if (!embeds.length) {
+            await interaction.editReply('Ingen treff');
             return;
           }
 
-          await reply(interaction, message);
+          await interaction.editReply({
+            body: `Fann ${response.length} treff`,
+            embeds,
+          });
+
+          if (overLimit) {
+            await interaction.followUp({
+              content:
+                'Viser berre dei 10 første treffa. For meir treff, gå til ordbokene.no, eller bruk kommandoen med meir spesifikke søkekriterium.',
+            });
+          }
         } catch (err) {
           console.error('Feil under ordboksøk:', err);
           interaction.editReply('Det skjedde ein feil under ordboksøket');
