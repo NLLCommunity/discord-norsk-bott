@@ -20,7 +20,7 @@ export class OptionParser {
         .getString('ordbok')
         ?.split(',')
         ?.map((dict) =>
-          dict === 'nynorsk' ? 'Nynorskordboka' : 'Bokmålsordboka'
+          dict === 'Nynorsk' ? 'Nynorskordboka' : 'Bokmaalsordboka'
         ) ?? []
     );
   }
