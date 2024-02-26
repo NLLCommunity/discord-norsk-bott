@@ -6,6 +6,7 @@ import {
 } from '../providers/ordbokapi.js';
 import { NorskSlashCommandBuilder } from '../helpers/command-builder.js';
 import { OptionParser } from '../helpers/option-parser.js';
+import { paginate } from '../helpers/paginate.js';
 
 const ordbokApi = new OrdbokApiService();
 
@@ -79,14 +80,7 @@ export function register(client) {
           /** @type {EmbedBuilder[]} */
           const embeds = [];
 
-          let overLimit = false;
-
-          for (const [index, article] of response.entries()) {
-            if (index === 10) {
-              overLimit = true;
-              break;
-            }
-
+          for (const article of response) {
             const definitions = article.definitions
               .map(
                 (definition, definitionIndex) =>
@@ -125,17 +119,7 @@ export function register(client) {
             return;
           }
 
-          await interaction.editReply({
-            body: `Fann ${response.length} treff`,
-            embeds,
-          });
-
-          if (overLimit) {
-            await interaction.followUp({
-              content:
-                'Viser berre dei 10 første treffa. For meir treff, gå til ordbokene.no, eller bruk kommandoen med meir spesifikke søkekriterium.',
-            });
-          }
+          await paginate(interaction, embeds);
         } catch (err) {
           console.error('Feil under ordboksøk:', err);
           interaction.editReply('Det skjedde ein feil under ordboksøket');
