@@ -80,11 +80,17 @@ export async function paginate(interaction, pages, timeout = 2 * 60 * 1000) {
   });
 
   collector.on('end', () => {
-    // Disable buttons when the collector ends
-    const disabledRow = new ActionRowBuilder().addComponents(
-      controls.map((button) => button.setDisabled(true))
-    );
-    curPage.edit({ components: [disabledRow] });
+    // remove buttons and add a message to the embed letting the user know that
+    // they'll have to send the command again to see other pages of results
+    curPage.edit({
+      components: [],
+      embeds: [
+        pages[currentPageIndex].setFooter({
+          text: `Resultat ${currentPageIndex + 1} / ${pages.length}
+Denne meldinga er no utdatert. Send kommandoen på nytt for å sjå andre resultat.`,
+        }),
+      ],
+    });
   });
 
   return curPage;
