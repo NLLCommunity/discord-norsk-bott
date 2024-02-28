@@ -9,8 +9,8 @@ import {
 /**
  * Creates a pagination embed for navigating through a list of MessageEmbeds.
  *
- * @param {Interaction} interaction The Discord interaction that triggered the
- * pagination.
+ * @param {import('discord.js').Interaction} interaction The Discord interaction
+ * that triggered the pagination.
  * @param {EmbedBuilder[]} pages An array of MessageEmbeds to be paginated
  * through.
  * @param {number} [timeout] The time in milliseconds before the data is
@@ -21,6 +21,10 @@ import {
 export async function paginate(interaction, pages, timeout = 2 * 60 * 1000) {
   if (!pages.length) {
     throw new Error('Pages must be defined and contain at least one page.');
+  }
+
+  if (pages.length === 1) {
+    return interaction.editReply({ embeds: [pages[0]] });
   }
 
   // Initialize pagination controls
