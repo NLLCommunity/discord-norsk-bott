@@ -54,7 +54,7 @@ export function register(client) {
   client.application.commands.create(
     new SlashCommandBuilder()
       .setName('nbnn')
-      .setDescription('Omset frå nynorsk til bokmål')
+      .setDescription('Omset frå bokmål til nynorsk')
       .addStringOption((option) =>
         option
           .setName('tekst')
@@ -66,7 +66,7 @@ export function register(client) {
   client.application.commands.create(
     new SlashCommandBuilder()
       .setName('nnnb')
-      .setDescription('Omset frå bokmål til nynorsk')
+      .setDescription('Omset frå nynorsk til bokmål')
       .addStringOption((option) =>
         option
           .setName('tekst')
