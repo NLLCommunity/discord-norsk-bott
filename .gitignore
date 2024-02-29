@@ -12,4 +12,7 @@
 #!.yarn/cache
 .pnp.*
 
-token.txt
+.env
+
+src/gql
+dist
