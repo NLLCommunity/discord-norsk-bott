@@ -95,7 +95,7 @@ export class PaginationProvider {
         embeds: [
           embeds[currentPageIndex].setFooter({
             text: `Resultat ${currentPageIndex + 1} / ${embeds.length}
-  Denne meldinga er no utdatert. Send kommandoen på nytt for å sjå andre resultat.`,
+Denne meldinga er no utdatert. Send kommandoen på nytt for å sjå andre resultat.`,
           }),
         ],
       });
