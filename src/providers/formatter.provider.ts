@@ -18,6 +18,9 @@ export class FormatterProvider {
       case Dictionary.Nynorskordboka:
         return 'Nynorskordboka';
 
+      case Dictionary.NorskOrdbok:
+        return 'Norsk Ordbok';
+
       default:
         return dictionary;
     }
@@ -131,6 +134,10 @@ export class FormatterProvider {
    * @param article The article to get the URL for.
    */
   getUrl(article: { id: number; dictionary: Dictionary }): string {
+    if (article.dictionary === Dictionary.NorskOrdbok) {
+      return '';
+    }
+
     return `https://ordbokene.no/${
       article.dictionary === Dictionary.Bokmaalsordboka ? 'bm' : 'nn'
     }/${article.id}`;

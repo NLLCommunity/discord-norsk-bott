@@ -133,7 +133,12 @@ export class BøyingCommand {
 
         let articleHeader = `_frå ${this.formatter.formatDictionary(
           article.dictionary,
-        )}_\n[Les meir](${this.formatter.getUrl(article)})`;
+        )}_`;
+        const url = this.formatter.getUrl(article);
+
+        if (url) {
+          articleHeader += `\n[Les meir](${url})`;
+        }
 
         if (splitInfinitive) {
           articleHeader += '\n\nKløyvd infinitiv: -a\n';

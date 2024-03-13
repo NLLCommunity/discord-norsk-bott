@@ -26,14 +26,29 @@ export const DictParam = () =>
     }),
     Choice(
       Object.entries(Dictionary).reduce(
-        (acc, [key, value]) => ({
-          ...acc,
-          [key === Dictionary.Bokmaalsordboka
-            ? 'bokmål'
-            : key === Dictionary.Nynorskordboka
-              ? 'nynorsk'
-              : key]: value,
-        }),
+        (acc, [key, value]) => {
+          let dict = '';
+
+          switch (key) {
+            case Dictionary.Bokmaalsordboka:
+              dict = 'bokmål';
+              break;
+            case Dictionary.Nynorskordboka:
+              dict = 'nynorsk';
+              break;
+            case Dictionary.NorskOrdbok:
+              dict = 'norsk';
+              break;
+            default:
+              dict = key;
+              break;
+          }
+
+          return {
+            ...acc,
+            [dict]: value,
+          };
+        },
         {} as Record<keyof typeof Dictionary, string>,
       ),
     ),
