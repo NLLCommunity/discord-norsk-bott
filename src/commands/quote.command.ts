@@ -64,8 +64,6 @@ export class QuoteCommand {
       return;
     }
 
-    console.log(message);
-
     const body =
       (message.content || '[Empty message]') +
       `\n[(Jump to message)](${message.url})`;
