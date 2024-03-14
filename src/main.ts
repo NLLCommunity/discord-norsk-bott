@@ -34,7 +34,7 @@ async function main() {
   let minLogLevel = process.argv.includes('--log-level')
     ? process.argv[process.argv.indexOf('--log-level') + 1]
     : prod
-      ? 'warn'
+      ? 'log'
       : 'verbose';
 
   // Validate and normalize the log level
