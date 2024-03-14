@@ -63,53 +63,87 @@ export class QuoteCommand {
     }
 
     const trimmed = messageId.trim();
-    const sanitized = this.sanitizer.sanitize(
-      this.sanitizer.truncate(trimmed, 20),
+    const sanitized = this.sanitizer.truncate(
+      this.sanitizer.sanitizeNumber(trimmed),
+      20,
     );
 
-    const message = trimmed.startsWith('https')
-      ? await this.messageFetcher.fetchMessageByUrl(interaction.guild, trimmed)
-      : await this.messageFetcher.fetchMessage(interaction.guild, sanitized);
+    try {
+      // const message = trimmed.startsWith('https')
+      //   ? await this.messageFetcher.fetchMessageByUrl(
+      //       interaction.guild,
+      //       trimmed,
+      //     )
+      //   : await this.messageFetcher.fetchMessage(interaction.guild, sanitized);
 
-    if (!message) {
+      let message: Message | null = null;
+
+      if (trimmed.startsWith('https')) {
+        message = await this.messageFetcher.fetchMessageByUrl(
+          interaction.guild,
+          trimmed,
+        );
+      } else {
+        if (!sanitized) {
+          await interaction.editReply(
+            'The provided message ID is invalid. You must provide either the message link or the message ID.',
+          );
+          return;
+        }
+
+        message = await this.messageFetcher.fetchMessage(
+          interaction.guild,
+          sanitized,
+        );
+      }
+
+      if (!message) {
+        await interaction.editReply(
+          `Could not find a message with ID \`${sanitized}\``,
+        );
+        return;
+      }
+
+      console.log(message);
+
+      // check if user has permission to view the message by checking if the user
+      // has permission to view the channel
+      if (
+        'permissionsFor' in message.channel &&
+        !message.channel
+          .permissionsFor(interaction.member as GuildMember)
+          ?.has(PermissionFlagsBits.ViewChannel)
+      ) {
+        await interaction.editReply(
+          'You do not have permission to view the channel this message is in.',
+        );
+        return;
+      }
+
+      const body =
+        (message.content || '[Empty message]') +
+        `\n[(Jump to message)](${message.url})`;
+
+      const embed = new EmbedBuilder()
+        .setAuthor({
+          name: message.author?.tag,
+          iconURL: message.author?.displayAvatarURL(),
+        })
+        .setDescription(body)
+        .setTimestamp(message.createdAt)
+        .setFooter({
+          text:
+            'name' in message.channel
+              ? `#${message.channel.name}`
+              : 'Unknown channel',
+        });
+
+      await interaction.editReply({ embeds: [embed] });
+    } catch (error) {
+      this.#logger.error(error);
       await interaction.editReply(
-        `Could not find a message with ID \`${sanitized}\``,
+        'An error occurred while quoting the message.',
       );
-      return;
     }
-
-    // check if user has permission to view the message by checking if the user
-    // has permission to view the channel
-    if (
-      'permissionsFor' in message.channel &&
-      !message.channel
-        .permissionsFor(interaction.member as GuildMember)
-        ?.has(PermissionFlagsBits.ViewChannel)
-    ) {
-      await interaction.editReply(
-        'You do not have permission to view the channel this message is in.',
-      );
-      return;
-    }
-
-    const body =
-      (message.content || '[Empty message]') +
-      `\n[(Jump to message)](${message.url})`;
-
-    const embed = new EmbedBuilder()
-      .setAuthor({
-        name: message.author?.tag,
-        iconURL: message.author?.displayAvatarURL(),
-      })
-      .setDescription(body)
-      .setTimestamp(message.createdAt)
-      .setFooter({
-        text:
-          'name' in message.channel
-            ? `#${message.channel.name}`
-            : 'Unknown channel',
-      });
-
-    await interaction.editReply({ embeds: [embed] });
   }
 }

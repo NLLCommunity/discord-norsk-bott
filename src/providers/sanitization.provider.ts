@@ -16,6 +16,14 @@ export class SanitizationProvider {
   }
 
   /**
+   * Sanitizes a string to limit it to only numbers.
+   * @param value The value to sanitize.
+   */
+  sanitizeNumber(value: string): string {
+    return value.replace(/[^0-9]/g, '');
+  }
+
+  /**
    * Keeps only the first `n` characters of a string. If the string is longer
    * than `n` characters, an ellipsis is appended.
    * @param value The value to truncate.
