@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { request, gql } from 'graphql-request';
 import {
   Dictionary,
@@ -11,7 +12,13 @@ import {
 
 @Injectable()
 export class OrdbokApiProvider {
-  readonly #endpoint = 'https://api.ordbokapi.org/graphql';
+  readonly #endpoint: string;
+
+  constructor(configService: ConfigService) {
+    this.#endpoint =
+      configService.get<string>('ORDBOKAPI_ENDPOINT') ??
+      'https://api.ordbokapi.org/graphql';
+  }
 
   /**
    * Retrieves the definitions of a word from the specified dictionaries.
