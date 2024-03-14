@@ -14,7 +14,11 @@ import * as commands from './commands';
       useFactory: (configService: ConfigService) => ({
         token: configService.get('DISCORD_TOKEN') ?? '',
         discordClientOptions: {
-          intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages],
+          intents: [
+            GatewayIntentBits.Guilds,
+            GatewayIntentBits.GuildMessages,
+            GatewayIntentBits.MessageContent,
+          ],
         },
         registerCommandOptions: [{ removeCommandsBefore: true }],
         failOnLogin: true,
