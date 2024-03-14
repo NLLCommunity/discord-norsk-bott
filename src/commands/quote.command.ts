@@ -56,9 +56,13 @@ export class QuoteCommand {
       return;
     }
 
-    const sanitized = this.sanitizer.sanitize(
-      this.sanitizer.truncate(messageId, 20),
+    const match = messageId.match(
+      /https:\/\/discord.com\/channels\/\d+\/\d+\/(?<messageId>\d+)/,
     );
+
+    const sanitized = match
+      ? match.groups?.messageId!
+      : this.sanitizer.sanitize(this.sanitizer.truncate(messageId, 20));
 
     const message = await this.messageFetcher.fetchMessage(
       interaction.guild,
