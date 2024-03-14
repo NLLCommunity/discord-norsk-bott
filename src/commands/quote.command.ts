@@ -8,13 +8,14 @@ import {
 } from '@discord-nestjs/core';
 import { SlashCommandPipe } from '@discord-nestjs/common';
 import { EmbedBuilder, type ChatInputCommandInteraction } from 'discord.js';
-import { FetchMessageProvider } from '../providers';
+import { FetchMessageProvider, SanitizationProvider } from '../providers';
 
 export class QuoteCommandParams {
   @Param({
     name: 'messageid',
     description: 'The ID of the message to quote',
     type: ParamType.STRING,
+    required: true,
   })
   messageId: string;
 }
@@ -30,7 +31,10 @@ export class QuoteCommandParams {
 export class QuoteCommand {
   #logger = new Logger(QuoteCommand.name);
 
-  constructor(private messageFetcher: FetchMessageProvider) {}
+  constructor(
+    private messageFetcher: FetchMessageProvider,
+    private sanitizer: SanitizationProvider,
+  ) {}
 
   /**
    * Handles the command.
@@ -52,14 +56,18 @@ export class QuoteCommand {
       return;
     }
 
+    const sanitized = this.sanitizer.sanitize(
+      this.sanitizer.truncate(messageId, 20),
+    );
+
     const message = await this.messageFetcher.fetchMessage(
       interaction.guild,
-      messageId,
+      sanitized,
     );
 
     if (!message) {
       await interaction.editReply(
-        `Could not find a message with ID ${messageId}`,
+        `Could not find a message with ID ${sanitized}`,
       );
       return;
     }
