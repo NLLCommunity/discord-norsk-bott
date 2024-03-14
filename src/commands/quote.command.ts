@@ -70,8 +70,8 @@ export class QuoteCommand {
 
     const embed = new EmbedBuilder()
       .setAuthor({
-        name: message.author.tag,
-        iconURL: message.author.displayAvatarURL(),
+        name: message.author?.tag,
+        iconURL: message.author?.displayAvatarURL(),
       })
       .setDescription(body)
       .setTimestamp(message.createdAt)
