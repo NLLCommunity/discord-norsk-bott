@@ -7,7 +7,13 @@ import {
   ParamType,
 } from '@discord-nestjs/core';
 import { SlashCommandPipe } from '@discord-nestjs/common';
-import { EmbedBuilder, type ChatInputCommandInteraction } from 'discord.js';
+import {
+  EmbedBuilder,
+  type ChatInputCommandInteraction,
+  GuildMember,
+  PermissionFlagsBits,
+  Message,
+} from 'discord.js';
 import { FetchMessageProvider, SanitizationProvider } from '../providers';
 
 export class QuoteCommandParams {
@@ -56,22 +62,32 @@ export class QuoteCommand {
       return;
     }
 
-    const match = messageId.match(
-      /https:\/\/discord.com\/channels\/\d+\/\d+\/(?<messageId>\d+)/,
+    const trimmed = messageId.trim();
+    const sanitized = this.sanitizer.sanitize(
+      this.sanitizer.truncate(trimmed, 20),
     );
 
-    const sanitized = match
-      ? match.groups?.messageId!
-      : this.sanitizer.sanitize(this.sanitizer.truncate(messageId, 20));
-
-    const message = await this.messageFetcher.fetchMessage(
-      interaction.guild,
-      sanitized,
-    );
+    const message = trimmed.startsWith('https')
+      ? await this.messageFetcher.fetchMessageByUrl(interaction.guild, trimmed)
+      : await this.messageFetcher.fetchMessage(interaction.guild, sanitized);
 
     if (!message) {
       await interaction.editReply(
-        `Could not find a message with ID ${sanitized}`,
+        `Could not find a message with ID \`${sanitized}\``,
+      );
+      return;
+    }
+
+    // check if user has permission to view the message by checking if the user
+    // has permission to view the channel
+    if (
+      'permissionsFor' in message.channel &&
+      !message.channel
+        .permissionsFor(interaction.member as GuildMember)
+        ?.has(PermissionFlagsBits.ViewChannel)
+    ) {
+      await interaction.editReply(
+        'You do not have permission to view the channel this message is in.',
       );
       return;
     }

@@ -32,4 +32,29 @@ export class FetchMessageProvider {
 
     return messages.find((message) => message !== null) ?? null;
   }
+
+  /**
+   * Fetches a message by its URL.
+   * @param guild The guild to fetch the message from.
+   * @param url The URL of the message to fetch.
+   */
+  async fetchMessageByUrl(guild: Guild, url: string): Promise<Message | null> {
+    const match = url.match(
+      /https:\/\/discord.com\/channels\/\d+\/(?<channelId>\d+)\/(?<messageId>\d+)/,
+    );
+
+    if (!match) {
+      return null;
+    }
+
+    const { channelId, messageId } = match.groups!;
+
+    const channel = guild.channels.cache.get(channelId);
+
+    if (!channel || !('messages' in channel)) {
+      return null;
+    }
+
+    return (await channel.messages.fetch(messageId)) ?? null;
+  }
 }
