@@ -53,8 +53,22 @@ async function main() {
     process.env.NO_COLOR = 'true';
   }
 
-  await NestFactory.createApplicationContext(AppModule, {
+  const app = await NestFactory.createApplicationContext(AppModule, {
     logger: logLevelArray,
+  });
+
+  app.enableShutdownHooks();
+
+  process.on('SIGINT', () => {
+    app.close();
+  });
+
+  process.on('SIGTERM', () => {
+    app.close();
+  });
+
+  process.on('unhandledRejection', (reason, promise) => {
+    console.error('Unhandled Rejection at:', promise, 'reason:', reason);
   });
 }
 

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import {
   ActionRowBuilder,
   ButtonBuilder,
@@ -7,12 +7,20 @@ import {
   ComponentType,
   type ChatInputCommandInteraction,
 } from 'discord.js';
+import { InteractionDataProvider } from './interaction-data.provider';
 
 /**
  * Provides a way to paginate embeds.
  */
 @Injectable()
 export class PaginationProvider {
+  #logger = new Logger(PaginationProvider.name);
+  #cancellationFns = new Set<() => Promise<void>>();
+
+  constructor(
+    private readonly interactionDataProvider: InteractionDataProvider,
+  ) {}
+
   /**
    * Paginates the given embeds. Does this by creating a pagination embed that
    * can be interacted with to change the current page.
@@ -35,6 +43,9 @@ export class PaginationProvider {
     if (embeds.length === 1) {
       return interaction.editReply({ embeds: [embeds[0]] });
     }
+
+    const interactionData =
+      this.interactionDataProvider.getDataFor(interaction);
 
     // Initialize pagination controls
     const controls = [
@@ -67,7 +78,34 @@ export class PaginationProvider {
       time: timeout,
     });
 
-    collector.on('collect', async (collectorInteraction) => {
+    const handleError = (error: unknown) => {
+      this.#logger.error(
+        `Failed to paginate for ${interaction.user.tag} in ${interactionData.getChannelName()}`,
+        error,
+      );
+    };
+
+    const cancel = async () => {
+      this.#cancellationFns.delete(cancel);
+
+      // remove buttons and add a message to the embed letting the user know that
+      // they'll have to send the command again to see other pages of results
+      await curPage
+        .edit({
+          components: [],
+          embeds: [
+            embeds[currentPageIndex].setFooter({
+              text: `Resultat ${currentPageIndex + 1} / ${embeds.length}
+Denne meldinga er no utdatert. Send kommandoen på nytt for å sjå andre resultat.`,
+            }),
+          ],
+        })
+        .catch(handleError);
+    };
+
+    this.#cancellationFns.add(cancel);
+
+    collector.on('collect', (collectorInteraction) => {
       // Update page index based on which button was clicked
       currentPageIndex =
         collectorInteraction.customId === 'prev'
@@ -77,30 +115,34 @@ export class PaginationProvider {
           : (currentPageIndex + 1) % embeds.length;
 
       // Update the message with the new page
-      await collectorInteraction.update({
-        embeds: [
-          embeds[currentPageIndex].setFooter({
-            text: `Resultat ${currentPageIndex + 1} / ${embeds.length}`,
-          }),
-        ],
-        components: [row],
-      });
+      collectorInteraction
+        .update({
+          embeds: [
+            embeds[currentPageIndex].setFooter({
+              text: `Resultat ${currentPageIndex + 1} / ${embeds.length}`,
+            }),
+          ],
+          components: [row],
+        })
+        .catch(handleError);
     });
 
-    collector.on('end', () => {
-      // remove buttons and add a message to the embed letting the user know that
-      // they'll have to send the command again to see other pages of results
-      curPage.edit({
-        components: [],
-        embeds: [
-          embeds[currentPageIndex].setFooter({
-            text: `Resultat ${currentPageIndex + 1} / ${embeds.length}
-Denne meldinga er no utdatert. Send kommandoen på nytt for å sjå andre resultat.`,
-          }),
-        ],
-      });
-    });
+    collector.on('end', cancel);
 
     return curPage;
+  }
+
+  /**
+   * Cancels all active pagination collectors when the application is shutting
+   * down.
+   */
+  async onModuleDestroy() {
+    this.#logger.log('Cancelling all active pagination collectors');
+
+    for (const cancel of this.#cancellationFns) {
+      await cancel();
+    }
+
+    this.#logger.log('All active pagination collectors cancelled');
   }
 }
