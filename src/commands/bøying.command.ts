@@ -6,6 +6,7 @@ import {
   PaginationProvider,
   OrdbokApiProvider,
   FormatterProvider,
+  RateLimiterProvider,
 } from '../providers';
 import {
   DictParam,
@@ -42,6 +43,7 @@ export class BøyingCommand {
     private readonly pagination: PaginationProvider,
     private readonly ordbokApi: OrdbokApiProvider,
     private readonly formatter: FormatterProvider,
+    private readonly rateLimiter: RateLimiterProvider,
   ) {}
 
   #logger = new Logger(BøyingCommand.name);
@@ -57,13 +59,20 @@ export class BøyingCommand {
     @InteractionEvent(SlashCommandPipe)
     { word, dictionary, wordClass, sendToEveryone }: BøyingCommandParams,
   ): Promise<void> {
-    await interaction.deferReply({
-      ephemeral: !sendToEveryone,
-    });
-
     this.#logger.log(
       `Søkjer etter ${word} i ${dictionary} med ordklasse ${wordClass}`,
     );
+
+    if (
+      sendToEveryone &&
+      this.rateLimiter.isRateLimited(BøyingCommand.name, interaction)
+    ) {
+      return;
+    }
+
+    await interaction.deferReply({
+      ephemeral: !sendToEveryone,
+    });
 
     try {
       const response = await this.ordbokApi.inflections(

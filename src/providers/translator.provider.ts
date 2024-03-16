@@ -1,6 +1,7 @@
 import { Injectable, Inject, Logger } from '@nestjs/common';
 import { type ChatInputCommandInteraction } from 'discord.js';
 import { ApertiumProvider, Language } from './apertium.provider';
+import { RateLimiterProvider } from './rate-limiter.provider';
 
 /**
  * Translates the given text to the given language.
@@ -10,6 +11,7 @@ export class TranslatorProvider {
   constructor(
     @Inject(ApertiumProvider)
     private readonly apertium: ApertiumProvider,
+    private readonly rateLimiter: RateLimiterProvider,
   ) {}
 
   #logger = new Logger(TranslatorProvider.name);
@@ -36,6 +38,13 @@ export class TranslatorProvider {
     ephemeral?: boolean;
   }): Promise<void> {
     this.#logger.log(`Omset frå ${from} til ${to}: ${text}`);
+
+    if (
+      !ephemeral &&
+      this.rateLimiter.isRateLimited(TranslatorProvider.name, interaction)
+    ) {
+      return;
+    }
 
     if (text.length > 1800) {
       await interaction.reply({
