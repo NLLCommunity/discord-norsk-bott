@@ -90,8 +90,8 @@ export class PaginationProvider {
 
       // remove buttons and add a message to the embed letting the user know that
       // they'll have to send the command again to see other pages of results
-      await curPage
-        .edit({
+      await interaction
+        .editReply({
           components: [],
           embeds: [
             embeds[currentPageIndex].setFooter({
