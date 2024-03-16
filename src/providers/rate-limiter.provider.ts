@@ -1,8 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import {
-  type ChatInputCommandInteraction,
-  PermissionFlagsBits,
-} from 'discord.js';
+import { type ChatInputCommandInteraction } from 'discord.js';
 import { InteractionDataProvider } from './interaction-data.provider';
 
 export interface RateLimiterOptions {

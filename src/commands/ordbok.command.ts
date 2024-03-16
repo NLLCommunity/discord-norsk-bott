@@ -89,7 +89,9 @@ export class OrdbokCommand {
             return acc ? `${acc}, ${lemmaText}` : lemmaText;
           }, '') ?? word;
 
-        let articleHeader = `_frå ${this.formatter.formatDictionary(
+        let articleHeader = `${
+          article.wordClass
+        }${genderString}\n_frå ${this.formatter.formatDictionary(
           article.dictionary,
         )}_`;
         const url = this.formatter.getUrl(article);

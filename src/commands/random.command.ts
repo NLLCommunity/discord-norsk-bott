@@ -7,13 +7,7 @@ import {
   ParamType,
 } from '@discord-nestjs/core';
 import { SlashCommandPipe } from '@discord-nestjs/common';
-import {
-  EmbedBuilder,
-  type ChatInputCommandInteraction,
-  GuildMember,
-  PermissionFlagsBits,
-  Message,
-} from 'discord.js';
+import { EmbedBuilder, type ChatInputCommandInteraction } from 'discord.js';
 import { RateLimiterProvider } from '../providers';
 
 export class RandomCommandParams {
