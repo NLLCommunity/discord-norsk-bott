@@ -14,7 +14,11 @@ import {
   PermissionFlagsBits,
   Message,
 } from 'discord.js';
-import { FetchMessageProvider, SanitizationProvider } from '../providers';
+import {
+  FetchMessageProvider,
+  RateLimiterProvider,
+  SanitizationProvider,
+} from '../providers';
 
 export class QuoteCommandParams {
   @Param({
@@ -40,6 +44,7 @@ export class QuoteCommand {
   constructor(
     private messageFetcher: FetchMessageProvider,
     private sanitizer: SanitizationProvider,
+    private readonly rateLimiter: RateLimiterProvider,
   ) {}
 
   /**
@@ -53,12 +58,17 @@ export class QuoteCommand {
     @InteractionEvent(SlashCommandPipe)
     { messageId }: QuoteCommandParams,
   ): Promise<void> {
-    await interaction.deferReply();
+    if (this.rateLimiter.isRateLimited(QuoteCommand.name, interaction)) {
+      return;
+    }
 
     this.#logger.log(`Quoting message with ID ${messageId}`);
 
     if (!interaction.guild) {
-      await interaction.editReply('This command can only be used in a server');
+      await interaction.reply({
+        content: 'This command can only be used in a server',
+        ephemeral: true,
+      });
       return;
     }
 
@@ -79,17 +89,23 @@ export class QuoteCommand {
       let message: Message | null = null;
 
       if (trimmed.startsWith('https')) {
+        await interaction.deferReply();
+
         message = await this.messageFetcher.fetchMessageByUrl(
           interaction.guild,
           trimmed,
         );
       } else {
         if (!sanitized) {
-          await interaction.editReply(
-            'The provided message ID is invalid. You must provide either the message link or the message ID.',
-          );
+          await interaction.reply({
+            content:
+              'The provided message ID is invalid. You must provide either the message link or the message ID.',
+            ephemeral: true,
+          });
           return;
         }
+
+        await interaction.deferReply();
 
         message = await this.messageFetcher.fetchMessage(
           interaction.guild,

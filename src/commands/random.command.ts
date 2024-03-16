@@ -53,11 +53,7 @@ export class RandomCommand {
   ): Promise<void> {
     this.#logger.log(`Rolling ${roll.slice(0, 100)}`);
 
-    if (
-      this.rateLimiter.isRateLimited(RandomCommand.name, interaction, {
-        maxPerWindow: 3,
-      })
-    ) {
+    if (this.rateLimiter.isRateLimited(RandomCommand.name, interaction)) {
       return;
     }
 

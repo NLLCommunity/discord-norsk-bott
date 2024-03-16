@@ -12,7 +12,7 @@ export interface RateLimiterOptions {
   window?: number;
 
   /**
-   * The maximum number of uses per window. Defaults to 5.
+   * The maximum number of uses per window. Defaults to 3.
    */
   maxPerWindow?: number;
 }
@@ -50,7 +50,7 @@ export class RateLimiterProvider {
   isRateLimited(
     key: string,
     interaction: ChatInputCommandInteraction,
-    { window = 1 * 60 * 1000, maxPerWindow = 5 }: RateLimiterOptions = {},
+    { window = 1 * 60 * 1000, maxPerWindow = 3 }: RateLimiterOptions = {},
   ): boolean {
     const interactionData =
       this.interactionDataProvider.getDataFor(interaction);
