@@ -7,7 +7,7 @@ import {
   OrdbokApiProvider,
   FormatterProvider,
 } from '../providers';
-import { DictParam, WordParam, WordClassParam } from '../utils';
+import { DictParam, WordParam, WordClassParam, PrivateParam } from '../utils';
 import { Dictionary, WordClass } from '../gql/graphql';
 
 export class OrdbokCommandParams {
@@ -19,6 +19,9 @@ export class OrdbokCommandParams {
 
   @WordClassParam()
   wordClass?: WordClass;
+
+  @PrivateParam()
+  privateResponse?: boolean;
 }
 
 /**
@@ -41,17 +44,17 @@ export class OrdbokCommand {
   /**
    * Handles the command.
    * @param interaction The interaction event.
-   * @param ord The word to search for.
-   * @param ordbok The dictionary to search in.
-   * @param ordklasse The word class to filter by.
+   * @param params The command parameters.
    */
   @Handler()
   async handle(
     @InteractionEvent() interaction: ChatInputCommandInteraction,
     @InteractionEvent(SlashCommandPipe)
-    { word, dictionary, wordClass }: OrdbokCommandParams,
+    { word, dictionary, wordClass, privateResponse }: OrdbokCommandParams,
   ): Promise<void> {
-    await interaction.deferReply();
+    await interaction.deferReply({
+      ephemeral: privateResponse,
+    });
 
     this.#logger.log(
       `Søkjer etter ${word} i ${dictionary} med ordklasse ${wordClass}`,

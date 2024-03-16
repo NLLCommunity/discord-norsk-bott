@@ -3,7 +3,7 @@ import { WordClass, Dictionary } from 'src/gql/graphql';
 import { Union } from './decorator-union';
 
 /**
- * Adds a "ord" option to the command.
+ * Adds an "ord" option to the command.
  */
 export const WordParam = () =>
   Param({
@@ -14,7 +14,7 @@ export const WordParam = () =>
   });
 
 /**
- * Adds a "ordbok" option to the command.
+ * Adds an "ordbok" option to the command.
  */
 export const DictParam = () =>
   Union(
@@ -55,7 +55,7 @@ export const DictParam = () =>
   );
 
 /**
- * Adds a "ordklasse" option to the command.
+ * Adds an "ordklasse" option to the command.
  */
 export const WordClassParam = () =>
   Union(
@@ -67,3 +67,14 @@ export const WordClassParam = () =>
     }),
     Choice(WordClass),
   );
+
+/**
+ * Adds a "privat" option to the command.
+ */
+export const PrivateParam = () =>
+  Param({
+    name: 'privat',
+    description: 'Om du vil ha svar berre du kan sjå',
+    type: ParamType.BOOLEAN,
+    required: false,
+  });
