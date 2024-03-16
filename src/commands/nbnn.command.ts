@@ -9,15 +9,19 @@ import {
 import { SlashCommandPipe } from '@discord-nestjs/common';
 import { type ChatInputCommandInteraction } from 'discord.js';
 import { Language, TranslatorProvider } from '../providers';
+import { ShowEveryoneParam } from '../utils';
 
 export class NbnnCommandParams {
   @Param({
     name: 'tekst',
-    description: 'Teksten du vil omsetja',
+    description: 'Teksten du vil omsetja / The text you want to translate',
     type: ParamType.STRING,
     required: true,
   })
   text: string;
+
+  @ShowEveryoneParam()
+  sendToEveryone?: boolean;
 }
 
 /**
@@ -26,7 +30,8 @@ export class NbnnCommandParams {
 @Injectable()
 @Command({
   name: 'nbnn',
-  description: 'Omset frå bokmål til nynorsk',
+  description:
+    'Omset frå bokmål til nynorsk / Translate from Bokmål to Nynorsk',
 })
 export class NbnnCommand {
   constructor(private readonly translator: TranslatorProvider) {}
@@ -40,13 +45,14 @@ export class NbnnCommand {
   async handle(
     @InteractionEvent() interaction: ChatInputCommandInteraction,
     @InteractionEvent(SlashCommandPipe)
-    { text }: NbnnCommandParams,
+    { text, sendToEveryone }: NbnnCommandParams,
   ): Promise<void> {
-    await this.translator.translate(
+    await this.translator.translate({
       interaction,
-      Language.Bokmål,
-      Language.Nynorsk,
+      from: Language.Bokmål,
+      to: Language.Nynorsk,
       text,
-    );
+      ephemeral: !sendToEveryone,
+    });
   }
 }

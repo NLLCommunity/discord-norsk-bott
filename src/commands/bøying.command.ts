@@ -7,7 +7,12 @@ import {
   OrdbokApiProvider,
   FormatterProvider,
 } from '../providers';
-import { DictParam, WordParam, WordClassParam, PrivateParam } from '../utils';
+import {
+  DictParam,
+  WordParam,
+  WordClassParam,
+  ShowEveryoneParam,
+} from '../utils';
 import { Dictionary, WordClass } from '../gql/graphql';
 
 export class BøyingCommandParams {
@@ -20,8 +25,8 @@ export class BøyingCommandParams {
   @WordClassParam()
   wordClass?: WordClass;
 
-  @PrivateParam()
-  privateResponse?: boolean;
+  @ShowEveryoneParam()
+  sendToEveryone?: boolean;
 }
 
 /**
@@ -30,7 +35,7 @@ export class BøyingCommandParams {
 @Injectable()
 @Command({
   name: 'bøying',
-  description: 'Søk etter bøying av ord',
+  description: 'Søk etter bøying av ord / Search for inflections of a word',
 })
 export class BøyingCommand {
   constructor(
@@ -50,10 +55,10 @@ export class BøyingCommand {
   async handle(
     @InteractionEvent() interaction: ChatInputCommandInteraction,
     @InteractionEvent(SlashCommandPipe)
-    { word, dictionary, wordClass, privateResponse }: BøyingCommandParams,
+    { word, dictionary, wordClass, sendToEveryone }: BøyingCommandParams,
   ): Promise<void> {
     await interaction.deferReply({
-      ephemeral: privateResponse,
+      ephemeral: !sendToEveryone,
     });
 
     this.#logger.log(

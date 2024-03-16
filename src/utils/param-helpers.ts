@@ -8,7 +8,7 @@ import { Union } from './decorator-union';
 export const WordParam = () =>
   Param({
     name: 'ord',
-    description: 'Ordet du vil søkja etter',
+    description: 'Ordet du vil søkja etter / The word you want to search for',
     type: ParamType.STRING,
     required: true,
   });
@@ -20,7 +20,8 @@ export const DictParam = () =>
   Union(
     Param({
       name: 'ordbok',
-      description: 'Ordboka du vil søkja i',
+      description:
+        'Ordboka du vil søkja i / The dictionary you want to search in',
       type: ParamType.STRING,
       required: false,
     }),
@@ -61,7 +62,8 @@ export const WordClassParam = () =>
   Union(
     Param({
       name: 'ordklasse',
-      description: 'Ordklassen du vil søkja etter',
+      description:
+        'Ordklassen du vil søkja etter / The word class you want to search for',
       type: ParamType.STRING,
       required: false,
     }),
@@ -69,12 +71,24 @@ export const WordClassParam = () =>
   );
 
 /**
- * Adds a "privat" option to the command.
+ * Adds a "visalle" option to the command.
  */
-export const PrivateParam = () =>
+export const ShowEveryoneParam = () =>
   Param({
-    name: 'privat',
-    description: 'Om du vil ha svar berre du kan sjå',
+    name: 'visalle',
+    description:
+      'Send svaret i kanalen for alle å sjå / Send the response in the channel for everyone to see',
+    type: ParamType.BOOLEAN,
+    required: false,
+  });
+
+/**
+ * Adds a "showeveryone" option to the command.
+ */
+export const ShowEveryoneParamEn = () =>
+  Param({
+    name: 'showeveryone',
+    description: 'Send the response in the channel for everyone to see',
     type: ParamType.BOOLEAN,
     required: false,
   });

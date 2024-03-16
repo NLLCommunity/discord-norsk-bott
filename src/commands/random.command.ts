@@ -9,6 +9,7 @@ import {
 import { SlashCommandPipe } from '@discord-nestjs/common';
 import { EmbedBuilder, type ChatInputCommandInteraction } from 'discord.js';
 import { RateLimiterProvider } from '../providers';
+import { ShowEveryoneParamEn } from '../utils';
 
 export class RandomCommandParams {
   @Param({
@@ -19,6 +20,9 @@ export class RandomCommandParams {
     required: true,
   })
   roll: string;
+
+  @ShowEveryoneParamEn()
+  sendToEveryone?: boolean;
 }
 
 /**
@@ -43,11 +47,14 @@ export class RandomCommand {
   async handle(
     @InteractionEvent() interaction: ChatInputCommandInteraction,
     @InteractionEvent(SlashCommandPipe)
-    { roll }: RandomCommandParams,
+    { roll, sendToEveryone }: RandomCommandParams,
   ): Promise<void> {
     this.#logger.log(`Rolling ${roll.slice(0, 100)}`);
 
-    if (this.rateLimiter.isRateLimited(RandomCommand.name, interaction)) {
+    if (
+      sendToEveryone &&
+      this.rateLimiter.isRateLimited(RandomCommand.name, interaction)
+    ) {
       return;
     }
 
@@ -113,6 +120,6 @@ export class RandomCommand {
       )
       .setColor(0x00ff00);
 
-    await interaction.reply({ embeds: [embed] });
+    await interaction.reply({ embeds: [embed], ephemeral: !sendToEveryone });
   }
 }

@@ -7,7 +7,12 @@ import {
   OrdbokApiProvider,
   FormatterProvider,
 } from '../providers';
-import { DictParam, WordParam, WordClassParam, PrivateParam } from '../utils';
+import {
+  DictParam,
+  WordParam,
+  WordClassParam,
+  ShowEveryoneParam,
+} from '../utils';
 import { Dictionary, WordClass } from '../gql/graphql';
 
 export class OrdbokCommandParams {
@@ -20,8 +25,8 @@ export class OrdbokCommandParams {
   @WordClassParam()
   wordClass?: WordClass;
 
-  @PrivateParam()
-  privateResponse?: boolean;
+  @ShowEveryoneParam()
+  sendToEveryone?: boolean;
 }
 
 /**
@@ -30,7 +35,8 @@ export class OrdbokCommandParams {
 @Injectable()
 @Command({
   name: 'ordbok',
-  description: 'Søk i ordbøkene',
+  description:
+    'Søk i ordbøkene etter definisjonar / Search the dictionaries for definitions',
 })
 export class OrdbokCommand {
   constructor(
@@ -50,10 +56,10 @@ export class OrdbokCommand {
   async handle(
     @InteractionEvent() interaction: ChatInputCommandInteraction,
     @InteractionEvent(SlashCommandPipe)
-    { word, dictionary, wordClass, privateResponse }: OrdbokCommandParams,
+    { word, dictionary, wordClass, sendToEveryone }: OrdbokCommandParams,
   ): Promise<void> {
     await interaction.deferReply({
-      ephemeral: privateResponse,
+      ephemeral: !sendToEveryone,
     });
 
     this.#logger.log(

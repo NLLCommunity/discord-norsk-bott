@@ -22,22 +22,33 @@ export class TranslatorProvider {
    * @param text The text to translate.
    * @returns The translated text.
    */
-  async translate(
-    interaction: ChatInputCommandInteraction,
-    from: Language,
-    to: Language,
-    text: string,
-  ): Promise<void> {
+  async translate({
+    interaction,
+    from,
+    to,
+    text,
+    ephemeral = true,
+  }: {
+    interaction: ChatInputCommandInteraction;
+    from: Language;
+    to: Language;
+    text: string;
+    ephemeral?: boolean;
+  }): Promise<void> {
     this.#logger.log(`Omset frå ${from} til ${to}: ${text}`);
 
     if (text.length > 1800) {
-      await interaction.reply(
-        'Teksten er for lang til å bli sendt. Prøv å korta ned teksten.',
-      );
+      await interaction.reply({
+        content:
+          'Teksten er for lang til å bli sendt. Prøv å korta ned teksten.',
+        ephemeral,
+      });
       return;
     }
 
-    await interaction.deferReply();
+    await interaction.deferReply({
+      ephemeral,
+    });
 
     try {
       const finalText = await this.apertium.translate(from, to, text);
