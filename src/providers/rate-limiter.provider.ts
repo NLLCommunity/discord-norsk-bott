@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { type ChatInputCommandInteraction } from 'discord.js';
 import { InteractionDataProvider } from './interaction-data.provider';
+import { InteractionVariant } from '../types';
 
 export interface RateLimiterOptions {
   /**
@@ -12,6 +12,12 @@ export interface RateLimiterOptions {
    * The maximum number of uses per window. Defaults to 3.
    */
   maxPerWindow?: number;
+
+  /**
+   * Whether to rate limit by user rather than by user, channel, and guild.
+   * Defaults to false.
+   */
+  byUser?: boolean;
 }
 
 export type RateLimiterResponse = {
@@ -64,8 +70,12 @@ export class RateLimiterProvider {
    */
   rateLimit(
     key: string,
-    interaction: ChatInputCommandInteraction,
-    { window = 1 * 60 * 1000, maxPerWindow = 3 }: RateLimiterOptions = {},
+    interaction: InteractionVariant,
+    {
+      window = 1 * 60 * 1000,
+      maxPerWindow = 3,
+      byUser,
+    }: RateLimiterOptions = {},
   ): RateLimiterResponse {
     const interactionData =
       this.interactionDataProvider.getDataFor(interaction);
@@ -74,7 +84,9 @@ export class RateLimiterProvider {
       return { isRateLimited: false };
     }
 
-    const mapKey = `${interaction.guildId}:${interaction.channelId}:${interaction.user.id}:${key}`;
+    const mapKey = byUser
+      ? `${interaction.user.id}:${key}`
+      : `${interaction.guildId}:${interaction.channelId}:${interaction.user.id}:${key}`;
     const now = Date.now();
     let entry = this.#lastUsed.get(mapKey);
 
@@ -118,7 +130,7 @@ export class RateLimiterProvider {
    */
   isRateLimited(
     key: string,
-    interaction: ChatInputCommandInteraction,
+    interaction: InteractionVariant,
     options?: RateLimiterOptions,
   ): boolean {
     const interactionData =

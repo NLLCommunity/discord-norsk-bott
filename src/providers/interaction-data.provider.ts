@@ -1,8 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import {
-  type ChatInputCommandInteraction,
-  PermissionFlagsBits,
-} from 'discord.js';
+import { PermissionFlagsBits } from 'discord.js';
+import { InteractionVariant } from '../types';
 
 export interface InteractionData {
   getChannelName: () => string;
@@ -16,7 +14,7 @@ export class InteractionDataProvider {
    * @param interaction The interaction to get data for.
    * @returns The interaction data.
    */
-  getDataFor(interaction: ChatInputCommandInteraction): InteractionData {
+  getDataFor(interaction: InteractionVariant): InteractionData {
     return {
       getChannelName: () =>
         interaction.channel && 'name' in interaction.channel

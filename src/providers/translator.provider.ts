@@ -1,33 +1,15 @@
 import { Injectable, Inject, Logger } from '@nestjs/common';
-import { EmbedBuilder, type ChatInputCommandInteraction } from 'discord.js';
+import { EmbedBuilder } from 'discord.js';
 import { ApertiumProvider, ApertiumLanguage } from './apertium.provider';
 import { RateLimiterProvider } from './rate-limiter.provider';
 import { DeepLProvider } from './deepl.provider';
 import { SanitizationProvider } from './sanitization.provider';
-
-export enum Language {
-  Bokmål = 'nb',
-  Nynorsk = 'nn',
-  English = 'en',
-}
-
-export enum DisplayLanguage {
-  Norwegian = 'no',
-  English = 'en',
-}
-
-export const LanguageName: Record<DisplayLanguage, Record<Language, string>> = {
-  [DisplayLanguage.Norwegian]: {
-    [Language.Bokmål]: 'bokmål',
-    [Language.Nynorsk]: 'nynorsk',
-    [Language.English]: 'engelsk',
-  },
-  [DisplayLanguage.English]: {
-    [Language.Bokmål]: 'Bokmål',
-    [Language.Nynorsk]: 'Nynorsk',
-    [Language.English]: 'English',
-  },
-};
+import {
+  Language,
+  DisplayLanguage,
+  LanguageName,
+  InteractionVariant,
+} from '../types';
 
 enum Messages {
   RateLimited,
@@ -36,6 +18,8 @@ enum Messages {
   Translated,
   UsesRemaining,
   DonationPrompt,
+  RequestedBy,
+  InaccuracyWarning,
 }
 
 const timeFormats: Record<DisplayLanguage, Intl.RelativeTimeFormat> = {
@@ -86,6 +70,8 @@ const MessageText = {
       `Du har ${usesLeft} ${usesLeft === 1 ? 'omsetjing' : 'omsetjingar'} igjen før du må venta ei stund.`,
     [Messages.DonationPrompt]: () =>
       '_Visste du at me betalar for kvar omsetjing?_\n_Hjelp oss med å tilby omsetjingar [ved å donera til Ada](https://github.com/sponsors/adalinesimonian)._',
+    [Messages.RequestedBy]: (user: string) => `Spurd av ${user}`,
+    [Messages.InaccuracyWarning]: () => '⚠️ Omsetjingane kan innehalda feil.',
   },
   [DisplayLanguage.English]: {
     [Messages.RateLimited]: (waitMs: number) =>
@@ -103,6 +89,8 @@ const MessageText = {
       `You have ${usesLeft} ${usesLeft === 1 ? 'translation' : 'translations'} left before you have to wait a while.`,
     [Messages.DonationPrompt]: () =>
       '_Did you know we pay for every translation?_\n_Help us offer translations by [donating to Ada](https://github.com/sponsors/adalinesimonian)._',
+    [Messages.RequestedBy]: (user: string) => `Requested by ${user}`,
+    [Messages.InaccuracyWarning]: () => '⚠️ Translations may contain mistakes.',
   },
 };
 
@@ -113,7 +101,7 @@ interface TranslatorOptions {
   /**
    * The interaction object representing the chat input command interaction.
    */
-  interaction: ChatInputCommandInteraction;
+  interaction: InteractionVariant;
 
   /**
    * The language to translate from.
@@ -132,7 +120,8 @@ interface TranslatorOptions {
 
   /**
    * (Optional) Whether the response should be ephemeral (only visible to the
-   * user who triggered the command).
+   * user who triggered the command). Ignored if the interaction is not a
+   * chat input command interaction. Defaults to `true`.
    */
   ephemeral?: boolean;
 
@@ -306,14 +295,17 @@ export class TranslatorProvider {
       ? this.rateLimiter.rateLimit(rateLimitKey, interaction, {
           window,
           maxPerWindow,
+          byUser: pipeline.expensive,
         })
       : undefined;
 
     if (rateLimitInfo?.isRateLimited) {
       await interaction.reply({
-        content: MessageText[displayLanguage][Messages.RateLimited](
-          rateLimitInfo.timeUntilNextUse!,
-        ),
+        content:
+          ('isPseudoInteraction' in interaction ? `${interaction.user} ` : '') +
+          MessageText[displayLanguage][Messages.RateLimited](
+            rateLimitInfo.timeUntilNextUse!,
+          ),
         ephemeral: true,
       });
       return;
@@ -362,9 +354,28 @@ export class TranslatorProvider {
 
       if (rateLimitInfo?.usesLeft !== undefined) {
         embed.setFooter({
-          text: MessageText[displayLanguage][Messages.UsesRemaining](
-            rateLimitInfo.usesLeft,
-          ),
+          text:
+            ('isPseudoInteraction' in interaction
+              ? `@${interaction.user.tag} `
+              : '') +
+            MessageText[displayLanguage][Messages.UsesRemaining](
+              rateLimitInfo.usesLeft,
+            ) +
+            '\n' +
+            MessageText[displayLanguage][Messages.InaccuracyWarning](),
+        });
+      } else if ('isPseudoInteraction' in interaction) {
+        embed.setFooter({
+          text:
+            MessageText[displayLanguage][Messages.RequestedBy](
+              interaction.user.tag,
+            ) +
+            '\n' +
+            MessageText[displayLanguage][Messages.InaccuracyWarning](),
+        });
+      } else {
+        embed.setFooter({
+          text: MessageText[displayLanguage][Messages.InaccuracyWarning](),
         });
       }
 

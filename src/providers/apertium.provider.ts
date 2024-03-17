@@ -1,11 +1,12 @@
 import { Injectable } from '@nestjs/common';
+import { Language } from '../types';
 
 @Injectable()
 export class ApertiumProvider {
-  readonly #url: string = 'https://apertium.org/apy/translate';
+  readonly #baseUrl: string = 'https://apertium.org/apy/';
 
-  async #fetch(query: string): Promise<any> {
-    const response = await fetch(this.#url, {
+  async #fetch(endpoint: string, query: string): Promise<any> {
+    const response = await fetch(this.#baseUrl + endpoint, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
@@ -13,13 +14,7 @@ export class ApertiumProvider {
       body: query,
     });
 
-    const json = await response.json();
-
-    if (json.responseStatus !== 200) {
-      throw new Error(json.responseDetails);
-    }
-
-    return json;
+    return await response.json();
   }
 
   /**
@@ -41,8 +36,32 @@ export class ApertiumProvider {
       q: text,
     }).toString();
 
-    const response = await this.#fetch(data);
+    const response = await this.#fetch('translate', data);
+
+    if (response.responseStatus !== 200) {
+      throw new Error(response.responseDetails);
+    }
+
     return response.responseData.translatedText;
+  }
+
+  /**
+   * Detects the language of the given text using the Apertium API.
+   * @param text The text to detect the language of.
+   * @returns The detected language.
+   */
+  async detectLanguage(text: string): Promise<string> {
+    const data = new URLSearchParams({ q: text }).toString();
+
+    const response = (await this.#fetch('identifyLang', data)) as {
+      [langId: string]: number;
+    };
+
+    const mostLikely = Object.entries(response).reduce((a, b) =>
+      a[1] > b[1] ? a : b,
+    );
+
+    return mostLikely[0];
   }
 }
 
@@ -52,4 +71,24 @@ export class ApertiumProvider {
 export enum ApertiumLanguage {
   Bokmål = 'nob',
   Nynorsk = 'nno',
+  English = 'eng',
+}
+
+/**
+ * Returns the Language enum value for the given Apertium language code.
+ */
+export function apertiumLangToLanguage(code: string): Language | undefined {
+  switch (code) {
+    case ApertiumLanguage.Bokmål:
+      return Language.Bokmål;
+
+    case ApertiumLanguage.Nynorsk:
+      return Language.Nynorsk;
+
+    case ApertiumLanguage.English:
+      return Language.English;
+
+    default:
+      return undefined;
+  }
 }

@@ -8,8 +8,9 @@ import {
 } from '@discord-nestjs/core';
 import { SlashCommandPipe } from '@discord-nestjs/common';
 import { type ChatInputCommandInteraction } from 'discord.js';
-import { Language, TranslatorProvider } from '../providers';
+import { TranslatorProvider } from '../providers';
 import { ShowEveryoneParam } from '../utils';
+import { Language } from '../types';
 
 export class NbnnCommandParams {
   @Param({

@@ -41,6 +41,10 @@ The bot requires the following permissions to function correctly:
 ### Bot Permissions
 
 - Read Messages/View Channels
+- Send Messages
+- Send Messages in Threads
+- Manage Messages
+- Add Reactions
 - Use Slash Commands
 
 ## Licence
