@@ -8,7 +8,11 @@ export class IsTranslateEmojiGuard implements CanActivate {
       | MessageReaction
       | PartialMessageReaction;
 
-    if (!reaction.emoji.name) {
+    if (
+      !reaction.emoji.name ||
+      !('guild' in reaction.emoji) ||
+      reaction.emoji.guild.id !== reaction.message.guild?.id
+    ) {
       return false;
     }
 
