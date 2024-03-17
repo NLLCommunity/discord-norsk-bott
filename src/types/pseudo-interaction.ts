@@ -7,10 +7,12 @@ import {
   ChatInputCommandInteraction,
   Message,
   MessageCreateOptions,
+  MessageContextMenuCommandInteraction,
 } from 'discord.js';
 
 export type InteractionVariant =
   | ChatInputCommandInteraction
+  | MessageContextMenuCommandInteraction
   | PseudoInteraction;
 
 export interface PseudoInteractionReplyOptions extends MessageCreateOptions {

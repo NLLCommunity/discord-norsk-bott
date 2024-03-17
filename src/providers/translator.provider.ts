@@ -1,6 +1,10 @@
 import { Injectable, Inject, Logger } from '@nestjs/common';
 import { EmbedBuilder } from 'discord.js';
-import { ApertiumProvider, ApertiumLanguage } from './apertium.provider';
+import {
+  ApertiumProvider,
+  ApertiumLanguage,
+  apertiumLangToLanguage,
+} from './apertium.provider';
 import { RateLimiterProvider } from './rate-limiter.provider';
 import { DeepLProvider } from './deepl.provider';
 import { SanitizationProvider } from './sanitization.provider';
@@ -15,6 +19,7 @@ enum Messages {
   RateLimited,
   TranslationTooLong,
   TranslationError,
+  SameLanguageError,
   Translated,
   UsesRemaining,
   DonationPrompt,
@@ -64,6 +69,8 @@ const MessageText = {
       'Omsett tekst er for lang til å bli sendt. Prøv å korta ned teksten.',
     [Messages.TranslationError]: () =>
       'Det skjedde ein feil under omsetjinga. Prøv igjen seinare.',
+    [Messages.SameLanguageError]: () =>
+      'Kan ikkje omsetja til same språk som originalteksten.',
     [Messages.Translated]: (from: Language, to: Language) =>
       `Omset frå ${LanguageName[DisplayLanguage.Norwegian][from]} til ${LanguageName[DisplayLanguage.Norwegian][to]}`,
     [Messages.UsesRemaining]: (usesLeft: number) =>
@@ -83,6 +90,8 @@ const MessageText = {
       'Translated text is too long to be sent. Try shortening the text.',
     [Messages.TranslationError]: () =>
       'An error occurred during translation. Try again later.',
+    [Messages.SameLanguageError]: () =>
+      'Cannot translate to the same language as the original text.',
     [Messages.Translated]: (from: Language, to: Language) =>
       `Translated from ${LanguageName[DisplayLanguage.English][from]} to ${LanguageName[DisplayLanguage.English][to]}`,
     [Messages.UsesRemaining]: (usesLeft: number) =>
@@ -106,7 +115,7 @@ interface TranslatorOptions {
   /**
    * The language to translate from.
    */
-  from: Language;
+  from?: Language;
 
   /**
    * The language to translate to.
@@ -281,7 +290,36 @@ export class TranslatorProvider {
   }: TranslatorOptions): Promise<void> {
     this.#logger.log(`Omset frå ${from} til ${to}: ${text}`);
 
-    const pipeline = this.#getTranslationPipeline(from, to);
+    const replyFunction:
+      | typeof interaction.reply
+      | typeof interaction.editReply = (...args: [any]) =>
+      'deferred' in interaction && interaction.deferred
+        ? interaction.editReply(...args)
+        : interaction.reply(...args);
+
+    let sourceLang = from;
+
+    if (!sourceLang) {
+      await interaction.deferReply({ ephemeral });
+      const detectedLang = await this.apertium.detectLanguage(text);
+      sourceLang =
+        apertiumLangToLanguage(detectedLang) ??
+        // If we can't detect the language, assume it is the opposite of the
+        // target language
+        (to === Language.English ? Language.Bokmål : Language.English);
+    }
+
+    if (sourceLang === to) {
+      await replyFunction(
+        MessageText[displayLanguage][Messages.SameLanguageError](),
+      );
+      this.#logger.error(
+        `Source language is the same as target language for text: ${text}`,
+      );
+      return;
+    }
+
+    const pipeline = this.#getTranslationPipeline(sourceLang, to);
     const shouldRateLimit = pipeline.expensive || !ephemeral;
     const [rateLimitKey, window, maxPerWindow] = pipeline.expensive
       ? [`${TranslatorProvider.name}-expensive`, 30 * 60 * 1000, 3]
@@ -300,7 +338,7 @@ export class TranslatorProvider {
       : undefined;
 
     if (rateLimitInfo?.isRateLimited) {
-      await interaction.reply({
+      await replyFunction({
         content:
           ('isPseudoInteraction' in interaction ? `${interaction.user} ` : '') +
           MessageText[displayLanguage][Messages.RateLimited](
@@ -312,16 +350,18 @@ export class TranslatorProvider {
     }
 
     if (text.length > 1800) {
-      await interaction.reply({
+      await replyFunction({
         content: MessageText[displayLanguage][Messages.TranslationTooLong](),
         ephemeral: true,
       });
       return;
     }
 
-    await interaction.deferReply({
-      ephemeral,
-    });
+    if ('deferred' in interaction && !interaction.deferred) {
+      await interaction.deferReply({
+        ephemeral,
+      });
+    }
 
     try {
       if (pipeline.functions.length === 0) {
@@ -343,7 +383,9 @@ export class TranslatorProvider {
       // use embeeds for cleaner output
 
       const embed = new EmbedBuilder()
-        .setTitle(MessageText[displayLanguage][Messages.Translated](from, to))
+        .setTitle(
+          MessageText[displayLanguage][Messages.Translated](sourceLang, to),
+        )
         .setColor('#00FF00')
         .setDescription(
           this.sanitizer.truncate(this.sanitizer.sanitize(finalText), 1800) +
@@ -381,8 +423,8 @@ export class TranslatorProvider {
 
       await interaction.editReply({ embeds: [embed] });
     } catch (err) {
-      console.error(`Feil under omsetjing: ${err}`);
-      await interaction.editReply(
+      this.#logger.error('Feil under omsetjing:', err);
+      await replyFunction(
         MessageText[displayLanguage][Messages.TranslationError](),
       );
     }

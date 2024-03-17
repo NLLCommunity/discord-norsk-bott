@@ -8,3 +8,6 @@ export * from './nnnb.command';
 export * from './ordbok.command';
 export * from './random.command';
 export * from './quote.command';
+export * from './to-en.command';
+export * from './to-nb.command';
+export * from './to-nn.command';
