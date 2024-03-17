@@ -15,7 +15,7 @@ Make sure you have [Node.js](https://nodejs.org/en/) and [Yarn](https://yarnpkg.
 
 1. Clone the repository
 2. Run `yarn` to install dependencies
-3. Configure the environment variables by copying the `template.env` file to `.env` and filling in the values. (You will need to create a bot on the [Discord Developer Portal](https://discord.com/developers/applications) and get a token, as well as a test server for the bot to join.)
+3. Configure the environment variables by copying the `template.env` file to `.env` and filling in the values. (You will need to create a bot on the [Discord Developer Portal](https://discord.com/developers/applications) and get a token, as well as a test server for the bot to join. You will also need an API key for [DeepL](https://www.deepl.com/pro-api) for the translation commands.)
 4. Run `yarn start:dev` to start the bot in development mode. The bot will now be running and you can make changes to the code. The bot will automatically restart when you save changes.
 
 ```sh

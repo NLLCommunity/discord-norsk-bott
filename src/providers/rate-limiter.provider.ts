@@ -14,6 +14,25 @@ export interface RateLimiterOptions {
   maxPerWindow?: number;
 }
 
+export type RateLimiterResponse = {
+  /**
+   * Whether the user is rate limited.
+   */
+  isRateLimited: boolean;
+
+  /**
+   * The time in milliseconds until the user can use the command again. This is
+   * only set if the user is rate limited.
+   */
+  timeUntilNextUse?: number;
+
+  /**
+   * The number of uses the user has left in the current window. This is only
+   * set if rate limiting applies to the user (i.e. they are not a moderator).
+   */
+  usesLeft?: number;
+};
+
 /**
  * Rate limits commands by keeping track of the last time a command was used by
  * a user in the same channel. Implements a sliding window algorithm.
@@ -35,25 +54,24 @@ export class RateLimiterProvider {
   ) {}
 
   /**
-   * Checks if the user is rate limited. If they are, responds with an ephemeral
-   * message. If not, updates the last used time for the user and channel. Users
-   * with the ability to kick members are not rate limited.
+   * Rate limits the given action. Returns information about the rate limiting
+   * status.
    * @param key The key to use for rate limiting. This should be unique to the
    * command.
    * @param interaction The interaction to check rate limiting for.
    * @param options The rate limiting options.
-   * @returns Whether the user is rate limited.
+   * @returns Information about the rate limiting status.
    */
-  isRateLimited(
+  rateLimit(
     key: string,
     interaction: ChatInputCommandInteraction,
     { window = 1 * 60 * 1000, maxPerWindow = 3 }: RateLimiterOptions = {},
-  ): boolean {
+  ): RateLimiterResponse {
     const interactionData =
       this.interactionDataProvider.getDataFor(interaction);
 
     if (interactionData.isModerator()) {
-      return false;
+      return { isRateLimited: false };
     }
 
     const mapKey = `${interaction.guildId}:${interaction.channelId}:${interaction.user.id}:${key}`;
@@ -73,25 +91,63 @@ export class RateLimiterProvider {
         `Rate limited ${interaction.user.tag} in ${interactionData.getChannelName()} for ${key}`,
       );
 
-      interaction
-        .reply({
-          content: `You are doing that too much. Please try again in ${this.#numberFormat.format(
-            (entry.windowStart + window - now) / 1000,
-          )}.`,
-          ephemeral: true,
-        })
-        .catch((error) => {
-          this.#logger.warn(
-            `Failed to send rate limit message to ${interaction.user.tag} in ${interactionData.getChannelName()}`,
-            error,
-          );
-        });
-
-      return true;
+      return {
+        isRateLimited: true,
+        timeUntilNextUse: entry.windowStart + window - now,
+        usesLeft: 0,
+      };
     }
 
     entry.uses++;
 
-    return false;
+    return {
+      isRateLimited: false,
+      usesLeft: maxPerWindow - entry.uses,
+    };
+  }
+
+  /**
+   * Checks if the user is rate limited. If they are, responds with an ephemeral
+   * message. If not, updates the last used time for the user and channel. Users
+   * with the ability to kick members are not rate limited.
+   * @param key The key to use for rate limiting. This should be unique to the
+   * command.
+   * @param interaction The interaction to check rate limiting for.
+   * @param options The rate limiting options.
+   * @returns Whether the user is rate limited.
+   */
+  isRateLimited(
+    key: string,
+    interaction: ChatInputCommandInteraction,
+    options?: RateLimiterOptions,
+  ): boolean {
+    const interactionData =
+      this.interactionDataProvider.getDataFor(interaction);
+
+    const { isRateLimited, timeUntilNextUse } = this.rateLimit(
+      key,
+      interaction,
+      options,
+    );
+
+    if (!isRateLimited) {
+      return false;
+    }
+
+    interaction
+      .reply({
+        content: `You are doing that too much. Please try again in ${this.#numberFormat.format(
+          (timeUntilNextUse ?? 0) / 1000,
+        )}.`,
+        ephemeral: true,
+      })
+      .catch((error) => {
+        this.#logger.warn(
+          `Failed to send rate limit message to ${interaction.user.tag} in ${interactionData.getChannelName()}`,
+          error,
+        );
+      });
+
+    return true;
   }
 }

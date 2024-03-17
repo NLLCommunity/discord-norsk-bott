@@ -29,7 +29,11 @@ export class ApertiumProvider {
    * @param text The text to translate.
    * @returns The translated text.
    */
-  async translate(from: Language, to: Language, text: string): Promise<string> {
+  async translate(
+    from: ApertiumLanguage,
+    to: ApertiumLanguage,
+    text: string,
+  ): Promise<string> {
     const data = new URLSearchParams({
       langpair: `${from}|${to}`,
       markUnknown: 'no',
@@ -45,7 +49,7 @@ export class ApertiumProvider {
 /**
  * The language codes used by the Apertium API.
  */
-export enum Language {
+export enum ApertiumLanguage {
   Bokmål = 'nob',
   Nynorsk = 'nno',
 }
