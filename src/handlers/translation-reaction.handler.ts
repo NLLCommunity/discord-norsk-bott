@@ -112,8 +112,8 @@ export class TranslationReactionHandler {
       if (doneEmoji) {
         await message.react(doneEmoji);
       }
-      await reaction.users.remove(user);
       this.#inProgressTranslations.delete(inProgressKey);
+      await reaction.users.remove(user);
       return;
     }
 
@@ -134,7 +134,7 @@ export class TranslationReactionHandler {
     if (doneEmoji) {
       await message.react(doneEmoji);
     }
-    await reaction.remove();
     this.#inProgressTranslations.delete(inProgressKey);
+    await reaction.remove();
   }
 }
