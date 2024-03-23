@@ -8,6 +8,7 @@ import {
   PublicThreadChannel,
   TextChannel,
   User,
+  Webhook,
 } from 'discord.js';
 import {
   InteractionDataProvider,
@@ -20,6 +21,11 @@ const norwegianTime = new Intl.DateTimeFormat('no-NO', {
   dateStyle: 'long',
   timeStyle: 'long',
 });
+
+interface Result {
+  success: boolean;
+  message?: string;
+}
 
 @Injectable()
 @SubCommand({
@@ -75,60 +81,176 @@ export class SyncSubCommand {
       //   - If the bot has not posted the content, post it
       //   - If the bot has posted the content, update it and the timestamp
 
+      const webhooks = await interaction.guild?.fetchWebhooks();
+
+      const results: string[] = [];
+
       for (const page of pages) {
-        // Find the channel to sync to
-        const channel = interaction.guild?.channels.cache.get(page.channel);
-
-        this.#logger.debug(
-          `Syncing page ${page.hash} to channel ${page.channel}`,
-        );
-
-        if (
-          !channel ||
-          (channel.type !== ChannelType.GuildText &&
-            channel.type !== ChannelType.PublicThread)
-        ) {
-          continue;
-        }
-
-        // Find the message
-        const messages = await channel.messages.fetch({ limit: 100 });
-        const oldMessages = messages
-          .filter(
-            (m) =>
-              // m.content.includes(page.hash) &&
-              m.author.bot && m.author.id === interaction.client.user?.id,
-          )
-          .sort((a, b) => a.createdTimestamp - b.createdTimestamp);
-
-        if (oldMessages.size > 0) {
-          // Update the message
-          this.#logger.debug(`Updating content in channel ${page.channel}`);
-          await this.#updateMessage({
-            channel,
-            page,
-            oldMessages,
-            user: interaction.user,
+        if (page.channel) {
+          const result = await this.#syncToChannel({
+            interaction,
+            page: page as SyncPage & Required<Pick<SyncPage, 'channel'>>,
           });
+          results.push(
+            result.success
+              ? `- ✅ [${page.title}] ${result.message}`
+              : `- ❌ [${page.title}] ${result.message}`,
+          );
+        } else if (page.webhook && webhooks) {
+          const result = await this.#syncToWebhook({
+            interaction,
+            webhooks,
+            page: page as SyncPage & Required<Pick<SyncPage, 'webhook'>>,
+          });
+          results.push(
+            result.success
+              ? `- ✅ [${page.title}] ${result.message}`
+              : `- ❌ [${page.title}] ${result.message}`,
+          );
         } else {
-          // Post the message
-          this.#logger.debug(`Posting content to channel ${page.channel}`);
-          const newMessages = this.#paginateContent(page, interaction.user);
-
-          for (const message of newMessages) {
-            await channel.send({ content: message });
-          }
+          this.#logger.error(
+            `Page "${page.title}" has no channel or webhook ID, or webhook not found`,
+          );
+          results.push(
+            `- ❌ [${page.title}] Page has no channel or webhook ID, or webhook not found`,
+          );
         }
       }
 
       await interaction.editReply({
-        content: 'Sync complete.',
+        content: results.length > 0 ? results.join('\n') : 'No pages to sync.',
       });
     } catch (error) {
       this.#logger.error('An error occurred while syncing with Notion.', error);
       await interaction.editReply({
         content: 'An error occurred while syncing.',
       });
+    }
+  }
+
+  async #syncToChannel({
+    interaction,
+    page,
+  }: {
+    interaction: ChatInputCommandInteraction;
+    page: SyncPage & Required<Pick<SyncPage, 'channel'>>;
+  }): Promise<Result> {
+    try {
+      const channel = interaction.guild?.channels.cache.get(page.channel);
+
+      if (
+        !channel ||
+        (channel.type !== ChannelType.GuildText &&
+          channel.type !== ChannelType.PublicThread)
+      ) {
+        return {
+          success: false,
+          message: `Channel with ID ${page.channel} not found, or is not a text/thread channel`,
+        };
+      }
+
+      const messages = await channel.messages.fetch({ limit: 100 });
+      const oldMessages = messages
+        .filter(
+          (m) =>
+            // m.content.includes(page.hash) &&
+            m.author.bot && m.author.id === interaction.client.user?.id,
+        )
+        .sort((a, b) => a.createdTimestamp - b.createdTimestamp);
+
+      if (oldMessages.size > 0) {
+        // Update the message
+        await this.#updateMessage({
+          channel,
+          page,
+          oldMessages,
+          user: interaction.user,
+        });
+      } else {
+        // Post the message
+        const newMessages = this.#paginateContent(page, interaction.user);
+
+        for (const message of newMessages) {
+          await channel.send({ content: message });
+        }
+      }
+
+      return {
+        success: true,
+        message: `Synced with channel #${channel.name}`,
+      };
+    } catch (error) {
+      return {
+        success: false,
+        message: error.message,
+      };
+    }
+  }
+
+  async #syncToWebhook({
+    interaction,
+    webhooks,
+    page,
+  }: {
+    interaction: ChatInputCommandInteraction;
+    webhooks: Collection<string, Webhook>;
+    page: SyncPage & Required<Pick<SyncPage, 'webhook'>>;
+  }): Promise<Result> {
+    try {
+      const webhook = webhooks.get(page.webhook);
+
+      if (!webhook) {
+        return {
+          success: false,
+          message: `Webhook for page ${page.title} not found`,
+        };
+      }
+
+      // To get the message IDs, we actually need to use the usual message fetch
+      // method. Webhooks only allow fetching a message by its ID, not all
+      // messages sent previously by the webhook.
+
+      const channel = interaction.guild?.channels.cache.get(webhook.channelId);
+
+      if (!channel || channel.type !== ChannelType.GuildText) {
+        return {
+          success: false,
+          message: `Channel for webhook ${webhook.name} not found, or is not a text channel`,
+        };
+      }
+
+      const messages = await channel.messages.fetch({ limit: 100 });
+
+      const oldMessages = messages
+        .filter((m) => m.author.id === webhook.id)
+        .sort((a, b) => a.createdTimestamp - b.createdTimestamp);
+
+      if (oldMessages.size > 0) {
+        // Update the message
+        await this.#updateMessage({
+          channel: webhook,
+          page,
+          oldMessages,
+          user: interaction.user,
+        });
+      } else {
+        // Post the message
+        const newMessages = this.#paginateContent(page, interaction.user);
+
+        for (const message of newMessages) {
+          await webhook.send({ content: message });
+        }
+      }
+
+      return {
+        success: true,
+        message: `Synced with webhook ${webhook.name}`,
+      };
+    } catch (error) {
+      return {
+        success: false,
+        message: error.message,
+      };
     }
   }
 
@@ -175,11 +297,6 @@ export class SyncSubCommand {
 
     for (const line of truncatedLines) {
       if (currentMessage.length + line.length > truncateTo) {
-        // // append the hash to the content so we can look it up later
-
-        // currentMessage += `\n\nSync ID: ${hash}\nLast updated: ${norwegianTime.format(
-        //   now,
-        // )}`;
         messages.push(currentMessage);
         currentMessage = '';
       }
@@ -188,10 +305,6 @@ export class SyncSubCommand {
     }
 
     if (currentMessage.length > 0) {
-      // currentMessage += `\n\nSync ID: ${hash}\nLast updated: ${norwegianTime.format(
-      //   now,
-      // )}`;
-
       messages.push(currentMessage);
     }
 
@@ -204,7 +317,7 @@ export class SyncSubCommand {
     oldMessages,
     user,
   }: {
-    channel: TextChannel | PublicThreadChannel;
+    channel: TextChannel | PublicThreadChannel | Webhook;
     page: SyncPage;
     oldMessages: Collection<string, Message>;
     user: User;
@@ -231,7 +344,13 @@ export class SyncSubCommand {
       const oldMessage = oldMessages.at(i);
 
       if (oldMessage) {
-        await oldMessage.edit(paginated[i]);
+        if ('editMessage' in channel) {
+          await channel.editMessage(oldMessage.id, {
+            content: paginated[i],
+          });
+        } else {
+          await oldMessage.edit(paginated[i]);
+        }
       } else {
         await channel.send({ content: paginated[i] });
       }

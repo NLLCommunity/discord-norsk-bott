@@ -1,18 +1,25 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Client } from '@notionhq/client';
-import { ListBlockChildrenResponse } from '@notionhq/client/build/src/api-endpoints';
+import {
+  ListBlockChildrenResponse,
+  PageObjectResponse,
+  PartialPageObjectResponse,
+  RichTextItemResponse,
+} from '@notionhq/client/build/src/api-endpoints';
 import { NotionToMarkdown } from 'notion-to-md';
 import * as YAML from 'yaml';
 import * as crypto from 'crypto';
 
 export interface SyncPageMetadata {
   guild: string;
-  channel: string;
+  channel?: string;
+  webhook?: string;
 }
 
 export interface SyncPage extends SyncPageMetadata {
   hash: string;
+  title: string;
   content: string;
 }
 
@@ -73,7 +80,7 @@ export class NotionService {
 
         this.#logger.verbose(`Checking page ${pageId}`);
 
-        const syncPage = await this.#getSyncPage(pageId);
+        const syncPage = await this.#getSyncPage(page);
 
         if (syncPage) {
           this.#logger.verbose(`Found page to sync: ${syncPage.hash}`);
@@ -85,7 +92,9 @@ export class NotionService {
     return syncPages;
   }
 
-  async #getSyncPage(pageId: string): Promise<SyncPage | undefined> {
+  async #getSyncPage(
+    page: PageObjectResponse | PartialPageObjectResponse,
+  ): Promise<SyncPage | undefined> {
     if (!this.#client) {
       return undefined;
     }
@@ -93,7 +102,7 @@ export class NotionService {
     // Get the blocks, then iterate until we find a code block with the info
 
     const blocks = await this.#client.blocks.children.list({
-      block_id: pageId,
+      block_id: page.id,
     });
 
     // Find the code block
@@ -129,9 +138,10 @@ export class NotionService {
       // replace markdown URLs to Discord channels with the syntax for Discord
 
       // e.g. [https://discord.com/channels/guildId/channelId](https://discord.com/channels/guildId/channelId)
+      // or [#channel-name](https://discord.com/channels/guildId/channelId)
       // becomes <#channelId>
       const discordChannelRegex =
-        /\[(https:\/\/discord\.com\/channels\/\d+\/)(\d+)\]\(https:\/\/discord\.com\/channels\/\d+\/\d+\)/g;
+        /\[(?:(?:https:\/\/discord\.com\/channels\/\d+\/\d+)|(?:#([^]+?)))\]\(https:\/\/discord\.com\/channels\/\d+\/(\d+)\)/g;
       content = content.replace(discordChannelRegex, '<#$2>');
 
       // replace any that weren't in markdown format
@@ -149,11 +159,26 @@ export class NotionService {
     }
 
     // hash the page ID so that we don't post the ID directly to Discord
-    const hash = crypto.createHash('md5').update(pageId).digest('hex');
+    const hash = crypto.createHash('md5').update(page.id).digest('hex');
 
     return {
       ...syncPageMetadata,
       hash,
+      title:
+        'properties' in page
+          ? Object.values(page.properties)
+              .find(
+                (
+                  p,
+                ): p is {
+                  type: 'title';
+                  title: RichTextItemResponse[];
+                  id: string;
+                } => 'title' in p,
+              )
+              ?.title.reduce((acc, text) => acc + text.plain_text, '') ??
+            'Untitled'
+          : 'Unknown',
       content,
     };
   }
@@ -195,11 +220,12 @@ export class NotionService {
         typeof data === 'object' &&
         data.syncToDiscord === true &&
         typeof data.guild === 'string' &&
-        typeof data.channel === 'string'
+        (typeof data.channel === 'string' || typeof data.webhook === 'string')
       ) {
         return {
           guild: data.guild,
           channel: data.channel,
+          webhook: data.webhook,
         };
       }
     } catch {
