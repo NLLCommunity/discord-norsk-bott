@@ -5,6 +5,7 @@ export * from './nben.command';
 export * from './nbnn.command';
 export * from './nnen.command';
 export * from './nnnb.command';
+export * from './notion';
 export * from './ordbok.command';
 export * from './random.command';
 export * from './quote.command';

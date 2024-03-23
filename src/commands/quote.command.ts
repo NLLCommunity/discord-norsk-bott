@@ -120,8 +120,6 @@ export class QuoteCommand {
         return;
       }
 
-      console.log(message);
-
       // check if user has permission to view the message by checking if the user
       // has permission to view the channel
       if (

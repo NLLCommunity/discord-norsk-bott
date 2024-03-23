@@ -2191,6 +2191,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@notionhq/client@npm:^2.2.14":
+  version: 2.2.14
+  resolution: "@notionhq/client@npm:2.2.14"
+  dependencies:
+    "@types/node-fetch": "npm:^2.5.10"
+    node-fetch: "npm:^2.6.1"
+  checksum: 10c0/7bdc91c585e8f5b910b04d5adb42b5e52443f991a5aa4ce7188af04398d3e992ab39bf30c57e1dbff2359c0282d7ea7fc01c82b0a15e4bfa070a2bb7fbe86eda
+  languageName: node
+  linkType: hard
+
 "@npmcli/agent@npm:^2.0.0":
   version: 2.2.1
   resolution: "@npmcli/agent@npm:2.2.1"
@@ -2508,6 +2518,16 @@ __metadata:
   version: 1.1.4
   resolution: "@types/methods@npm:1.1.4"
   checksum: 10c0/a78534d79c300718298bfff92facd07bf38429c66191f640c1db4c9cff1e36f819304298a96f7536b6512bfc398e5c3e6b831405e138cd774b88ad7be78d682a
+  languageName: node
+  linkType: hard
+
+"@types/node-fetch@npm:^2.5.10":
+  version: 2.6.11
+  resolution: "@types/node-fetch@npm:2.6.11"
+  dependencies:
+    "@types/node": "npm:*"
+    form-data: "npm:^4.0.0"
+  checksum: 10c0/5283d4e0bcc37a5b6d8e629aee880a4ffcfb33e089f4b903b2981b19c623972d1e64af7c3f9540ab990f0f5c89b9b5dda19c5bcb37a8e177079e93683bfd2f49
   languageName: node
   linkType: hard
 
@@ -4174,6 +4194,7 @@ __metadata:
     "@nestjs/core": "npm:^10.3.3"
     "@nestjs/schematics": "npm:^10.1.1"
     "@nestjs/testing": "npm:^10.3.3"
+    "@notionhq/client": "npm:^2.2.14"
     "@types/jest": "npm:^29.5.12"
     "@types/node": "npm:^20.11.22"
     "@types/supertest": "npm:^6.0.2"
@@ -4187,6 +4208,7 @@ __metadata:
     graphql: "npm:^16.8.1"
     graphql-request: "npm:^6.1.0"
     jest: "npm:^29.7.0"
+    notion-to-md: "npm:^3.1.1"
     prettier: "npm:^3.2.5"
     reflect-metadata: "npm:^0.2.1"
     rxjs: "npm:^7.8.1"
@@ -4197,6 +4219,7 @@ __metadata:
     ts-node: "npm:^10.9.2"
     tsconfig-paths: "npm:^4.2.0"
     typescript: "npm:^5.3.3"
+    yaml: "npm:^2.4.1"
   bin:
     discord-norsk-bott: main.js
   languageName: unknown
@@ -6643,6 +6666,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"markdown-table@npm:^2.0.0":
+  version: 2.0.0
+  resolution: "markdown-table@npm:2.0.0"
+  dependencies:
+    repeat-string: "npm:^1.0.0"
+  checksum: 10c0/f257e0781ea50eb946919df84bdee4ba61f983971b277a369ca7276f89740fd0e2749b9b187163a42df4c48682b71962d4007215ce3523480028f06c11ddc2e6
+  languageName: node
+  linkType: hard
+
 "memfs@npm:^3.4.1":
   version: 3.5.3
   resolution: "memfs@npm:3.5.3"
@@ -6938,7 +6970,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"node-fetch@npm:^2.6.1, node-fetch@npm:^2.6.12":
+"node-fetch@npm:2, node-fetch@npm:^2.6.1, node-fetch@npm:^2.6.12":
   version: 2.7.0
   resolution: "node-fetch@npm:2.7.0"
   dependencies:
@@ -7010,6 +7042,16 @@ __metadata:
   version: 3.0.0
   resolution: "normalize-path@npm:3.0.0"
   checksum: 10c0/e008c8142bcc335b5e38cf0d63cfd39d6cf2d97480af9abdbe9a439221fd4d749763bab492a8ee708ce7a194bb00c9da6d0a115018672310850489137b3da046
+  languageName: node
+  linkType: hard
+
+"notion-to-md@npm:^3.1.1":
+  version: 3.1.1
+  resolution: "notion-to-md@npm:3.1.1"
+  dependencies:
+    markdown-table: "npm:^2.0.0"
+    node-fetch: "npm:2"
+  checksum: 10c0/8366a2a3d448412661f784e98178d27193347588c535f2c93624a35d26ce67a52d7645ad1920209289d7d09ea620f5037ac54b6ec774a075bb4e7e4da90515a1
   languageName: node
   linkType: hard
 
@@ -7555,7 +7597,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"repeat-string@npm:^1.6.1":
+"repeat-string@npm:^1.0.0, repeat-string@npm:^1.6.1":
   version: 1.6.1
   resolution: "repeat-string@npm:1.6.1"
   checksum: 10c0/87fa21bfdb2fbdedc44b9a5b118b7c1239bdd2c2c1e42742ef9119b7d412a5137a1d23f1a83dc6bb686f4f27429ac6f542e3d923090b44181bafa41e8ac0174d
@@ -9036,6 +9078,15 @@ __metadata:
   bin:
     yaml: bin.mjs
   checksum: 10c0/97ab0b5a0714c92e4dd75120a6a63e470b0adc282afae0a701bf38f8c42cbf6429fcd6aca883e3a63c68936ab841862e6c69e2d66d355c3e4fc7cfd346af2108
+  languageName: node
+  linkType: hard
+
+"yaml@npm:^2.4.1":
+  version: 2.4.1
+  resolution: "yaml@npm:2.4.1"
+  bin:
+    yaml: bin.mjs
+  checksum: 10c0/816057dbaea16a7dfb0b868ace930f143dece96bbb4c4fbb6f38aa389166f897240d9fa535dbfd6b1b0d9442416f4abcc698e63f82394d0c67b329aa6c2be576
   languageName: node
   linkType: hard
 

@@ -30,8 +30,6 @@ export class FetchMessageProvider {
 
     const messages = await results;
 
-    console.log(messages);
-
     return messages.find((message) => message !== null) ?? null;
   }
 
