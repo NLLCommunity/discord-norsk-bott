@@ -7,6 +7,7 @@ import {
   Message,
   PublicThreadChannel,
   TextChannel,
+  User,
 } from 'discord.js';
 import {
   InteractionDataProvider,
@@ -107,11 +108,12 @@ export class SyncSubCommand {
             channel,
             page,
             oldMessages,
+            user: interaction.user,
           });
         } else {
           // Post the message
           this.#logger.debug(`Posting content to channel ${page.channel}`);
-          const newMessages = this.#paginateContent(page);
+          const newMessages = this.#paginateContent(page, interaction.user);
 
           for (const message of newMessages) {
             await channel.send({ content: message });
@@ -130,7 +132,7 @@ export class SyncSubCommand {
     }
   }
 
-  #paginateContent({ content, hash }: SyncPage): string[] {
+  #paginateContent({ content, hash }: SyncPage, user: User): string[] {
     // split by lines, then append until we reach 1900 characters, then start a
     // new message
 
@@ -139,7 +141,7 @@ export class SyncSubCommand {
 
     let currentMessage = '';
 
-    content += `\n\nSync ID: ${hash}\nLast updated: ${norwegianTime.format(
+    content += `\n\nPage ID: ${hash}\nLast synced by ${user} at ${norwegianTime.format(
       now,
     )}`;
 
@@ -200,12 +202,14 @@ export class SyncSubCommand {
     channel,
     page,
     oldMessages,
+    user,
   }: {
     channel: TextChannel | PublicThreadChannel;
     page: SyncPage;
     oldMessages: Collection<string, Message>;
+    user: User;
   }): Promise<void> {
-    const paginated = this.#paginateContent(page);
+    const paginated = this.#paginateContent(page, user);
 
     // Check if there are more new messages than old messages
     if (paginated.length > oldMessages.size) {
