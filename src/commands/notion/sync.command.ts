@@ -1,9 +1,12 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Handler, InteractionEvent, SubCommand } from '@discord-nestjs/core';
 import {
+  AnyThreadChannel,
   ChannelType,
   ChatInputCommandInteraction,
   Collection,
+  ForumChannel,
+  GuildBasedChannel,
   Message,
   PublicThreadChannel,
   TextChannel,
@@ -26,6 +29,18 @@ interface Result {
   success: boolean;
   message?: string;
 }
+
+type ChannelInfo =
+  | {
+      type: 'channel';
+      channel: TextChannel | AnyThreadChannel;
+      webhook?: Webhook;
+    }
+  | {
+      type: 'forum';
+      channel: ForumChannel;
+      webhook?: Webhook;
+    };
 
 @Injectable()
 @SubCommand({
@@ -86,35 +101,40 @@ export class SyncSubCommand {
       const results: string[] = [];
 
       for (const page of pages) {
-        if (page.channel) {
-          const result = await this.#syncToChannel({
-            interaction,
-            page: page as SyncPage & Required<Pick<SyncPage, 'channel'>>,
-          });
-          results.push(
-            result.success
-              ? `- ✅ [${page.title}] ${result.message}`
-              : `- ❌ [${page.title}] ${result.message}`,
-          );
-        } else if (page.webhook && webhooks) {
-          const result = await this.#syncToWebhook({
-            interaction,
-            webhooks,
-            page: page as SyncPage & Required<Pick<SyncPage, 'webhook'>>,
-          });
-          results.push(
-            result.success
-              ? `- ✅ [${page.title}] ${result.message}`
-              : `- ❌ [${page.title}] ${result.message}`,
-          );
-        } else {
+        const info = await this.#getChannelInfo({
+          interaction,
+          page,
+          webhooks,
+        });
+
+        if (!info) {
           this.#logger.error(
             `Page "${page.title}" has no channel or webhook ID, or webhook not found`,
           );
           results.push(
             `- ❌ [${page.title}] Page has no channel or webhook ID, or webhook not found`,
           );
+          continue;
         }
+
+        const result =
+          info.type === 'forum'
+            ? await this.#syncToThread({
+                interaction,
+                page: page,
+                info,
+              })
+            : await this.#syncToChannel({
+                interaction,
+                page: page as SyncPage & Required<Pick<SyncPage, 'channel'>>,
+                info,
+              });
+
+        results.push(
+          result.success
+            ? `- ✅ [${page.title}] ${result.message}`
+            : `- ❌ [${page.title}] ${result.message}`,
+        );
       }
 
       await interaction.editReply({
@@ -128,40 +148,89 @@ export class SyncSubCommand {
     }
   }
 
-  async #syncToChannel({
+  async #getChannelInfo({
     interaction,
+    webhooks,
     page,
   }: {
     interaction: ChatInputCommandInteraction;
-    page: SyncPage & Required<Pick<SyncPage, 'channel'>>;
-  }): Promise<Result> {
+    webhooks?: Collection<string, Webhook>;
+    page: SyncPage;
+  }): Promise<ChannelInfo | undefined> {
     try {
-      const channel = interaction.guild?.channels.cache.get(page.channel);
-
-      if (
-        !channel ||
-        (channel.type !== ChannelType.GuildText &&
-          channel.type !== ChannelType.PublicThread)
-      ) {
-        return {
-          success: false,
-          message: `Channel with ID ${page.channel} not found, or is not a text/thread channel`,
-        };
+      if (!page.channel && !page.webhook) {
+        return undefined;
       }
 
-      const messages = await channel.messages.fetch({ limit: 100 });
+      let channel: GuildBasedChannel | undefined;
+      let webhook: Webhook | undefined;
+
+      if (page.webhook) {
+        webhook = webhooks?.get(page.webhook);
+
+        if (!webhook) {
+          return undefined;
+        }
+
+        channel = interaction.guild?.channels.cache.get(webhook.channelId);
+      } else if (page.channel) {
+        channel = interaction.guild?.channels.cache.get(page.channel);
+      } else {
+        return undefined;
+      }
+
+      if (!channel) {
+        return undefined;
+      }
+
+      if (page.thread) {
+        return channel.type === ChannelType.GuildForum
+          ? {
+              type: 'forum',
+              channel,
+              webhook,
+            }
+          : undefined;
+      }
+
+      return channel.type === ChannelType.GuildText ||
+        channel.type === ChannelType.PublicThread ||
+        channel.type === ChannelType.PrivateThread
+        ? {
+            type: 'channel',
+            channel,
+            webhook,
+          }
+        : undefined;
+    } catch (error) {
+      this.#logger.error('Error while getting channel info', error);
+      return undefined;
+    }
+  }
+
+  async #syncToChannel({
+    interaction,
+    page,
+    info,
+  }: {
+    interaction: ChatInputCommandInteraction;
+    page: SyncPage & Required<Pick<SyncPage, 'channel'>>;
+    info: ChannelInfo & { type: 'channel' };
+  }): Promise<Result> {
+    try {
+      const messages = await info.channel.messages.fetch({ limit: 100 });
       const oldMessages = messages
-        .filter(
-          (m) =>
-            // m.content.includes(page.hash) &&
-            m.author.bot && m.author.id === interaction.client.user?.id,
+        .filter((m) =>
+          info.webhook
+            ? m.author.id === info.webhook.id
+            : m.author.bot && m.author.id === interaction.client.user?.id,
         )
         .sort((a, b) => a.createdTimestamp - b.createdTimestamp);
 
       if (oldMessages.size > 0) {
         // Update the message
         await this.#updateMessage({
-          channel,
+          channel: info.webhook || info.channel,
           page,
           oldMessages,
           user: interaction.user,
@@ -171,13 +240,19 @@ export class SyncSubCommand {
         const newMessages = this.#paginateContent(page, interaction.user);
 
         for (const message of newMessages) {
-          await channel.send({ content: message });
+          if (info.webhook) {
+            await info.webhook.send({ content: message });
+          } else {
+            await info.channel.send({ content: message });
+          }
         }
       }
 
       return {
         success: true,
-        message: `Synced with channel #${channel.name}`,
+        message: info.webhook
+          ? `Synced with webhook ${info.webhook.name} in channel #${info.channel.name}`
+          : `Synced with channel #${info.channel.name}`,
       };
     } catch (error) {
       return {
@@ -187,64 +262,109 @@ export class SyncSubCommand {
     }
   }
 
-  async #syncToWebhook({
+  async #syncToThread({
     interaction,
-    webhooks,
     page,
+    info,
   }: {
     interaction: ChatInputCommandInteraction;
-    webhooks: Collection<string, Webhook>;
-    page: SyncPage & Required<Pick<SyncPage, 'webhook'>>;
+    page: SyncPage;
+    info: ChannelInfo & { type: 'forum' };
   }): Promise<Result> {
     try {
-      const webhook = webhooks.get(page.webhook);
+      const { threads } = await info.channel.threads.fetch();
+      let matching: AnyThreadChannel | undefined = undefined;
 
-      if (!webhook) {
-        return {
-          success: false,
-          message: `Webhook for page ${page.title} not found`,
-        };
+      for (const thread of threads.values()) {
+        await thread.messages.fetch({ limit: 100 });
+
+        if (
+          thread.messages.cache.some(
+            (m) =>
+              m.content.includes(page.hash) &&
+              (info.webhook
+                ? m.author.id === info.webhook.id
+                : m.author.bot && m.author.id === interaction.client.user?.id),
+          )
+        ) {
+          matching = thread;
+          break;
+        }
       }
 
-      // To get the message IDs, we actually need to use the usual message fetch
-      // method. Webhooks only allow fetching a message by its ID, not all
-      // messages sent previously by the webhook.
-
-      const channel = interaction.guild?.channels.cache.get(webhook.channelId);
-
-      if (!channel || channel.type !== ChannelType.GuildText) {
-        return {
-          success: false,
-          message: `Channel for webhook ${webhook.name} not found, or is not a text channel`,
-        };
-      }
-
-      const messages = await channel.messages.fetch({ limit: 100 });
-
-      const oldMessages = messages
-        .filter((m) => m.author.id === webhook.id)
-        .sort((a, b) => a.createdTimestamp - b.createdTimestamp);
-
-      if (oldMessages.size > 0) {
+      if (matching) {
         // Update the message
         await this.#updateMessage({
-          channel: webhook,
+          channel: info.webhook || matching,
           page,
-          oldMessages,
+          oldMessages: matching.messages.cache.sort(
+            (a, b) => a.createdTimestamp - b.createdTimestamp,
+          ),
           user: interaction.user,
+          threadId: matching.id,
         });
       } else {
         // Post the message
         const newMessages = this.#paginateContent(page, interaction.user);
 
-        for (const message of newMessages) {
-          await webhook.send({ content: message });
+        // The very first message needs to create the thread
+
+        const starter = newMessages.shift();
+
+        if (!starter) {
+          return {
+            success: false,
+            message: 'Failed to create the first message',
+          };
+        }
+
+        if (!info.webhook) {
+          const thread = await info.channel.threads.create({
+            name: page.title,
+            autoArchiveDuration: 60,
+            message: {
+              content: starter,
+            },
+          });
+
+          // Post the rest of the messages in the thread
+
+          for (const message of newMessages) {
+            await thread.send({ content: message });
+          }
+        } else {
+          const firstMessage = await info.webhook.send({
+            content: starter,
+            threadName: page.title,
+          });
+
+          // Find the thread with the first message ID
+
+          const thread = info.channel.threads.cache.find((t) =>
+            t.messages.cache.has(firstMessage.id),
+          );
+
+          if (!thread) {
+            return {
+              success: false,
+              message: 'Failed to find the thread',
+            };
+          }
+
+          // Post the rest of the messages in the thread
+
+          for (const message of newMessages) {
+            await info.webhook.send({
+              content: message,
+              threadId: thread.id,
+            });
+          }
         }
       }
 
       return {
         success: true,
-        message: `Synced with webhook ${webhook.name}`,
+        message: `Synced with forum channel #${info.channel.name}`,
       };
     } catch (error) {
       return {
@@ -316,11 +436,13 @@ export class SyncSubCommand {
     page,
     oldMessages,
     user,
+    threadId,
   }: {
-    channel: TextChannel | PublicThreadChannel | Webhook;
+    channel: TextChannel | PublicThreadChannel | AnyThreadChannel | Webhook;
     page: SyncPage;
     oldMessages: Collection<string, Message>;
     user: User;
+    threadId?: string;
   }): Promise<void> {
     const paginated = this.#paginateContent(page, user);
 
@@ -347,6 +469,7 @@ export class SyncSubCommand {
         if ('editMessage' in channel) {
           await channel.editMessage(oldMessage.id, {
             content: paginated[i],
+            threadId,
           });
         } else {
           await oldMessage.edit(paginated[i]);

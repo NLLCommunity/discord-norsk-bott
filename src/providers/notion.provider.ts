@@ -13,6 +13,7 @@ import * as crypto from 'crypto';
 
 export interface SyncPageMetadata {
   guild: string;
+  thread: boolean;
   channel?: string;
   webhook?: string;
 }
@@ -224,6 +225,7 @@ export class NotionService {
       ) {
         return {
           guild: data.guild,
+          thread: data.thread === true,
           channel: data.channel,
           webhook: data.webhook,
         };
