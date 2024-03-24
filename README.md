@@ -4,7 +4,9 @@
 
 # Norsk-bott
 
-This repository contains the source code that powers the Norsk-bott Discord bot. The bot is written in [TypeScript](https://www.typescriptlang.org/) and uses the [Discord.js](https://discord.js.org), [NestJS](https://nestjs.com), and [discord-nestjs](https://github.com/fjodor-rybakov/discord-nestjs) libraries.
+Norsk-bott is a Discord bot that provides various features for the Norwegian Language Learning community (NLL).
+
+The bot is written in [TypeScript](https://www.typescriptlang.org/) and uses the [Discord.js](https://discord.js.org) library. [discord-nestjs](https://github.com/fjodor-rybakov/discord-nestjs) is used to provide a modular, dependency-injected architecture as a [NestJS](https://nestjs.com/) application.
 
 ## Contributing
 
@@ -13,9 +15,9 @@ Make sure you have [Node.js](https://nodejs.org/en/) and [Yarn](https://yarnpkg.
 > [!TIP]
 > It is recommended to use [Volta](https://volta.sh/) to manage Node.js versions. If Volta is installed, you do not need to do anything. When you run any commands in this repository, Volta will automatically install and install the correct versions of both Node.js and Yarn.
 
-1. Clone the repository
-2. Run `yarn` to install dependencies
-3. Configure the environment variables by copying the `template.env` file to `.env` and filling in the values. (You will need to create a bot on the [Discord Developer Portal](https://discord.com/developers/applications) and get a token, as well as a test server for the bot to join. You will also need an API key for [DeepL](https://www.deepl.com/pro-api) for the translation commands.)
+1. Clone the repository.
+2. Run `yarn` to install dependencies.
+3. Configure the environment variables by copying the `template.env` file to `.env` and filling in the values. See [Environment Variables](#environment-variables) for more information.
 4. Run `yarn start:dev` to start the bot in development mode. The bot will now be running and you can make changes to the code. The bot will automatically restart when you save changes.
 
 ```sh
@@ -29,23 +31,55 @@ cp template.env .env
 yarn start:dev
 ```
 
+## Environment Variables
+
+The bot requires the following environment variables to be set.
+
+### `DISCORD_TOKEN`
+
+Required. The bot token from the [Discord Developer Portal](https://discord.com/developers/applications).
+
+### `DEEPL_API_KEY`
+
+Required. The API key from [DeepL](https://www.deepl.com/pro-api). Used for translation.
+
+### `NOTION_TOKEN`
+
+Optional. The integration token from [Notion](https://www.notion.so/my-integrations). Used for syncing content from Notion.
+
 ## Permissions
 
-The bot requires the following permissions to function correctly:
+The bot requires the following permissions to function correctly.
+
+```
+https://discord.com/oauth2/authorize?client_id=<client_id>&permissions=397821422656&scope=bot+applications.commands
+```
+
+Replace `<client_id>` with the client ID of the bot.
 
 ### OAuth2 Scopes
 
-- bot
-- application.commands
+- **`bot`** — Needed to join servers
+- **`application.commands`** — Needed to register slash commands
 
 ### Bot Permissions
 
-- Read Messages/View Channels
-- Send Messages
-- Send Messages in Threads
-- Manage Messages
-- Add Reactions
-- Use Slash Commands
+#### General Permissions
+
+- **Manage Webhooks** — Used by the Notion sync feature to get webhook IDs
+- **Read Messages/View Channels** — Required to translate messages
+
+#### Text Permissions
+
+- **Send Messages** — Required to send messages with translations or with Notion content
+- **Create Public Threads** — Required to sync Notion content to threads
+- **Create Private Threads** — Required to sync Notion content to threads
+- **Send Messages in Threads** — Required to send messages with translations or with Notion content in threads
+- **Manage Messages** — Required to delete old content from Notion, and to delete translation reactions
+- **Manage Threads** — Required to delete old content from Notion
+- **Read Message History** — Required to look up old messages synced from Notion
+- **Add Reactions** — Required to add translation-complete reactions
+- **Use Slash Commands** — Required to use slash commands
 
 ## Licence
 
