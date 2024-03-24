@@ -101,6 +101,10 @@ export class SyncSubCommand {
       const results: string[] = [];
 
       for (const page of pages) {
+        if (page.guild !== interaction.guildId) {
+          continue;
+        }
+
         const info = await this.#getChannelInfo({
           interaction,
           page,
