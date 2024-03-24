@@ -4,18 +4,18 @@ import {
   MessageContextMenuCommandInteraction,
   ApplicationCommandType,
 } from 'discord.js';
-import { TranslatorProvider } from '../providers';
-import { DisplayLanguage, Language } from '../types';
+import { TranslatorProvider } from '../../providers';
+import { DisplayLanguage, Language } from '../../types';
 
 /**
- * Translates messages to Nynorsk.
+ * Translates messages to English.
  */
 @Injectable()
 @Command({
-  name: 'To Nynorsk',
+  name: 'To English',
   type: ApplicationCommandType.Message,
 })
-export class ToNnCommand {
+export class ToEnCommand {
   constructor(private readonly translator: TranslatorProvider) {}
 
   /**
@@ -29,7 +29,7 @@ export class ToNnCommand {
   ): Promise<void> {
     await this.translator.translate({
       interaction,
-      to: Language.Nynorsk,
+      to: Language.English,
       text: interaction.targetMessage.content,
       ephemeral: true,
       displayLanguage: DisplayLanguage.English,

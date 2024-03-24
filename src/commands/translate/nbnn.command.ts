@@ -8,11 +8,11 @@ import {
 } from '@discord-nestjs/core';
 import { SlashCommandPipe } from '@discord-nestjs/common';
 import { type ChatInputCommandInteraction } from 'discord.js';
-import { TranslatorProvider } from '../providers';
-import { ShowEveryoneParamEn } from '../utils';
-import { Language, DisplayLanguage } from '../types';
+import { TranslatorProvider } from '../../providers';
+import { ShowEveryoneParam } from '../../utils';
+import { Language } from '../../types';
 
-export class EnnnCommandParams {
+export class NbnnCommandParams {
   @Param({
     name: 'tekst',
     description: 'Teksten du vil omsetja / The text you want to translate',
@@ -21,20 +21,20 @@ export class EnnnCommandParams {
   })
   text: string;
 
-  @ShowEveryoneParamEn()
+  @ShowEveryoneParam()
   sendToEveryone?: boolean;
 }
 
 /**
- * Translates text from English to Nynorsk.
+ * Translates text from Bokmål to Nynorsk.
  */
 @Injectable()
 @Command({
-  name: 'ennn',
+  name: 'nbnn',
   description:
-    'Omset frå engelsk til nynorsk / Translate from English to Nynorsk',
+    'Omset frå bokmål til nynorsk / Translate from Bokmål to Nynorsk',
 })
-export class EnnnCommand {
+export class NbnnCommand {
   constructor(private readonly translator: TranslatorProvider) {}
 
   /**
@@ -46,15 +46,14 @@ export class EnnnCommand {
   async handle(
     @InteractionEvent() interaction: ChatInputCommandInteraction,
     @InteractionEvent(SlashCommandPipe)
-    { text, sendToEveryone }: EnnnCommandParams,
+    { text, sendToEveryone }: NbnnCommandParams,
   ): Promise<void> {
     await this.translator.translate({
       interaction,
-      from: Language.English,
+      from: Language.Bokmål,
       to: Language.Nynorsk,
       text,
       ephemeral: !sendToEveryone,
-      displayLanguage: DisplayLanguage.English,
     });
   }
 }
