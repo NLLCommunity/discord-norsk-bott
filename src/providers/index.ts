@@ -8,4 +8,5 @@ export * from './ordbokapi.provider';
 export * from './pagination.provider';
 export * from './rate-limiter.provider';
 export * from './sanitization.provider';
+export * from './show-everyone.provider';
 export * from './translator.provider';

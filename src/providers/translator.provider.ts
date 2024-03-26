@@ -1,5 +1,5 @@
 import { Injectable, Inject, Logger } from '@nestjs/common';
-import { EmbedBuilder } from 'discord.js';
+import { EmbedBuilder, ButtonBuilder, ActionRowBuilder } from 'discord.js';
 import {
   ApertiumProvider,
   ApertiumLanguage,
@@ -8,6 +8,7 @@ import {
 import { RateLimiterProvider } from './rate-limiter.provider';
 import { DeepLProvider } from './deepl.provider';
 import { SanitizationProvider } from './sanitization.provider';
+import { ShowEveryoneProvider } from './show-everyone.provider';
 import {
   Language,
   DisplayLanguage,
@@ -25,6 +26,7 @@ enum Messages {
   DonationPrompt,
   RequestedBy,
   InaccuracyWarning,
+  ShowEveryone,
 }
 
 const timeFormats: Record<DisplayLanguage, Intl.RelativeTimeFormat> = {
@@ -79,6 +81,7 @@ const MessageText = {
       '_Visste du at me betalar for kvar omsetjing?_\n_Hjelp oss med å tilby omsetjingar [ved å donera til Ada](https://github.com/sponsors/adalinesimonian)._',
     [Messages.RequestedBy]: (user: string) => `Spurd av ${user}`,
     [Messages.InaccuracyWarning]: () => '⚠️ Omsetjingane kan innehalda feil.',
+    [Messages.ShowEveryone]: () => 'Vis alle',
   },
   [DisplayLanguage.English]: {
     [Messages.RateLimited]: (waitMs: number) =>
@@ -100,6 +103,7 @@ const MessageText = {
       '_Did you know we pay for every translation?_\n_Help us offer translations by [donating to Ada](https://github.com/sponsors/adalinesimonian)._',
     [Messages.RequestedBy]: (user: string) => `Requested by ${user}`,
     [Messages.InaccuracyWarning]: () => '⚠️ Translations may contain mistakes.',
+    [Messages.ShowEveryone]: () => 'Show everyone',
   },
 };
 
@@ -174,6 +178,7 @@ export class TranslatorProvider {
     private readonly deepL: DeepLProvider,
     private readonly rateLimiter: RateLimiterProvider,
     private readonly sanitizer: SanitizationProvider,
+    private readonly showEveryone: ShowEveryoneProvider,
   ) {}
 
   #logger = new Logger(TranslatorProvider.name);
@@ -394,6 +399,20 @@ export class TranslatorProvider {
               : ''),
         );
 
+      // Add a button to send the message to the channel for everyone to see,
+      // if the message is ephemeral and sent to a guild channel
+
+      const components: ActionRowBuilder<ButtonBuilder>[] = [];
+
+      if (
+        ephemeral && // Only show the button if the message is ephemeral
+        interaction.channel && // Ensure the interaction has a channel
+        'name' in interaction.channel &&
+        interaction.channel.name // Ensure the channel is a guild channel
+      ) {
+        components.push(this.showEveryone.getActionRow(displayLanguage));
+      }
+
       if (rateLimitInfo?.usesLeft !== undefined) {
         embed.setFooter({
           text:
@@ -421,7 +440,7 @@ export class TranslatorProvider {
         });
       }
 
-      await interaction.editReply({ embeds: [embed] });
+      await interaction.editReply({ embeds: [embed], components });
     } catch (err) {
       this.#logger.error('Feil under omsetjing:', err);
       await replyFunction(

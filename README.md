@@ -66,7 +66,7 @@ Replace `<client_id>` with the client ID of the bot.
 
 #### General Permissions
 
-- **Manage Webhooks** — Used by the Notion sync feature to get webhook IDs
+- **Manage Webhooks** — Used by the Notion sync feature to get webhook secrets
 - **Read Messages/View Channels** — Required to translate messages
 
 #### Text Permissions

@@ -9,6 +9,24 @@ import {
 } from 'discord.js';
 import { InteractionDataProvider } from './interaction-data.provider';
 
+export interface PaginationOptions {
+  /** The interaction to paginate for. */
+  interaction: ChatInputCommandInteraction;
+
+  /** The embeds to paginate. */
+  embeds: EmbedBuilder[];
+
+  /**
+   * The time in milliseconds before the data is considered expired. In other
+   * words, how long to keep the embeds in memory and interactable. Defaults to
+   * 2 minutes.
+   */
+  timeout?: number;
+
+  /** Any additional buttons to add to the pagination row. */
+  additionalButtons?: ButtonBuilder[];
+}
+
 /**
  * Provides a way to paginate embeds.
  */
@@ -24,24 +42,32 @@ export class PaginationProvider {
   /**
    * Paginates the given embeds. Does this by creating a pagination embed that
    * can be interacted with to change the current page.
-   * @param interaction The interaction to paginate for.
-   * @param embeds The embeds to paginate.
-   * @param timeout The time in milliseconds before the data is considered
-   * expired. In other words, how long to keep the embeds in memory and
-   * interactable. Defaults to 2 minutes.
+   * @param options The options for pagination.
    * @returns The message with the pagination embed.
    */
-  async paginate(
-    interaction: ChatInputCommandInteraction,
-    embeds: EmbedBuilder[],
+  async paginate({
+    interaction,
+    embeds,
     timeout = 2 * 60 * 1000,
-  ) {
+    additionalButtons = [],
+  }: PaginationOptions) {
     if (!embeds.length) {
       throw new Error('Pages must be defined and contain at least one page.');
     }
 
     if (embeds.length === 1) {
-      return interaction.editReply({ embeds: [embeds[0]] });
+      if (!additionalButtons.length) {
+        return interaction.editReply({ embeds: [embeds[0]] });
+      }
+
+      return interaction.editReply({
+        embeds: [embeds[0]],
+        components: [
+          new ActionRowBuilder<ButtonBuilder>().addComponents(
+            additionalButtons,
+          ),
+        ],
+      });
     }
 
     const interactionData =
@@ -62,6 +88,11 @@ export class PaginationProvider {
 
     // Create a row of buttons for pagination
     const row = new ActionRowBuilder<ButtonBuilder>().addComponents(controls);
+
+    // Add any additional buttons
+    if (additionalButtons.length) {
+      row.addComponents(additionalButtons);
+    }
 
     // Send the initial page
     const curPage = await interaction.editReply({
@@ -106,6 +137,13 @@ Denne meldinga er no utdatert. Send kommandoen på nytt for å sjå andre result
     this.#cancellationFns.add(cancel);
 
     collector.on('collect', (collectorInteraction) => {
+      if (
+        collectorInteraction.customId !== 'prev' &&
+        collectorInteraction.customId !== 'next'
+      ) {
+        return;
+      }
+
       // Update page index based on which button was clicked
       currentPageIndex =
         collectorInteraction.customId === 'prev'

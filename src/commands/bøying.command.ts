@@ -7,6 +7,7 @@ import {
   OrdbokApiProvider,
   FormatterProvider,
   RateLimiterProvider,
+  ShowEveryoneProvider,
 } from '../providers';
 import {
   DictParam,
@@ -14,6 +15,7 @@ import {
   WordClassParam,
   ShowEveryoneParam,
 } from '../utils';
+import { DisplayLanguage } from '../types';
 import { Dictionary, WordClass } from '../gql/graphql';
 
 export class BøyingCommandParams {
@@ -44,6 +46,7 @@ export class BøyingCommand {
     private readonly ordbokApi: OrdbokApiProvider,
     private readonly formatter: FormatterProvider,
     private readonly rateLimiter: RateLimiterProvider,
+    private readonly showEveryone: ShowEveryoneProvider,
   ) {}
 
   #logger = new Logger(BøyingCommand.name);
@@ -183,7 +186,16 @@ export class BøyingCommand {
         return;
       }
 
-      await this.pagination.paginate(interaction, embeds);
+      await this.pagination.paginate({
+        interaction,
+        embeds,
+        additionalButtons:
+          sendToEveryone ||
+          !interaction.channel ||
+          interaction.channel.isDMBased()
+            ? []
+            : [this.showEveryone.getButton(DisplayLanguage.Norwegian)],
+      });
     } catch (err) {
       this.#logger.error('Feil under ordboksøk:', err);
       interaction.editReply('Det skjedde ein feil under ordboksøket');
