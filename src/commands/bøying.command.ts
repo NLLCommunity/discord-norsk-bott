@@ -189,13 +189,25 @@ export class BøyingCommand {
                 let presentParticiple: string | undefined;
 
                 for (const { tags, wordForms } of groupedInflections.values()) {
-                  if (tags.has(InflectionTag.Infinitiv)) {
+                  if (
+                    tags.has(InflectionTag.Infinitiv) &&
+                    !tags.has(InflectionTag.Passiv)
+                  ) {
                     infinitive = wordForms.map((wf) => `_å_ ${wf}`).join(', ');
-                  } else if (tags.has(InflectionTag.Presens)) {
+                  } else if (
+                    tags.has(InflectionTag.Presens) &&
+                    !tags.has(InflectionTag.Passiv)
+                  ) {
                     present = wordForms.join(', ');
-                  } else if (tags.has(InflectionTag.Preteritum)) {
+                  } else if (
+                    tags.has(InflectionTag.Preteritum) &&
+                    !tags.has(InflectionTag.Passiv)
+                  ) {
                     past = wordForms.join(', ');
-                  } else if (tags.has(InflectionTag.PerfektPartisipp)) {
+                  } else if (
+                    tags.has(InflectionTag.PerfektPartisipp) &&
+                    !tags.has(InflectionTag.Passiv)
+                  ) {
                     perfect = wordForms.map((wf) => `_har_ ${wf}`).join(', ');
                   } else if (tags.has(InflectionTag.Imperativ)) {
                     imperative = wordForms.map((wf) => `${wf}!`).join(', ');
