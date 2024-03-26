@@ -146,6 +146,8 @@ export class NotionService {
       let line = await this.#markdownify?.blockToMarkdown(block);
 
       if (!line) {
+        content += '\n';
+
         continue;
       }
 

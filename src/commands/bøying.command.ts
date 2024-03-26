@@ -191,22 +191,26 @@ export class BøyingCommand {
                 for (const { tags, wordForms } of groupedInflections.values()) {
                   if (
                     tags.has(InflectionTag.Infinitiv) &&
-                    !tags.has(InflectionTag.Passiv)
+                    !tags.has(InflectionTag.Passiv) &&
+                    !tags.has(InflectionTag.Adjektiv)
                   ) {
                     infinitive = wordForms.map((wf) => `_å_ ${wf}`).join(', ');
                   } else if (
                     tags.has(InflectionTag.Presens) &&
-                    !tags.has(InflectionTag.Passiv)
+                    !tags.has(InflectionTag.Passiv) &&
+                    !tags.has(InflectionTag.Adjektiv)
                   ) {
                     present = wordForms.join(', ');
                   } else if (
                     tags.has(InflectionTag.Preteritum) &&
-                    !tags.has(InflectionTag.Passiv)
+                    !tags.has(InflectionTag.Passiv) &&
+                    !tags.has(InflectionTag.Adjektiv)
                   ) {
                     past = wordForms.join(', ');
                   } else if (
                     tags.has(InflectionTag.PerfektPartisipp) &&
-                    !tags.has(InflectionTag.Passiv)
+                    !tags.has(InflectionTag.Passiv) &&
+                    !tags.has(InflectionTag.Adjektiv)
                   ) {
                     perfect = wordForms.map((wf) => `_har_ ${wf}`).join(', ');
                   } else if (tags.has(InflectionTag.Imperativ)) {
