@@ -2,7 +2,6 @@ import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Client } from '@notionhq/client';
 import {
-  ListBlockChildrenResponse,
   PageObjectResponse,
   PartialPageObjectResponse,
   RichTextItemResponse,
@@ -10,6 +9,13 @@ import {
 import { NotionToMarkdown } from 'notion-to-md';
 import * as YAML from 'yaml';
 import * as crypto from 'crypto';
+import {
+  Client as DiscordClient,
+  channelMention,
+  channelLink,
+  hideLinkEmbed,
+} from 'discord.js';
+import { InjectDiscordClient } from '@discord-nestjs/core';
 
 export interface SyncPageMetadata {
   guild: string;
@@ -30,7 +36,10 @@ export class NotionService {
   readonly #logger = new Logger(NotionService.name);
   readonly #markdownify?: NotionToMarkdown;
 
-  constructor(configService: ConfigService) {
+  constructor(
+    configService: ConfigService,
+    @InjectDiscordClient() private discordClient: DiscordClient,
+  ) {
     const token = configService.get<string>('NOTION_TOKEN');
 
     if (!token) {
@@ -134,25 +143,66 @@ export class NotionService {
         continue;
       }
 
-      const line = await this.#markdownify?.blockToMarkdown(block);
+      let line = await this.#markdownify?.blockToMarkdown(block);
 
-      // replace markdown URLs to Discord channels with the syntax for Discord
-
-      // e.g. [https://discord.com/channels/guildId/channelId](https://discord.com/channels/guildId/channelId)
-      // or [#channel-name](https://discord.com/channels/guildId/channelId)
-      // becomes <#channelId>
-      const discordChannelRegex =
-        /\[(?:(?:https:\/\/discord\.com\/channels\/\d+\/\d+)|(?:#([^]+?)))\]\(https:\/\/discord\.com\/channels\/\d+\/(\d+)\)/g;
-      content = content.replace(discordChannelRegex, '<#$2>');
-
-      // replace any that weren't in markdown format
-      const discordChannelRegex2 =
-        /https:\/\/discord\.com\/channels\/\d+\/(\d+)/g;
-      content = content.replace(discordChannelRegex2, '<#$1>');
-
-      if (line) {
-        content += line + '\n';
+      if (!line) {
+        continue;
       }
+
+      const guild = this.discordClient.guilds.cache.get(syncPageMetadata.guild);
+      const combinedRegex =
+        /(?:\[#(?:[^\s\[\]\(\)]+?)\]\(((?:https:\/\/discord\.com\/channels\/(\d+)\/(\d+))))|(?:\[((https:\/\/discord\.com\/channels\/(\d+)\/(\d+))|#([^\s]+?))\]\(\5\))|(https:\/\/discord\.com\/channels\/(\d+)\/(\d+))|(:([a-zA-Z0-9_]+):)|(?:\[(https?:\/\/[^\s\[\]\(\)]+)\]\(\14\/?\))|((https?:\/\/[^\s\[\]\(\)]+))/g;
+
+      // Use a function to determine the replacement dynamically
+      line = line.replace(
+        combinedRegex,
+        (
+          match,
+          _p1,
+          p2,
+          p3,
+          _p4,
+          _p5,
+          p6,
+          p7,
+          _p8,
+          _p9,
+          p10,
+          p11,
+          _p12,
+          p13,
+          p14,
+          _p15,
+          p16,
+        ) => {
+          if (p3 || p7 || p11) {
+            // Discord channel URL
+            // p3, p7, or p11 - channel ID
+            // p2, p6, or p10 - guild ID
+            const guildId = p2 ?? p6 ?? p10;
+            const channelId = p3 ?? p7 ?? p11;
+            const sameGuild = guildId === syncPageMetadata?.guild;
+
+            return sameGuild
+              ? channelMention(channelId)
+              : channelLink(guildId, channelId);
+          } else if (p14 || p16) {
+            // URL, or URL with duplicate link text and URL (e.g. [link](link))
+            return hideLinkEmbed(p14 ?? p16);
+          } else if (p13) {
+            // Emoji
+            return (
+              guild?.emojis.cache.find((e) => e.name === p13)?.toString() ??
+              match
+            );
+          } else {
+            // No match
+            return match;
+          }
+        },
+      );
+
+      content += line + '\n';
     }
 
     if (!syncPageMetadata) {
@@ -182,35 +232,6 @@ export class NotionService {
           : 'Unknown',
       content,
     };
-  }
-
-  async getPageContent(pageId: string): Promise<string> {
-    if (!this.#client) {
-      return '';
-    }
-
-    const blocks = await this.#client.blocks.children.list({
-      block_id: pageId,
-    });
-
-    const content = await this.#blocksToMarkdown(blocks.results);
-    return content;
-  }
-
-  async #blocksToMarkdown(
-    blocks: ListBlockChildrenResponse['results'],
-  ): Promise<string> {
-    let content = '';
-
-    for (const block of blocks) {
-      const line = await this.#markdownify?.blockToMarkdown(block);
-
-      if (line) {
-        content += line + '\n';
-      }
-    }
-
-    return content;
   }
 
   #extractSyncMetadata(code: string): SyncPageMetadata | undefined {
