@@ -1,5 +1,11 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { Command, Handler, InteractionEvent } from '@discord-nestjs/core';
+import {
+  Command,
+  Handler,
+  InteractionEvent,
+  Param,
+  ParamType,
+} from '@discord-nestjs/core';
 import { SlashCommandPipe } from '@discord-nestjs/common';
 import { EmbedBuilder, type ChatInputCommandInteraction } from 'discord.js';
 import {
@@ -16,7 +22,7 @@ import {
   ShowEveryoneParam,
 } from '../utils';
 import { DisplayLanguage } from '../types';
-import { Dictionary, WordClass } from '../gql/graphql';
+import { Dictionary, Gender, InflectionTag, WordClass } from '../gql/graphql';
 
 export class BøyingCommandParams {
   @WordParam()
@@ -30,7 +36,30 @@ export class BøyingCommandParams {
 
   @ShowEveryoneParam()
   sendToEveryone?: boolean;
+
+  @Param({
+    name: 'full',
+    description: 'Vis fullstendig bøying / Show full inflection',
+    type: ParamType.BOOLEAN,
+    required: false,
+  })
+  full?: boolean;
 }
+
+const indefiniteArticles = {
+  [Dictionary.Bokmaalsordboka]: {
+    [Gender.Hankjoenn]: 'en',
+    [Gender.HankjoennHokjoenn]: 'en/ei',
+    [Gender.Hokjoenn]: 'ei',
+    [Gender.Inkjekjoenn]: 'et',
+  },
+  [Dictionary.Nynorskordboka]: {
+    [Gender.Hankjoenn]: 'ein',
+    [Gender.HankjoennHokjoenn]: 'ein/ei',
+    [Gender.Hokjoenn]: 'ei',
+    [Gender.Inkjekjoenn]: 'eit',
+  },
+};
 
 /**
  * A command for retrieving inflections of a word.
@@ -60,7 +89,7 @@ export class BøyingCommand {
   async handle(
     @InteractionEvent() interaction: ChatInputCommandInteraction,
     @InteractionEvent(SlashCommandPipe)
-    { word, dictionary, wordClass, sendToEveryone }: BøyingCommandParams,
+    { word, dictionary, wordClass, sendToEveryone, full }: BøyingCommandParams,
   ): Promise<void> {
     this.#logger.log(
       `Søkjer etter ${word} i ${dictionary} med ordklasse ${wordClass}`,
@@ -93,7 +122,18 @@ export class BøyingCommand {
 
         let splitInfinitive = false;
 
-        for (const lemma of article.lemmas || []) {
+        const articleDictionary =
+          article.dictionary === Dictionary.Bokmaalsordboka
+            ? Dictionary.Bokmaalsordboka
+            : Dictionary.Nynorskordboka;
+
+        const indefiniteArticle =
+          article.gender &&
+          indefiniteArticles[articleDictionary][article.gender];
+
+        const lemmas = article.lemmas ?? [];
+
+        for (const lemma of lemmas) {
           if (lemma.splitInfinitive) {
             splitInfinitive = true;
           }
@@ -107,33 +147,201 @@ export class BøyingCommand {
             let paradigmText = '';
 
             if (paradigm.tags.length) {
-              paradigmText = `**${paradigm.tags
-                .map(this.formatter.formatInflectionTag)
-                .join(', ')}**`;
+              paradigmText =
+                paradigm.tags
+                  .map(this.formatter.formatInflectionTag)
+                  .join(', ') + (lemmas.length > 1 ? ` (${lemma.lemma})` : '');
             } else {
               paradigmText =
                 lemma.paradigms.length > 1
-                  ? `Bøyingsmønster ${index + 1}`
-                  : 'Bøyingsmønster';
+                  ? `Bøyingsmønster ${index + 1}${lemmas.length > 1 ? ` (${lemma.lemma})` : ''}`
+                  : `Bøyingsmønster${lemmas.length > 1 ? ` (${lemma.lemma})` : ''}`;
             }
 
-            /** @type {Map<string, { tags: string[], wordForms: string[] }>} */
             const groupedInflections = paradigm.inflections.reduce(
               (acc, inflection) => {
                 const key = inflection.tags.sort().join('|');
                 if (!acc.has(key)) {
-                  acc.set(key, { tags: inflection.tags, wordForms: [] });
+                  acc.set(key, {
+                    tags: new Set(inflection.tags),
+                    wordForms: [],
+                  });
                 }
-                acc.get(key).wordForms.push(inflection.wordForm);
+                acc.get(key)?.wordForms.push(inflection.wordForm ?? '');
                 return acc;
               },
-              new Map(),
+              new Map<string, { tags: Set<string>; wordForms: string[] }>(),
             );
 
-            for (const { tags, wordForms } of groupedInflections.values()) {
-              text += `${wordForms.join(', ')} (_${tags
-                .map(this.formatter.formatInflectionTag)
-                .join(', ')}_)\n`;
+            if (full) {
+              for (const { tags, wordForms } of groupedInflections.values()) {
+                text += `${wordForms.join(', ')} (_${[...tags]
+                  .map(this.formatter.formatInflectionTag)
+                  .join(', ')}_)\n`;
+              }
+            } else {
+              if (article.wordClass === WordClass.Verb) {
+                let infinitive: string | undefined;
+                let present: string | undefined;
+                let past: string | undefined;
+                let perfect: string | undefined;
+                let imperative: string | undefined;
+                let presentParticiple: string | undefined;
+
+                for (const { tags, wordForms } of groupedInflections.values()) {
+                  if (tags.has(InflectionTag.Infinitiv)) {
+                    infinitive = wordForms.map((wf) => `_å_ ${wf}`).join(', ');
+                  } else if (tags.has(InflectionTag.Presens)) {
+                    present = wordForms.join(', ');
+                  } else if (tags.has(InflectionTag.Preteritum)) {
+                    past = wordForms.join(', ');
+                  } else if (tags.has(InflectionTag.PerfektPartisipp)) {
+                    perfect = wordForms.map((wf) => `_har_ ${wf}`).join(', ');
+                  } else if (tags.has(InflectionTag.Imperativ)) {
+                    imperative = wordForms.map((wf) => `${wf}!`).join(', ');
+                  } else if (tags.has(InflectionTag.PresensPartisipp)) {
+                    presentParticiple = wordForms.join(', ');
+                  }
+                }
+
+                const verbForms = [
+                  infinitive,
+                  present,
+                  past,
+                  perfect,
+                  imperative,
+                  presentParticiple,
+                ].filter((f) => f);
+
+                if (verbForms.length) {
+                  text += verbForms.join('; ') + '\n';
+                }
+              } else if (article.wordClass === WordClass.Substantiv) {
+                let singular: string | undefined;
+                let plural: string | undefined;
+                let definiteSingular: string | undefined;
+                let definitePlural: string | undefined;
+
+                for (const { tags, wordForms } of groupedInflections.values()) {
+                  if (
+                    tags.has(InflectionTag.Eintal) &&
+                    tags.has(InflectionTag.Ubestemt)
+                  ) {
+                    singular = wordForms
+                      .map((wf) => `_${indefiniteArticle}_ ${wf}`)
+                      .join(', ');
+                  } else if (
+                    tags.has(InflectionTag.Fleirtal) &&
+                    tags.has(InflectionTag.Ubestemt)
+                  ) {
+                    plural = wordForms.join(', ');
+                  } else if (
+                    tags.has(InflectionTag.Bestemt) &&
+                    tags.has(InflectionTag.Eintal)
+                  ) {
+                    definiteSingular = wordForms.join(', ');
+                  } else if (
+                    tags.has(InflectionTag.Bestemt) &&
+                    tags.has(InflectionTag.Fleirtal)
+                  ) {
+                    definitePlural = wordForms.join(', ');
+                  }
+                }
+
+                const nounForms = [
+                  singular,
+                  plural,
+                  definiteSingular,
+                  definitePlural,
+                ].filter((f) => f);
+
+                if (nounForms.length) {
+                  text += nounForms.join('; ') + '\n';
+                }
+              } else if (article.wordClass === WordClass.Adjektiv) {
+                let masculineSingular: string | undefined;
+                let feminineSingular: string | undefined;
+                let commonSingular: string | undefined;
+                let neuterSingular: string | undefined;
+                let plural: string | undefined;
+                let definiteSingular: string | undefined;
+
+                let comparative: string | undefined;
+                let superlativeIndefinite: string | undefined;
+                let superlativeDefinite: string | undefined;
+
+                for (const { tags, wordForms } of groupedInflections.values()) {
+                  if (
+                    tags.has(InflectionTag.Eintal) &&
+                    tags.has(InflectionTag.Hankjoenn)
+                  ) {
+                    masculineSingular = wordForms.join(', ');
+                  } else if (
+                    tags.has(InflectionTag.Eintal) &&
+                    tags.has(InflectionTag.Hokjoenn)
+                  ) {
+                    feminineSingular = wordForms.join(', ');
+                  } else if (
+                    tags.has(InflectionTag.Eintal) &&
+                    tags.has(InflectionTag.HankjoennHokjoenn)
+                  ) {
+                    commonSingular = wordForms.join(', ');
+                  } else if (
+                    tags.has(InflectionTag.Eintal) &&
+                    tags.has(InflectionTag.Inkjekjoenn)
+                  ) {
+                    neuterSingular = wordForms.join(', ');
+                  } else if (
+                    tags.has(InflectionTag.Eintal) &&
+                    tags.has(InflectionTag.Bestemt)
+                  ) {
+                    definiteSingular = wordForms.join(', ');
+                  } else if (tags.has(InflectionTag.Fleirtal)) {
+                    plural = wordForms.join(', ');
+                  } else if (tags.has(InflectionTag.Komparativ)) {
+                    comparative = wordForms.join(', ');
+                  } else if (
+                    tags.has(InflectionTag.Superlativ) &&
+                    tags.has(InflectionTag.Ubestemt)
+                  ) {
+                    superlativeIndefinite = wordForms.join(', ');
+                  } else if (
+                    tags.has(InflectionTag.Superlativ) &&
+                    tags.has(InflectionTag.Bestemt)
+                  ) {
+                    superlativeDefinite = wordForms.join(', ');
+                  }
+                }
+
+                const adjectiveFormsFirst = [
+                  masculineSingular,
+                  feminineSingular,
+                  commonSingular,
+                  neuterSingular,
+                  plural,
+                  definiteSingular,
+                ].filter((f) => f);
+
+                const adjectiveFormsSecond = [
+                  comparative,
+                  superlativeIndefinite,
+                  superlativeDefinite,
+                ].filter((f) => f);
+
+                if (adjectiveFormsFirst.length) {
+                  text += adjectiveFormsFirst.join('; ') + '\n';
+                }
+
+                if (adjectiveFormsSecond.length) {
+                  text += adjectiveFormsSecond.join('; ') + '\n';
+                }
+              } else {
+                for (const { tags, wordForms } of groupedInflections.values()) {
+                  text += `${wordForms.join(', ')} (_${[...tags]
+                    .map(this.formatter.formatInflectionTag)
+                    .join(', ')}_)\n`;
+                }
+              }
             }
 
             if (!text) {

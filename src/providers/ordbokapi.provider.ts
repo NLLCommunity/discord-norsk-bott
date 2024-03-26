@@ -94,6 +94,7 @@ export class OrdbokApiProvider {
             id
             dictionary
             wordClass
+            gender
             lemmas {
               lemma
               splitInfinitive
