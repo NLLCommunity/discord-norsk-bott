@@ -297,6 +297,9 @@ export class SyncSubCommand {
       }
 
       if (matching) {
+        // Update the thread title
+        await matching.setName(page.title);
+
         // Update the message
         await this.#updateMessage({
           channel: info.webhook || matching,
