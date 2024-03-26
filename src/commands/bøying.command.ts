@@ -127,9 +127,9 @@ export class BøyingCommand {
             ? Dictionary.Bokmaalsordboka
             : Dictionary.Nynorskordboka;
 
-        const indefiniteArticle =
-          article.gender &&
-          indefiniteArticles[articleDictionary][article.gender];
+        const genderString = article.gender
+          ? `, ${this.formatter.formatGender(article.gender)}`
+          : '';
 
         const lemmas = article.lemmas ?? [];
 
@@ -233,6 +233,14 @@ export class BøyingCommand {
                 let plural: string | undefined;
                 let definiteSingular: string | undefined;
                 let definitePlural: string | undefined;
+
+                const gender =
+                  Object.values(Gender).find((g) =>
+                    paradigm.tags.includes(g as unknown as InflectionTag),
+                  ) ?? article.gender;
+
+                const indefiniteArticle =
+                  gender && indefiniteArticles[articleDictionary][gender];
 
                 for (const { tags, wordForms } of groupedInflections.values()) {
                   if (
@@ -371,7 +379,9 @@ export class BøyingCommand {
           continue;
         }
 
-        let articleHeader = `_frå ${this.formatter.formatDictionary(
+        let articleHeader = `${
+          article.wordClass
+        }${genderString}\n_frå ${this.formatter.formatDictionary(
           article.dictionary,
         )}_`;
         const url = this.formatter.getUrl(article);
