@@ -81,7 +81,7 @@ const MessageText = {
       '_Visste du at me betalar for kvar omsetjing?_\n_Hjelp oss med å tilby omsetjingar [ved å donera til Ada](https://github.com/sponsors/adalinesimonian)._',
     [Messages.RequestedBy]: (user: string) => `Spurd av ${user}`,
     [Messages.InaccuracyWarning]: () => '⚠️ Omsetjingane kan innehalda feil.',
-    [Messages.ShowEveryone]: () => 'Vis alle',
+    [Messages.ShowEveryone]: () => 'Vis til alle',
   },
   [DisplayLanguage.English]: {
     [Messages.RateLimited]: (waitMs: number) =>

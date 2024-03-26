@@ -59,7 +59,7 @@ const MessageText = {
         waitMs,
         DisplayLanguage.Norwegian,
       )}.`,
-    [Messages.ShowEveryone]: 'Vis alle',
+    [Messages.ShowEveryone]: 'Vis til alle',
     [Messages.RequestedBy]: (user: string) => `Spurt av ${user}`,
     [Messages.UsedCommand]: (user: string, command: string) =>
       `${user} brukte kommandoen ${command}`,
