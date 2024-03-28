@@ -47,6 +47,10 @@ Required. The API key from [DeepL](https://www.deepl.com/pro-api). Used for tran
 
 Optional. The integration token from [Notion](https://www.notion.so/my-integrations). Used for syncing content from Notion.
 
+### `OPENAI_API_KEY`
+
+Optional. The API key from [OpenAI](https://platform.openai.com/). Used to check random words pulled from the dictionary for appropriateness before sending them to the chat.
+
 ## Permissions
 
 The bot requires the following permissions to function correctly.

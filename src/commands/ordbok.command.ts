@@ -87,46 +87,9 @@ export class OrdbokCommand {
         wordClass,
       );
 
-      const embeds: EmbedBuilder[] = [];
-
-      for (const article of response) {
-        const definitions =
-          article.definitions
-            ?.map(
-              (definition, definitionIndex) =>
-                `${definitionIndex + 1}. ` +
-                definition.content.map((c) => c.textContent).join('; '),
-            )
-            .join('\n') ?? '';
-
-        const genderString = article.gender
-          ? `, ${this.formatter.formatGender(article.gender)}`
-          : '';
-
-        const title =
-          article.lemmas?.reduce((acc, lemma) => {
-            const lemmaText =
-              article.wordClass === 'Verb' ? `å ${lemma.lemma}` : lemma.lemma;
-            return acc ? `${acc}, ${lemmaText}` : lemmaText;
-          }, '') ?? word;
-
-        let articleHeader = `${
-          article.wordClass
-        }${genderString}\n_frå ${this.formatter.formatDictionary(
-          article.dictionary,
-        )}_`;
-        const url = this.formatter.getUrl(article);
-
-        if (url) {
-          articleHeader += `\n[Les meir](${url})`;
-        }
-
-        const body = `${articleHeader}\n${definitions}`;
-
-        const embed = new EmbedBuilder().setTitle(title).setDescription(body);
-
-        embeds.push(embed);
-      }
+      const embeds: EmbedBuilder[] = response.map((article) =>
+        this.formatter.embedForArticle(article, word),
+      );
 
       if (!embeds.length) {
         await interaction.editReply(

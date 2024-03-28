@@ -1,5 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import { Dictionary, Gender, InflectionTag } from '../gql/graphql';
+import {
+  Dictionary,
+  Gender,
+  InflectionTag,
+  WordDefinitionsQuery,
+} from '../gql/graphql';
+import { EmbedBuilder } from 'discord.js';
 
 /**
  * Formats common data types for display in Discord.
@@ -141,5 +147,53 @@ export class FormatterProvider {
     return `https://ordbokene.no/${
       article.dictionary === Dictionary.Bokmaalsordboka ? 'bm' : 'nn'
     }/${article.id}`;
+  }
+
+  /**
+   * Returns an embed for the given dictionary article.
+   * @param article The article to get the embed for.
+   */
+  embedForArticle(
+    article: NonNullable<
+      NonNullable<WordDefinitionsQuery['word']>['articles']
+    >[0],
+    fallbackWord?: string,
+  ): EmbedBuilder {
+    const definitions =
+      article.definitions
+        ?.map(
+          (definition, definitionIndex) =>
+            `${definitionIndex + 1}. ` +
+            definition.content.map((c) => c.textContent).join('; '),
+        )
+        .join('\n') ?? '';
+
+    const genderString = article.gender
+      ? `, ${this.formatGender(article.gender)}`
+      : '';
+
+    const title =
+      article.lemmas?.reduce((acc, lemma) => {
+        const lemmaText =
+          article.wordClass === 'Verb' ? `å ${lemma.lemma}` : lemma.lemma;
+        return acc ? `${acc}, ${lemmaText}` : lemmaText;
+      }, '') ??
+      fallbackWord ??
+      '[Ukjent ord]';
+
+    let articleHeader = `${
+      article.wordClass
+    }${genderString}\n_frå ${this.formatDictionary(article.dictionary)}_`;
+    const url = this.getUrl(article);
+
+    if (url) {
+      articleHeader += `\n[Les meir](${url})`;
+    }
+
+    const body = `${articleHeader}\n${definitions}`;
+
+    const embed = new EmbedBuilder().setTitle(title).setDescription(body);
+
+    return embed;
   }
 }

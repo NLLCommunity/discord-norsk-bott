@@ -3,6 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { request, gql } from 'graphql-request';
 import {
   Dictionary,
+  RandomWordDefinitionsQuery,
   WordClass,
   WordDefinitionsQuery,
   WordDefinitionsQueryVariables,
@@ -69,6 +70,49 @@ export class OrdbokApiProvider {
     >(this.#endpoint, query, { word, dictionaries, wordClass });
 
     return data.word?.articles ?? [];
+  }
+
+  /**
+   * Retrieves the definitions of a random word from the specified dictionary.
+   *
+   * @param word The word to retrieve definitions for.
+   * @param dictionary The dictionary to search for definitions in.
+   * @returns An article containing the word's definitions.
+   */
+  async randomDefinition(
+    dictionary: Dictionary,
+  ): Promise<RandomWordDefinitionsQuery['randomArticle']> {
+    const query = gql`
+      query RandomWordDefinitions($dictionary: Dictionary!) {
+        randomArticle(dictionary: $dictionary) {
+          id
+          dictionary
+          lemmas {
+            lemma
+          }
+          gender
+          wordClass
+          definitions {
+            content {
+              textContent
+            }
+            examples {
+              textContent
+            }
+          }
+        }
+      }
+    `;
+
+    const data = await request<RandomWordDefinitionsQuery>(
+      this.#endpoint,
+      query,
+      {
+        dictionary,
+      },
+    );
+
+    return data.randomArticle;
   }
 
   /**

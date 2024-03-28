@@ -5,6 +5,7 @@ export * from './formatter.provider';
 export * from './interaction-data.provider';
 export * from './inflection-formatter.provider';
 export * from './notion.provider';
+export * from './openai.provider';
 export * from './ordbokapi.provider';
 export * from './pagination.provider';
 export * from './rate-limiter.provider';

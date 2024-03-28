@@ -1,6 +1,7 @@
 import { Param, ParamType, Choice } from '@discord-nestjs/core';
 import { WordClass, Dictionary } from 'src/gql/graphql';
 import { Union } from './decorator-union';
+import { ParamOptions } from '@discord-nestjs/core/dist/decorators/option/param/param-options';
 
 /**
  * Adds an "ord" option to the command.
@@ -16,7 +17,7 @@ export const WordParam = () =>
 /**
  * Adds an "ordbok" option to the command.
  */
-export const DictParam = () =>
+export const DictParam = (options: Partial<ParamOptions> = {}) =>
   Union(
     Param({
       name: 'ordbok',
@@ -24,6 +25,7 @@ export const DictParam = () =>
         'Ordboka du vil søkja i / The dictionary you want to search in',
       type: ParamType.STRING,
       required: false,
+      ...options,
     }),
     Choice(
       Object.entries(Dictionary).reduce(
