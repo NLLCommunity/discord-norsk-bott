@@ -7,7 +7,10 @@ import {
   ParamType,
 } from '@discord-nestjs/core';
 import { SlashCommandPipe } from '@discord-nestjs/common';
-import { type ChatInputCommandInteraction } from 'discord.js';
+import {
+  PermissionFlagsBits,
+  type ChatInputCommandInteraction,
+} from 'discord.js';
 import { TranslatorProvider } from '../../providers';
 import { ShowEveryoneParamEn } from '../../utils';
 import { Language, DisplayLanguage } from '../../types';
@@ -33,6 +36,7 @@ export class EnnbCommandParams {
   name: 'ennb',
   description:
     'Omset frå engelsk til bokmål / Translate from English to Bokmål',
+  defaultMemberPermissions: PermissionFlagsBits.SendMessages,
 })
 export class EnnbCommand {
   constructor(private readonly translator: TranslatorProvider) {}

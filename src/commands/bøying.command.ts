@@ -7,7 +7,11 @@ import {
   ParamType,
 } from '@discord-nestjs/core';
 import { SlashCommandPipe } from '@discord-nestjs/common';
-import { EmbedBuilder, type ChatInputCommandInteraction } from 'discord.js';
+import {
+  EmbedBuilder,
+  PermissionFlagsBits,
+  type ChatInputCommandInteraction,
+} from 'discord.js';
 import {
   PaginationProvider,
   OrdbokApiProvider,
@@ -54,6 +58,7 @@ export class BøyingCommandParams {
 @Command({
   name: 'bøying',
   description: 'Søk etter bøying av ord / Search for inflections of a word',
+  defaultMemberPermissions: PermissionFlagsBits.SendMessages,
 })
 export class BøyingCommand {
   constructor(

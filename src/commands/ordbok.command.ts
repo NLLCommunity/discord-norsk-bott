@@ -1,7 +1,11 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Command, Handler, InteractionEvent } from '@discord-nestjs/core';
 import { SlashCommandPipe } from '@discord-nestjs/common';
-import { EmbedBuilder, type ChatInputCommandInteraction } from 'discord.js';
+import {
+  EmbedBuilder,
+  PermissionFlagsBits,
+  type ChatInputCommandInteraction,
+} from 'discord.js';
 import {
   PaginationProvider,
   OrdbokApiProvider,
@@ -40,6 +44,7 @@ export class OrdbokCommandParams {
   name: 'ordbok',
   description:
     'Søk i ordbøkene etter definisjonar / Search the dictionaries for definitions',
+  defaultMemberPermissions: PermissionFlagsBits.SendMessages,
 })
 export class OrdbokCommand {
   constructor(

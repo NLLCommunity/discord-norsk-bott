@@ -37,6 +37,7 @@ export class QuoteCommandParams {
 @Command({
   name: 'quote',
   description: 'Quotes a message',
+  defaultMemberPermissions: PermissionFlagsBits.SendMessages,
 })
 export class QuoteCommand {
   #logger = new Logger(QuoteCommand.name);

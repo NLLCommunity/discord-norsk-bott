@@ -3,6 +3,7 @@ import { Command, Handler, InteractionEvent } from '@discord-nestjs/core';
 import {
   MessageContextMenuCommandInteraction,
   ApplicationCommandType,
+  PermissionFlagsBits,
 } from 'discord.js';
 import { TranslatorProvider } from '../../providers';
 import { DisplayLanguage, Language } from '../../types';
@@ -14,6 +15,7 @@ import { DisplayLanguage, Language } from '../../types';
 @Command({
   name: 'To English',
   type: ApplicationCommandType.Message,
+  defaultMemberPermissions: PermissionFlagsBits.SendMessages,
 })
 export class ToEnCommand {
   constructor(private readonly translator: TranslatorProvider) {}

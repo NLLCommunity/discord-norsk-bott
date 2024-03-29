@@ -7,7 +7,11 @@ import {
   ParamType,
 } from '@discord-nestjs/core';
 import { SlashCommandPipe } from '@discord-nestjs/common';
-import { EmbedBuilder, type ChatInputCommandInteraction } from 'discord.js';
+import {
+  EmbedBuilder,
+  PermissionFlagsBits,
+  type ChatInputCommandInteraction,
+} from 'discord.js';
 import { RateLimiterProvider } from '../providers';
 import { ShowEveryoneParamEn } from '../utils';
 
@@ -32,6 +36,7 @@ export class RandomCommandParams {
 @Command({
   name: 'random',
   description: 'Gets a random number/roll',
+  defaultMemberPermissions: PermissionFlagsBits.SendMessages,
 })
 export class RandomCommand {
   #logger = new Logger(RandomCommand.name);

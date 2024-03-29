@@ -1,7 +1,10 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Command, Handler, InteractionEvent } from '@discord-nestjs/core';
 import { SlashCommandPipe } from '@discord-nestjs/common';
-import { type ChatInputCommandInteraction } from 'discord.js';
+import {
+  PermissionFlagsBits,
+  type ChatInputCommandInteraction,
+} from 'discord.js';
 import {
   OrdbokApiProvider,
   FormatterProvider,
@@ -29,6 +32,7 @@ export class TilfeldigOrdCommandParams {
   name: 'tilfeldigord',
   description:
     'Få eit tilfeldig ord frå ordboka / Get a random word from the dictionary',
+  defaultMemberPermissions: PermissionFlagsBits.SendMessages,
 })
 export class TilfeldigOrdCommand {
   constructor(
