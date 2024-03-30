@@ -1,6 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { Translator, SourceLanguageCode, TargetLanguageCode } from 'deepl-node';
+import {
+  Translator,
+  SourceLanguageCode,
+  TargetLanguageCode,
+  TextResult,
+} from 'deepl-node';
 
 export enum DeepLSourceLanguage {
   Bokmål = 'nb',
@@ -90,16 +95,10 @@ export class DeepLProvider {
    * @returns The translated text.
    */
   async translate(
-    from: SourceLanguageCode,
+    from: SourceLanguageCode | null,
     to: TargetLanguageCode,
     text: string,
-  ): Promise<string> {
-    const { text: translated } = await this.#translator.translateText(
-      text,
-      from,
-      to,
-    );
-
-    return translated;
+  ): Promise<TextResult> {
+    return this.#translator.translateText(text, from, to);
   }
 }
