@@ -5,8 +5,8 @@ import {
   ApplicationCommandType,
   PermissionFlagsBits,
 } from 'discord.js';
-import { TranslatorProvider } from '../../providers';
-import { DisplayLanguage, Language } from '../../types';
+import { TranslationLanguage, TranslatorProvider } from '../../providers';
+import { DisplayLanguage } from '../../types';
 
 /**
  * Translates messages to Nynorsk.
@@ -31,7 +31,7 @@ export class ToNnCommand {
   ): Promise<void> {
     await this.translator.translate({
       interaction,
-      to: Language.Nynorsk,
+      to: TranslationLanguage.Nynorsk,
       text: interaction.targetMessage.content,
       ephemeral: true,
       displayLanguage: DisplayLanguage.English,

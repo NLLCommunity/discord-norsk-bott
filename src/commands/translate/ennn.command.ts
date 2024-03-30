@@ -11,9 +11,9 @@ import {
   PermissionFlagsBits,
   type ChatInputCommandInteraction,
 } from 'discord.js';
-import { TranslatorProvider } from '../../providers';
+import { TranslatorProvider, TranslationLanguage } from '../../providers';
 import { ShowEveryoneParamEn } from '../../utils';
-import { Language, DisplayLanguage } from '../../types';
+import { DisplayLanguage } from '../../types';
 
 export class EnnnCommandParams {
   @Param({
@@ -54,8 +54,8 @@ export class EnnnCommand {
   ): Promise<void> {
     await this.translator.translate({
       interaction,
-      from: Language.English,
-      to: Language.Nynorsk,
+      from: TranslationLanguage.English,
+      to: TranslationLanguage.Nynorsk,
       text,
       ephemeral: !sendToEveryone,
       displayLanguage: DisplayLanguage.English,

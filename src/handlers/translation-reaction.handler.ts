@@ -16,9 +16,11 @@ import {
   DisplayLanguage,
 } from '../types';
 import {
+  ApertiumLanguage,
   ApertiumProvider,
+  TranslationLanguage,
   TranslatorProvider,
-  apertiumLangToLanguage,
+  convertLanguageEnum,
 } from '../providers';
 import { UserHasPermissionsGuard } from './guards/user-has-permissions.guard';
 
@@ -98,14 +100,32 @@ export class TranslationReactionHandler {
 
     const detectedLang = await this.apertium.detectLanguage(message.content);
     const sourceLang =
-      apertiumLangToLanguage(detectedLang) ??
+      convertLanguageEnum(
+        detectedLang as ApertiumLanguage,
+        ApertiumLanguage,
+        TranslationLanguage,
+      ) ??
       // If we can't detect the language, assume it is the opposite of the
-      // target language
+      // target language (with respect to Norwegian)
       (emojiData.language === Language.English
-        ? Language.Bokmål
-        : Language.English);
+        ? TranslationLanguage.Bokmål
+        : TranslationLanguage.English);
+    const targetLang = convertLanguageEnum(
+      emojiData.language,
+      Language,
+      TranslationLanguage,
+    );
 
-    if (sourceLang === emojiData.language) {
+    if (!targetLang) {
+      this.#logger.error(
+        `Could not convert language ${emojiData.language} to TranslationLanguage`,
+      );
+      this.#inProgressTranslations.delete(inProgressKey);
+      await reaction.users.remove(user);
+      return;
+    }
+
+    if (sourceLang === targetLang) {
       this.#logger.debug(
         `Source language is the same as target language for message ${message.id}, not translating`,
       );
@@ -121,7 +141,7 @@ export class TranslationReactionHandler {
 
     await this.translator.translate({
       from: sourceLang,
-      to: emojiData.language,
+      to: targetLang,
       text: message.content,
       interaction,
       displayLanguage: DisplayLanguage.English,

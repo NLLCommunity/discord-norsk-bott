@@ -5,8 +5,8 @@ import {
   ApplicationCommandType,
   PermissionFlagsBits,
 } from 'discord.js';
-import { TranslatorProvider } from '../../providers';
-import { DisplayLanguage, Language } from '../../types';
+import { TranslatorProvider, TranslationLanguage } from '../../providers';
+import { DisplayLanguage } from '../../types';
 
 /**
  * Translates messages to English.
@@ -31,7 +31,7 @@ export class ToEnCommand {
   ): Promise<void> {
     await this.translator.translate({
       interaction,
-      to: Language.English,
+      to: TranslationLanguage.English,
       text: interaction.targetMessage.content,
       ephemeral: true,
       displayLanguage: DisplayLanguage.English,

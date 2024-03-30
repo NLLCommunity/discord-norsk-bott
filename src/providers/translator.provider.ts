@@ -1,20 +1,16 @@
 import { Injectable, Inject, Logger } from '@nestjs/common';
 import { EmbedBuilder, ButtonBuilder, ActionRowBuilder } from 'discord.js';
-import {
-  ApertiumProvider,
-  ApertiumLanguage,
-  apertiumLangToLanguage,
-} from './apertium.provider';
+import { ApertiumProvider, ApertiumLanguage } from './apertium.provider';
 import { RateLimiterProvider } from './rate-limiter.provider';
-import { DeepLProvider } from './deepl.provider';
+import {
+  DeepLProvider,
+  DeepLSourceLanguage,
+  DeepLTargetLanguage,
+} from './deepl.provider';
 import { SanitizationProvider } from './sanitization.provider';
 import { ShowEveryoneProvider } from './show-everyone.provider';
-import {
-  Language,
-  DisplayLanguage,
-  LanguageName,
-  InteractionVariant,
-} from '../types';
+import { DisplayLanguage, InteractionVariant } from '../types';
+import { SourceLanguageCode } from 'deepl-node';
 
 enum Messages {
   RateLimited,
@@ -60,6 +56,17 @@ const formatTime = (ms: number, displayLanguage: DisplayLanguage) => {
   return timeFormats[displayLanguage].format(seconds, 'second');
 };
 
+// Assuming an enum is 1:1 with each key being unique, gets the name of the key
+// from the enum value.
+function getEnumKeyByValue<T extends Record<string, string>>(
+  enumType: T,
+  value: string,
+): keyof T | undefined {
+  return Object.keys(enumType).find((key) => enumType[key] === value) as
+    | keyof T
+    | undefined;
+}
+
 const MessageText = {
   [DisplayLanguage.Norwegian]: {
     [Messages.RateLimited]: (waitMs: number) =>
@@ -73,8 +80,14 @@ const MessageText = {
       'Det skjedde ein feil under omsetjinga. Prøv igjen seinare.',
     [Messages.SameLanguageError]: () =>
       'Kan ikkje omsetja til same språk som originalteksten.',
-    [Messages.Translated]: (from: Language, to: Language) =>
-      `Omset frå ${LanguageName[DisplayLanguage.Norwegian][from]} til ${LanguageName[DisplayLanguage.Norwegian][to]}`,
+    [Messages.Translated]: (
+      from: TranslationLanguage,
+      to: TranslationLanguage,
+    ) =>
+      `Omset frå ${getEnumKeyByValue(TranslationLanguage, from)} til ${getEnumKeyByValue(
+        TranslationLanguage,
+        to,
+      )}`,
     [Messages.UsesRemaining]: (usesLeft: number) =>
       `Du har ${usesLeft} ${usesLeft === 1 ? 'omsetjing' : 'omsetjingar'} igjen før du må venta ei stund.`,
     [Messages.DonationPrompt]: () =>
@@ -95,8 +108,14 @@ const MessageText = {
       'An error occurred during translation. Try again later.',
     [Messages.SameLanguageError]: () =>
       'Cannot translate to the same language as the original text.',
-    [Messages.Translated]: (from: Language, to: Language) =>
-      `Translated from ${LanguageName[DisplayLanguage.English][from]} to ${LanguageName[DisplayLanguage.English][to]}`,
+    [Messages.Translated]: (
+      from: TranslationLanguage,
+      to: TranslationLanguage,
+    ) =>
+      `Translated from ${getEnumKeyByValue(TranslationLanguage, from)} to ${getEnumKeyByValue(
+        TranslationLanguage,
+        to,
+      )}`,
     [Messages.UsesRemaining]: (usesLeft: number) =>
       `You have ${usesLeft} ${usesLeft === 1 ? 'translation' : 'translations'} left before you have to wait a while.`,
     [Messages.DonationPrompt]: () =>
@@ -106,6 +125,60 @@ const MessageText = {
     [Messages.ShowEveryone]: () => 'Show everyone',
   },
 };
+
+export enum TranslationLanguage {
+  Bokmål = 'nb',
+  Nynorsk = 'nn',
+  English = 'en',
+  Arabic = 'ar',
+  Bulgarian = 'bg',
+  Czech = 'cs',
+  Danish = 'da',
+  German = 'de',
+  Greek = 'el',
+  Spanish = 'es',
+  Estonian = 'et',
+  Finnish = 'fi',
+  French = 'fr',
+  Hungarian = 'hu',
+  Indonesian = 'id',
+  Italian = 'it',
+  Japanese = 'ja',
+  Korean = 'ko',
+  Lithuanian = 'lt',
+  Latvian = 'lv',
+  Dutch = 'nl',
+  Polish = 'pl',
+  Portuguese = 'pt',
+  Romanian = 'ro',
+  Russian = 'ru',
+  Slovak = 'sk',
+  Slovenian = 'sl',
+  Swedish = 'sv',
+  Turkish = 'tr',
+  Ukrainian = 'uk',
+  Chinese = 'zh',
+}
+
+export function convertLanguageEnum<
+  S extends { [key: string]: string },
+  K extends S[keyof S],
+  T extends { [key: string]: string },
+>(sourceLang: K, sourceEnum: S, targetEnum: T): T[keyof T] | undefined {
+  // find the name of the key in the source enum
+  const sourceKey = Object.keys(sourceEnum).find(
+    (key) => sourceEnum[key as keyof S] === sourceLang,
+  );
+
+  if (!sourceKey) {
+    return undefined;
+  }
+
+  // find the key in the target enum
+  const targetKey = Object.keys(targetEnum).find((key) => key === sourceKey);
+
+  return targetKey ? targetEnum[targetKey as keyof T] : undefined;
+}
 
 /**
  * Represents the options for the translator.
@@ -119,12 +192,12 @@ interface TranslatorOptions {
   /**
    * The language to translate from.
    */
-  from?: Language;
+  from?: TranslationLanguage;
 
   /**
    * The language to translate to.
    */
-  to: Language;
+  to: TranslationLanguage;
 
   /**
    * The text to be translated.
@@ -162,10 +235,22 @@ interface TranslationInfo {
 }
 
 type TranslationGraph = Partial<{
-  [sourceLanguageCode in Language]: Partial<{
-    [targetLanguageCode in Language]: TranslationInfo;
+  [sourceLanguageCode in TranslationLanguage]: Partial<{
+    [targetLanguageCode in TranslationLanguage]: TranslationInfo;
   }>;
 }>;
+
+type Translator<
+  S extends TranslationLanguage = TranslationLanguage,
+  T extends TranslationLanguage = TranslationLanguage,
+> = {
+  from: S[];
+  to: T[];
+  translate: (from: S, to: T, str: string) => Promise<string>;
+  expensive: boolean;
+};
+
+type Translators = Translator[];
 
 /**
  * Translates the given text to the given language.
@@ -183,44 +268,93 @@ export class TranslatorProvider {
 
   #logger = new Logger(TranslatorProvider.name);
 
-  #translationGraph: TranslationGraph = {
-    [Language.Bokmål]: {
-      [Language.Nynorsk]: {
-        fn: (str) =>
-          this.apertium.translate(
-            ApertiumLanguage.Bokmål,
-            ApertiumLanguage.Nynorsk,
-            str,
-          ),
-        expensive: false,
-      },
-      [Language.English]: {
-        fn: (str) => this.deepL.translate(Language.Bokmål, 'en-US', str),
-        expensive: true,
-      },
-    },
-    [Language.Nynorsk]: {
-      [Language.Bokmål]: {
-        fn: (str) =>
-          this.apertium.translate(
-            ApertiumLanguage.Nynorsk,
-            ApertiumLanguage.Bokmål,
-            str,
-          ),
-        expensive: false,
-      },
-    },
-    [Language.English]: {
-      [Language.Bokmål]: {
-        fn: (str) =>
-          this.deepL.translate(Language.English, Language.Bokmål, str),
-        expensive: true,
-      },
-    },
-  };
+  #translators: Translators = [
+    {
+      from: Object.values(DeepLSourceLanguage)
+        .map((lang) =>
+          convertLanguageEnum(lang, DeepLSourceLanguage, TranslationLanguage),
+        )
+        .filter((lang) => lang) as TranslationLanguage[],
+      to: Object.values(DeepLTargetLanguage)
+        .map((lang) =>
+          convertLanguageEnum(lang, DeepLTargetLanguage, TranslationLanguage),
+        )
+        .filter((lang) => lang) as TranslationLanguage[],
+      translate: (from, to, str) => {
+        const toLang = convertLanguageEnum(
+          to,
+          TranslationLanguage,
+          DeepLTargetLanguage,
+        );
 
-  #findPath(source: Language, target: Language): Language[] {
-    const queue: Language[][] = [[source]];
+        if (!toLang) {
+          throw new Error(`Invalid language code: ${to}`);
+        }
+
+        return this.deepL.translate(from as SourceLanguageCode, toLang, str);
+      },
+      expensive: true,
+    },
+    {
+      from: [TranslationLanguage.Bokmål, TranslationLanguage.Nynorsk],
+      to: [TranslationLanguage.Bokmål, TranslationLanguage.Nynorsk],
+      translate: (from, to, str) => {
+        const fromLang = convertLanguageEnum(
+          from,
+          TranslationLanguage,
+          ApertiumLanguage,
+        );
+        const toLang = convertLanguageEnum(
+          to,
+          TranslationLanguage,
+          ApertiumLanguage,
+        );
+
+        if (!fromLang || !toLang) {
+          throw new Error(`Invalid language code: ${from} or ${to}`);
+        }
+
+        return this.apertium.translate(fromLang, toLang, str);
+      },
+      expensive: false,
+    },
+  ];
+
+  #buildTranslationGraph(): TranslationGraph {
+    const graph: TranslationGraph = {};
+
+    for (const translator of this.#translators) {
+      for (const sourceLanguage of translator.from) {
+        let node = graph[sourceLanguage];
+
+        if (!node) {
+          node = {};
+          graph[sourceLanguage] = node;
+        }
+
+        for (const targetLanguage of translator.to) {
+          // Avoid translating a language to itself
+          if (sourceLanguage !== targetLanguage) {
+            node[targetLanguage] = {
+              fn: (str: string) =>
+                translator.translate(sourceLanguage, targetLanguage, str),
+              expensive: translator.expensive,
+            };
+          }
+        }
+      }
+    }
+
+    return graph;
+  }
+
+  #translationGraph: TranslationGraph = this.#buildTranslationGraph();
+
+  #findPath(
+    source: TranslationLanguage,
+    target: TranslationLanguage,
+  ): TranslationLanguage[] {
+    const queue: TranslationLanguage[][] = [[source]];
     const visited = new Set([source]);
 
     while (queue.length > 0) {
@@ -234,9 +368,9 @@ export class TranslatorProvider {
       const neighbors = Object.keys(this.#translationGraph[lastNode] || {});
 
       for (const neighbor of neighbors) {
-        if (!visited.has(neighbor as Language)) {
-          visited.add(neighbor as Language);
-          queue.push([...path, neighbor as Language]);
+        if (!visited.has(neighbor as TranslationLanguage)) {
+          visited.add(neighbor as TranslationLanguage);
+          queue.push([...path, neighbor as TranslationLanguage]);
         }
       }
     }
@@ -246,8 +380,8 @@ export class TranslatorProvider {
   }
 
   #getTranslationPipeline(
-    source: Language,
-    target: Language,
+    source: TranslationLanguage,
+    target: TranslationLanguage,
   ): { expensive: boolean; functions: TranslateFunction[] } {
     const path = this.#findPath(source, target);
     const functions: TranslateFunction[] = [];
@@ -308,10 +442,16 @@ export class TranslatorProvider {
       await interaction.deferReply({ ephemeral });
       const detectedLang = await this.apertium.detectLanguage(text);
       sourceLang =
-        apertiumLangToLanguage(detectedLang) ??
+        convertLanguageEnum(
+          detectedLang as ApertiumLanguage,
+          ApertiumLanguage,
+          TranslationLanguage,
+        ) ??
         // If we can't detect the language, assume it is the opposite of the
-        // target language
-        (to === Language.English ? Language.Bokmål : Language.English);
+        // target language (with respect to Norwegian)
+        (to === TranslationLanguage.English
+          ? TranslationLanguage.Bokmål
+          : TranslationLanguage.English);
     }
 
     if (sourceLang === to) {

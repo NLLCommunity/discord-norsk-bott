@@ -11,9 +11,9 @@ import {
   PermissionFlagsBits,
   type ChatInputCommandInteraction,
 } from 'discord.js';
-import { TranslatorProvider } from '../../providers';
+import { TranslatorProvider, TranslationLanguage } from '../../providers';
 import { ShowEveryoneParamEn } from '../../utils';
-import { Language, DisplayLanguage } from '../../types';
+import { DisplayLanguage } from '../../types';
 
 export class NbenCommandParams {
   @Param({
@@ -54,8 +54,8 @@ export class NbenCommand {
   ): Promise<void> {
     await this.translator.translate({
       interaction,
-      from: Language.Bokmål,
-      to: Language.English,
+      from: TranslationLanguage.Bokmål,
+      to: TranslationLanguage.English,
       text,
       ephemeral: !sendToEveryone,
       displayLanguage: DisplayLanguage.English,

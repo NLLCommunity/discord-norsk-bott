@@ -5,8 +5,8 @@ import {
   ApplicationCommandType,
   PermissionFlagsBits,
 } from 'discord.js';
-import { TranslatorProvider } from '../../providers';
-import { DisplayLanguage, Language } from '../../types';
+import { TranslatorProvider, TranslationLanguage } from '../../providers';
+import { DisplayLanguage } from '../../types';
 
 /**
  * Translates messages to Bokmål.
@@ -31,7 +31,7 @@ export class ToNbCommand {
   ): Promise<void> {
     await this.translator.translate({
       interaction,
-      to: Language.Bokmål,
+      to: TranslationLanguage.Bokmål,
       text: interaction.targetMessage.content,
       ephemeral: true,
       displayLanguage: DisplayLanguage.English,
