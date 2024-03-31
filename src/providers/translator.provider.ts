@@ -57,7 +57,7 @@ const formatTime = (ms: number, displayLanguage: DisplayLanguage) => {
 
 // Assuming an enum is 1:1 with each key being unique, gets the name of the key
 // from the enum value.
-function getEnumKeyByValue<T extends Record<string, string>>(
+export function getEnumKeyByValue<T extends Record<string, string>>(
   enumType: T,
   value: string,
 ): keyof T | undefined {

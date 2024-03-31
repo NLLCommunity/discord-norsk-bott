@@ -1,6 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { Language } from '../types';
 
+export interface LanguageCandidate {
+  language: ApertiumLanguage;
+  confidence: number;
+}
+
 @Injectable()
 export class ApertiumProvider {
   readonly #baseUrl: string = 'https://apertium.org/apy/';
@@ -62,6 +67,28 @@ export class ApertiumProvider {
     );
 
     return mostLikely[0];
+  }
+
+  /**
+   * Returns an array of languages that the given text could be along with their
+   * confidence levels. The array is sorted by confidence in descending order,
+   * with the most likely language first.
+   * @param text The text to detect the language of.
+   * @returns An array of language candidates.
+   */
+  async detectLanguages(text: string): Promise<LanguageCandidate[]> {
+    const data = new URLSearchParams({ q: text }).toString();
+
+    const response = (await this.#fetch('identifyLang', data)) as {
+      [langId: string]: number;
+    };
+
+    return Object.entries(response)
+      .map(([language, confidence]) => ({
+        language: language as ApertiumLanguage,
+        confidence,
+      }))
+      .sort((a, b) => b.confidence - a.confidence);
   }
 }
 
