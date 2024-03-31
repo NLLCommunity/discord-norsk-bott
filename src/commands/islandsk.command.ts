@@ -12,6 +12,7 @@ import {
   EmbedBuilder,
   ActionRowBuilder,
   ButtonBuilder,
+  PermissionFlagsBits,
 } from 'discord.js';
 import { RateLimiterProvider, ShowEveryoneProvider } from '../providers';
 import { ShowEveryoneParam } from '../utils';
@@ -37,6 +38,7 @@ export class IslandskCommandParams {
 @Command({
   name: 'islandsk',
   description: 'Omsetur tilinn islandskur / Translate to Icelandic',
+  defaultMemberPermissions: PermissionFlagsBits.SendMessages,
 })
 export class IslandskCommand {
   constructor(
