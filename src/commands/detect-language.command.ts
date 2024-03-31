@@ -95,7 +95,7 @@ export class DetectLanguageCommand {
       .setTitle('Language Detection')
       .setDescription(description)
       .setFooter({
-        text: '⚠️ I am not always accurate. Please verify the result.',
+        text: '⚠️ I am not always accurate. Dialects or slang may affect the result. Ask a human for confirmation.',
       });
 
     await interaction.editReply({
