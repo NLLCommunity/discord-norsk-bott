@@ -87,7 +87,7 @@ export class IslandskCommand {
 
     const wordRegex = /\b([a-zæøåäö]+)\b/gi;
 
-    const translatedText = text.replace(wordRegex, (word) => {
+    let translatedText = text.replace(wordRegex, (word) => {
       if (word.length < 3 || word.endsWith('ur') || word.endsWith('inn')) {
         return word;
       }
@@ -135,6 +135,15 @@ export class IslandskCommand {
       // Add -ur to the word.
       return `${word}ur`;
     });
+
+    // Replace "-dur" with "-ður" and "th" with "þ".
+    translatedText = translatedText
+      .replace(/dur\b/gi, 'ður')
+      .replace(/(?<=[^0-9]|\b)th/gi, 'þ');
+
+    // Replace "dt" with "þ".
+
+    translatedText = translatedText.replace(/dt/gi, 'þ');
 
     const embed = new EmbedBuilder()
       .setTitle('Translated to Icelandic')
