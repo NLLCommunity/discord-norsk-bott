@@ -88,9 +88,13 @@ export class IslandskCommand {
     const wordRegex = /\b([a-zæøåäö]+)\b/gi;
 
     let translatedText = text.replace(wordRegex, (word) => {
-      if (word.length < 3 || word.endsWith('ur') || word.endsWith('inn')) {
+      if (word.length < 3 || /ur$|inn$/i.test(word)) {
         return word;
       }
+
+      const isCapitalized = /[A-ZÆØÅÄÖ]$/.test(word);
+
+      const [ur, inn] = isCapitalized ? ['UR', 'INN'] : ['ur', 'inn'];
 
       // match vowels followed by r (e.g. "ar", "år", etc.)
       const vowelsFollowedByRMatch = word.match(
@@ -99,7 +103,7 @@ export class IslandskCommand {
 
       if (vowelsFollowedByRMatch) {
         // Replace the er/ar/etc. with -ur.
-        return word.slice(0, -2) + 'ur';
+        return word.slice(0, -2) + ur;
       }
 
       // match last vowel, even if it's before the consonants at the end
@@ -120,30 +124,26 @@ export class IslandskCommand {
 
         // Replace the last vowels with -inn if the last vowel is "i".
         if (lastVowelsMatch[0] === 'i') {
-          return word.replace(/[aeiouyæøåäö]+$/i, 'inn');
+          return word.replace(/[aeiouyæøåäö]+$/i, inn);
         }
 
         // Replace the last vowels with -ur.
-        return word.replace(/[aeiouyæøåäö]+$/i, 'ur');
+        return word.replace(/[aeiouyæøåäö]+$/i, ur);
       }
 
       // Add -inn to the word if the last vowel is "i".
       if (lastVowelsMatch[0] === 'i') {
-        return `${word}inn`;
+        return `${word}${inn}`;
       }
 
       // Add -ur to the word.
-      return `${word}ur`;
+      return `${word}${ur}`;
     });
 
-    // Replace "-dur" with "-ður" and "th" with "þ".
     translatedText = translatedText
-      .replace(/dur\b/gi, 'ður')
-      .replace(/(?<=[^0-9]|\b)th/gi, 'þ');
-
-    // Replace "dt" with "þ".
-
-    translatedText = translatedText.replace(/dt/gi, 'þ');
+      .replace(/d(ur)\b/gi, 'ð$1') // Replace "dur" with "ður".
+      .replace(/(?<=[^0-9]|\b)th/gi, 'þ') // Replace "th" with "þ".
+      .replace(/dt/gi, 'þ'); // Replace "dt" with "þ".
 
     const embed = new EmbedBuilder()
       .setTitle('Translated to Icelandic')
