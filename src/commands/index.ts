@@ -1,6 +1,5 @@
 export * from './bøying.command';
 export * from './detect-language.command';
-export * from './islandsk.command';
 export * from './notion';
 export * from './ordbok.command';
 export * from './random.command';
