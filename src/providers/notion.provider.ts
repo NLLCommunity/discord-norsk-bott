@@ -153,7 +153,7 @@ export class NotionService {
 
       const guild = this.discordClient.guilds.cache.get(syncPageMetadata.guild);
       const combinedRegex =
-        /(?:\[#(?:[^\s\[\]\(\)]+?)\]\(((?:https:\/\/discord\.com\/channels\/(\d+)\/(\d+))))|(?:\[((https:\/\/discord\.com\/channels\/(\d+)\/(\d+))|#([^\s]+?))\]\(\5\))|(https:\/\/discord\.com\/channels\/(\d+)\/(\d+))|(:([a-zA-Z0-9_]+):)|(?:\[(https?:\/\/[^\s\[\]\(\)]+)\]\(\14\/?\))|((https?:\/\/[^\s\[\]\(\)]+))/g;
+        /(?:\[#(?:[^\s\[\]\(\)]+?)\]\(((?:https:\/\/discord\.com\/channels\/(\d+)\/(\d+)))\))|(?:\[((https:\/\/discord\.com\/channels\/(\d+)\/(\d+))|#([^\s]+?))\]\(\5\))|(https:\/\/discord\.com\/channels\/(\d+)\/(\d+))|(:([a-zA-Z0-9_]+):)|(?:\[(https?:\/\/[^\s\[\]\(\)]+)\]\(\14\/?\))|((https?:\/\/[^\s\[\]\(\)]+))/g;
 
       // Use a function to determine the replacement dynamically
       line = line.replace(
