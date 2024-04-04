@@ -57,4 +57,42 @@ Only respond with "safe" or "unsafe" — do not include any other text in your r
       throw error;
     }
   }
+
+  /**
+   * Summarizes the given content.
+   * @param content The content to summarize.
+   * @param context Additional context to provide to the model.
+   * @returns The summarized content.
+   */
+  async summarize(content: string, context?: string): Promise<string | null> {
+    if (!this.#openAI) {
+      return content;
+    }
+
+    try {
+      const response = await this.#openAI.chat.completions.create({
+        model: 'gpt-4-0125-preview',
+        n: 1,
+        messages: [
+          {
+            role: 'system',
+            content: `Summarize the following text.${context ? `\n${context}\n` : ''}
+Your response should be only the summary of the text and should be no longer than 1000 characters.
+You should format it suitable for being sent as a Discord message with the limited Markdown support that Discord provides.
+It should be clear, concise, easy to follow and understand, and be well-structured/formatted.
+Do not include any other text in your response.`,
+          },
+          {
+            role: 'user',
+            content,
+          },
+        ],
+      });
+
+      return response.choices[0].message.content;
+    } catch (error) {
+      this.#logger.error('Failed to summarize content', error);
+      throw error;
+    }
+  }
 }
