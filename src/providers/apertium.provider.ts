@@ -83,6 +83,10 @@ export class ApertiumProvider {
       [langId: string]: number;
     };
 
+    if (response.code && response.code !== 200) {
+      throw new Error((response as unknown as { message: string }).message);
+    }
+
     return Object.entries(response)
       .map(([language, confidence]) => ({
         language: language as ApertiumLanguage,
