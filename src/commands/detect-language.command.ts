@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { Command, Handler, InteractionEvent } from '@discord-nestjs/core';
 import {
   EmbedBuilder,
@@ -31,6 +31,8 @@ export class DetectLanguageCommand {
     private readonly sanitizer: SanitizationProvider,
   ) {}
 
+  #logger = new Logger(DetectLanguageCommand.name);
+
   /**
    * Handles the command.
    * @param interaction The interaction event.
@@ -52,55 +54,63 @@ export class DetectLanguageCommand {
 
     await interaction.deferReply({ ephemeral: true });
 
-    const candidates = await this.apertium.detectLanguages(text);
+    try {
+      const candidates = await this.apertium.detectLanguages(text);
 
-    const excerpt = this.sanitizer.sanitize(
-      text.length > 100 ? `${text.slice(0, 100)}…` : text,
-    );
+      const excerpt = this.sanitizer.sanitize(
+        text.length > 100 ? `${text.slice(0, 100)}…` : text,
+      );
 
-    // Send the top 3 detected languages. Skip any with a low confidence.
+      // Send the top 3 detected languages. Skip any with a low confidence.
 
-    const topLanguages = candidates
-      .filter((candidate) => candidate.confidence > 0.5)
-      .slice(0, 3)
-      .map((candidate) => {
-        const language = getEnumKeyByValue(
-          ApertiumLanguage,
-          candidate.language,
-        );
-        return { language, confidence: candidate.confidence };
-      });
+      const topLanguages = candidates
+        .filter((candidate) => candidate.confidence > 0.5)
+        .slice(0, 3)
+        .map((candidate) => {
+          const language = getEnumKeyByValue(
+            ApertiumLanguage,
+            candidate.language,
+          );
+          return { language, confidence: candidate.confidence };
+        });
 
-    const firstPlace = topLanguages.shift();
+      const firstPlace = topLanguages.shift();
 
-    let description = `@${interaction.targetMessage.author.username} said:\n> ${excerpt}\n\n`;
+      let description = `@${interaction.targetMessage.author.username} said:\n> ${excerpt}\n\n`;
 
-    if (!firstPlace) {
-      description +=
-        "I couldn't detect the language of that message. It may be too short or be in a language I don't support.";
-    } else {
-      description += `I am **${(firstPlace.confidence * 100).toFixed(2)}% confident** that the message is in **${firstPlace.language}**.`;
+      if (!firstPlace) {
+        description +=
+          "I couldn't detect the language of that message. It may be too short or be in a language I don't support.";
+      } else {
+        description += `I am **${(firstPlace.confidence * 100).toFixed(2)}% confident** that the message is in **${firstPlace.language}**.`;
 
-      if (topLanguages.length > 0) {
-        description += `\n\nOther likely languages include:\n${topLanguages
-          .map(
-            (language) =>
-              `- ${language.language} (${(language.confidence * 100).toFixed(2)}%)`,
-          )
-          .join('\n')}`;
+        if (topLanguages.length > 0) {
+          description += `\n\nOther likely languages include:\n${topLanguages
+            .map(
+              (language) =>
+                `- ${language.language} (${(language.confidence * 100).toFixed(2)}%)`,
+            )
+            .join('\n')}`;
+        }
       }
-    }
 
-    const embed = new EmbedBuilder()
-      .setTitle('Language Detection')
-      .setDescription(description)
-      .setFooter({
-        text: '⚠️ I am not always accurate. Dialects or slang may affect the result. Ask a human for confirmation.',
+      const embed = new EmbedBuilder()
+        .setTitle('Language Detection')
+        .setDescription(description)
+        .setFooter({
+          text: '⚠️ I am not always accurate. Dialects or slang may affect the result. Ask a human for confirmation.',
+        });
+
+      await interaction.editReply({
+        embeds: [embed],
+        components: [this.showEveryone.getActionRow()],
       });
+    } catch (error) {
+      this.#logger.error('Error detecting language', error);
 
-    await interaction.editReply({
-      embeds: [embed],
-      components: [this.showEveryone.getActionRow()],
-    });
+      await interaction.editReply({
+        content: 'An error occurred while detecting the language.',
+      });
+    }
   }
 }
