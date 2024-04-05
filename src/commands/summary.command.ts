@@ -87,8 +87,6 @@ export class SummarizeCommand {
         lastMessageId = batch.last()?.id;
       } while (messages.length < 500 && lastMessageId);
 
-      console.log(messages);
-
       if (!messages) {
         this.#logger.warn('No messages found in the current thread');
         interaction.editReply('No messages found in the current thread');
@@ -106,7 +104,11 @@ export class SummarizeCommand {
 
       const response = await this.openai.summarize(
         content,
-        `If your summary contains a user mention with a numeric user ID (e.g. @123456789...), it must be formatted as <@numericuserid>, and for channels, <#numericchannelid>. Do not surround the bracketed mentions with code backticks.`,
+        `If your summary contains a user mention with a numeric user ID (e.g. @123456789...), it must be formatted as <@numericuserid>, and for channels, <#numericchannelid>. Do not surround the bracketed mentions with code backticks.
+Where possible, _always_ refer to users with a mention (e.g. <@numericuserid>), not with a username. This is because usernames can change, but IDs are permanent.
+Use a concise and clear writing style. Avoid using jargon or overly complex language.
+Use bullet points or numbered lists to organize information.
+Use bold or italic text to emphasize key points.`,
       );
 
       if (!response) {
