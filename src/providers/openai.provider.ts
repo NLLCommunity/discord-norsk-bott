@@ -81,7 +81,7 @@ Only respond with "safe" or "unsafe" — do not include any other text in your r
           {
             role: 'system',
             content: `Summarize the text given to you, following these guidelines:${context ? `\n${context}\n` : ''}
-Your response should be only the summary of the text and should be no longer than 1000 characters.
+Your response should be only the summary of the text and must be no longer than 1700 characters. This is a hard limit.
 You should format it suitable for being sent as a Discord message with the limited Markdown support that Discord provides.
 It should be clear, concise, easy to follow and understand, and be well-structured/formatted.
 Do not include any other text in your response.`,
