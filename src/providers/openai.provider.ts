@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { OpenAI } from 'openai';
+import { Stream } from 'openai/streaming';
 
 @Injectable()
 export class OpenAiProvider {
@@ -64,9 +65,12 @@ Only respond with "safe" or "unsafe" — do not include any other text in your r
    * @param context Additional context to provide to the model.
    * @returns The summarized content.
    */
-  async summarize(content: string, context?: string): Promise<string | null> {
+  async summarize(
+    content: string,
+    context?: string,
+  ): Promise<Stream<OpenAI.Chat.Completions.ChatCompletionChunk> | null> {
     if (!this.#openAI) {
-      return content;
+      return null;
     }
 
     try {
@@ -87,9 +91,10 @@ Do not include any other text in your response.`,
             content,
           },
         ],
+        stream: true,
       });
 
-      return response.choices[0].message.content;
+      return response;
     } catch (error) {
       this.#logger.error('Failed to summarize content', error);
       throw error;
