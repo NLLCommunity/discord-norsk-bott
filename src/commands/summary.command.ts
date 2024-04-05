@@ -108,7 +108,8 @@ export class SummarizeCommand {
 Where possible, _always_ refer to users with a mention (e.g. <@numericuserid>), not with a username. This is because usernames can change, but IDs are permanent.
 Use a concise and clear writing style. Avoid using jargon or overly complex language.
 Use bullet points or numbered lists to organize information.
-Use bold or italic text to emphasize key points.`,
+Use bold or italic text to emphasize key points.
+If people are discussing solutions for a problem or set of problems, structure the summary such that you first introduce the problem(s), and then the proposed solutions and what people's opinions are on them.`,
       );
 
       if (!response) {
