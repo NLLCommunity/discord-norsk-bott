@@ -1,17 +1,14 @@
 import { Injectable, Logger } from '@nestjs/common';
 import {
   ButtonStyle,
-  ComponentType,
-  InteractionCollector,
   ButtonInteraction,
   ButtonBuilder,
   Client,
-  TextBasedChannel,
-  Events,
   ActionRowBuilder,
 } from 'discord.js';
 import { InjectDiscordClient } from '@discord-nestjs/core';
 import { RateLimiterProvider } from './rate-limiter.provider';
+import { GuildButtonCollectorProvider } from './guild-button-collector.provider';
 import { DisplayLanguage } from '../types';
 
 enum Messages {
@@ -88,130 +85,94 @@ export class ShowEveryoneProvider {
   constructor(
     @InjectDiscordClient() private readonly client: Client,
     private readonly rateLimiter: RateLimiterProvider,
+    guildCollectors: GuildButtonCollectorProvider,
   ) {
-    // Add collectors to all channels that the bot is in when the bot is ready
-    this.client.once(Events.ClientReady, () => {
-      this.client.guilds.cache.forEach((guild) => {
-        guild.channels.cache.forEach((channel) => {
-          if (channel.isTextBased()) {
-            this.#addCollector(channel);
-          }
-        });
-      });
-    });
-
-    // Add collectors to new channels as they are created
-    this.client.on(Events.ChannelCreate, (channel) => {
-      if (channel.isTextBased()) {
-        this.#addCollector(channel);
-      }
-    });
-
-    // Remove collectors from channels as they are deleted
-    this.client.on(Events.ChannelDelete, (channel) => {
-      if (channel.isTextBased()) {
-        this.#collectors.get(channel.id)?.stop();
-        this.#collectors.delete(channel.id);
-      }
-    });
+    guildCollectors.addHandler('showeveryone', (interaction) =>
+      this.#handle(interaction),
+    );
+    guildCollectors.addHandler('visalle', (interaction) =>
+      this.#handle(interaction),
+    );
   }
 
-  /** Collectors keyed by channel ID. */
-  #collectors = new Map<string, InteractionCollector<ButtonInteraction>>();
-
   /**
-   * Adds a collector to the given channel.
-   * @param channel The channel to add the collector to.
+   * Handles the command.
+   * @param collectorInteraction The interaction event.
    */
-  #addCollector(channel: TextBasedChannel): void {
-    const collector = channel.createMessageComponentCollector({
-      componentType: ComponentType.Button,
-    });
+  async #handle(collectorInteraction: ButtonInteraction): Promise<void> {
+    const { channel, message, customId } = collectorInteraction;
 
-    collector.on('collect', async (collectorInteraction) => {
-      const { channel, message } = collectorInteraction;
+    const language =
+      customId === 'showeveryone'
+        ? DisplayLanguage.English
+        : customId === 'visalle'
+          ? DisplayLanguage.Norwegian
+          : undefined;
 
-      const language =
-        collectorInteraction.customId === 'showeveryone'
-          ? DisplayLanguage.English
-          : collectorInteraction.customId === 'visalle'
-            ? DisplayLanguage.Norwegian
-            : undefined;
+    if (!language || !channel || !('name' in channel)) {
+      return;
+    }
 
-      if (!language || !channel || !('name' in channel)) {
+    try {
+      // Post ephemeral message to the channel for everyone to see
+      // Rate limit like it were a normal command with visalle/showeveryone
+      // passed as true
+
+      const rateLimitKey = ShowEveryoneProvider.name;
+
+      const result = this.rateLimiter.rateLimit(
+        rateLimitKey,
+        collectorInteraction as any,
+        {
+          byUser: false,
+        },
+      );
+
+      if (result.isRateLimited) {
+        collectorInteraction.reply({
+          content: MessageText[DisplayLanguage.Norwegian][Messages.RateLimited](
+            result.timeUntilNextUse!,
+          ),
+          ephemeral: true,
+        });
         return;
       }
 
-      try {
-        // Post ephemeral message to the channel for everyone to see
-        // Rate limit like it were a normal command with visalle/showeveryone
-        // passed as true
+      // Take the existing translation message and send a copy to the channel
+      // that isn't ephemeral
 
-        const rateLimitKey = ShowEveryoneProvider.name;
+      // Create a new message with the same content as the original message
+      const newMessage = message.embeds[0].toJSON();
 
-        const result = this.rateLimiter.rateLimit(
-          rateLimitKey,
-          collectorInteraction as any,
-          {
-            byUser: false,
-          },
-        );
+      // Modify the embed such that the requesting user's name is added to the
+      // beginning of the footer
 
-        if (result.isRateLimited) {
-          collectorInteraction.reply({
-            content: MessageText[DisplayLanguage.Norwegian][
-              Messages.RateLimited
-            ](result.timeUntilNextUse!),
-            ephemeral: true,
-          });
-          return;
-        }
+      const requestedBy = message.interaction
+        ? MessageText[language][Messages.UsedCommand](
+            '@' + message.interaction.user.tag,
+            message.interaction.commandName,
+          )
+        : MessageText[language][Messages.RequestedBy](
+            '@' + collectorInteraction.user.tag,
+          );
 
-        // Take the existing translation message and send a copy to the channel
-        // that isn't ephemeral
+      newMessage.footer = {
+        ...(newMessage.footer ?? {}),
+        text:
+          requestedBy +
+          (newMessage.footer?.text ? `\n${newMessage.footer.text}` : ''),
+      };
 
-        // Create a new message with the same content as the original message
-        const newMessage = message.embeds[0].toJSON();
-
-        // Modify the embed such that the requesting user's name is added to the
-        // beginning of the footer
-
-        const requestedBy = message.interaction
-          ? MessageText[language][Messages.UsedCommand](
-              '@' + message.interaction.user.tag,
-              message.interaction.commandName,
-            )
-          : MessageText[language][Messages.RequestedBy](
-              '@' + collectorInteraction.user.tag,
-            );
-
-        newMessage.footer = {
-          ...(newMessage.footer ?? {}),
-          text:
-            requestedBy +
-            (newMessage.footer?.text ? `\n${newMessage.footer.text}` : ''),
-        };
-
-        // Send a new reply that's not ephemeral
-        await collectorInteraction.reply({
-          embeds: [newMessage],
-        });
-      } catch (error) {
-        this.#logger.error(
-          `Failed to show translation to everyone for ${collectorInteraction.user.tag} in ${channel.name}`,
-          error,
-        );
-      }
-    });
-
-    this.#collectors.set(channel.id, collector);
-  }
-
-  /**
-   * Runs when the application is shutting down. Removes all collectors.
-   */
-  onApplicationShutdown(): void {
-    this.#collectors.forEach((collector) => collector.stop());
+      // Send a new reply that's not ephemeral
+      await collectorInteraction.reply({
+        embeds: [newMessage],
+      });
+    } catch (error) {
+      this.#logger.error(
+        `Failed to show translation to everyone for ${collectorInteraction.user.tag} in ${channel.name}`,
+        error,
+      );
+    }
   }
 
   /**

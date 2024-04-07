@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { DiscordModule } from '@discord-nestjs/core';
-import { GatewayIntentBits, Partials } from 'discord.js';
+import { Client, GatewayIntentBits, Partials } from 'discord.js';
 import { NestClassCollection } from './utils';
 import * as providers from './providers';
 import * as commands from './commands';
@@ -26,6 +26,9 @@ import * as handlers from './handlers';
         registerCommandOptions: [{ removeCommandsBefore: true }],
         failOnLogin: true,
       }),
+      setupClientFactory: (client: Client) => {
+        client.setMaxListeners(100);
+      },
       inject: [ConfigService],
     }),
     DiscordModule.forFeature(),
