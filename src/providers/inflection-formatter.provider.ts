@@ -133,11 +133,11 @@ const wordClassHandlers: WordClassHandlers = {
         },
         {
           name: 'bestemt eintal',
-          includeTags: [InflectionTag.Fleirtal, InflectionTag.Ubestemt],
+          includeTags: [InflectionTag.Bestemt, InflectionTag.Eintal],
         },
         {
           name: 'ubestemt fleirtal',
-          includeTags: [InflectionTag.Bestemt, InflectionTag.Eintal],
+          includeTags: [InflectionTag.Fleirtal, InflectionTag.Ubestemt],
         },
         {
           name: 'bestemt fleirtal',
