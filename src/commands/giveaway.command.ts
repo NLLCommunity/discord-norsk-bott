@@ -167,6 +167,10 @@ To be eligible to win, you must have been in the server for at least 1 month.`,
         const index = Math.floor(Math.random() * users.length);
         winner = users.splice(index, 1)[0];
 
+        const winnerGuildMember =
+          interaction.guild.members.cache.get(winner.id) ||
+          (await interaction.guild.members.fetch(winner.id));
+
         // Check if the user:
         // - Is not the user who started the giveaway
         // - Is still in the server
@@ -174,8 +178,8 @@ To be eligible to win, you must have been in the server for at least 1 month.`,
 
         if (
           winner.id === interaction.message.interaction?.user.id ||
-          !interaction.guild.members.cache.has(winner.id) ||
-          now - winner.createdTimestamp < 30 * 24 * 60 * 60 * 1000 // 30 days
+          !winnerGuildMember?.joinedTimestamp ||
+          now - winnerGuildMember.joinedTimestamp < 30 * 24 * 60 * 60 * 1000 // 30 days
         ) {
           this.#logger.debug(`User ${winner.tag} is not eligible to win`);
           winner = null;
