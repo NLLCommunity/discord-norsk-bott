@@ -73,11 +73,11 @@ export const WordClassParam = () =>
   );
 
 /**
- * Adds a "visalle" option to the command.
+ * Adds a "vistilalle" option to the command.
  */
 export const ShowEveryoneParam = () =>
   Param({
-    name: 'visalle',
+    name: 'vistilalle',
     description:
       'Send svaret i kanalen for alle å sjå / Send the response in the channel for everyone to see',
     type: ParamType.BOOLEAN,

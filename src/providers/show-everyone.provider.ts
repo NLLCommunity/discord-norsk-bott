@@ -90,7 +90,7 @@ export class ShowEveryoneProvider {
     guildCollectors.addHandler('showeveryone', (interaction) =>
       this.#handle(interaction),
     );
-    guildCollectors.addHandler('visalle', (interaction) =>
+    guildCollectors.addHandler('vistilalle', (interaction) =>
       this.#handle(interaction),
     );
   }
@@ -105,7 +105,7 @@ export class ShowEveryoneProvider {
     const language =
       customId === 'showeveryone'
         ? DisplayLanguage.English
-        : customId === 'visalle'
+        : customId === 'vistilalle'
           ? DisplayLanguage.Norwegian
           : undefined;
 
@@ -115,7 +115,7 @@ export class ShowEveryoneProvider {
 
     try {
       // Post ephemeral message to the channel for everyone to see
-      // Rate limit like it were a normal command with visalle/showeveryone
+      // Rate limit like it were a normal command with vistilalle/showeveryone
       // passed as true
 
       const rateLimitKey = ShowEveryoneProvider.name;
@@ -188,7 +188,7 @@ export class ShowEveryoneProvider {
     return new ButtonBuilder()
       .setCustomId(
         displayLanguage === DisplayLanguage.Norwegian
-          ? 'visalle'
+          ? 'vistilalle'
           : 'showeveryone',
       )
       .setLabel(MessageText[displayLanguage][Messages.ShowEveryone])
