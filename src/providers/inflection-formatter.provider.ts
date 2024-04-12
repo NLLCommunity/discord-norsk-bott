@@ -6,7 +6,6 @@ import {
   WordClass,
   WordInflectionsQuery,
 } from '../gql/graphql';
-import { FormatterProvider } from './formatter.provider';
 
 type InflectionsQueryArticle = NonNullable<
   NonNullable<WordInflectionsQuery['word']>['articles']
@@ -101,7 +100,7 @@ const wordClassHandlers: WordClassHandlers = {
         {
           name: 'imperativ',
           includeTags: [InflectionTag.Imperativ],
-          suffix: '!',
+          suffix: '_!_',
         },
         {
           name: 'presens partisipp',
@@ -227,8 +226,6 @@ function processForms(
 
 @Injectable()
 export class InflectionFormatterProvider {
-  constructor(private readonly formatter: FormatterProvider) {}
-
   #groupInflections(
     inflections: InflectionsQueryInflections,
   ): GroupedInflections {
@@ -261,7 +258,7 @@ export class InflectionFormatterProvider {
 
       for (const { tags, wordForms } of groupedInflections.values()) {
         formatted.push({
-          name: [...tags].map(this.formatter.formatInflectionTag).join(', '),
+          name: [...tags].map(this.formatInflectionTag).join(', '),
           forms: wordForms.join(', '),
         });
       }
@@ -273,5 +270,85 @@ export class InflectionFormatterProvider {
       groups: handler({ groupedInflections, article, paradigm }),
       full: false,
     };
+  }
+
+  /**
+   * Formats an inflection tag.
+   * @param tag The tag to format.
+   */
+  formatInflectionTag(tag: InflectionTag): string {
+    switch (tag) {
+      case InflectionTag.Infinitiv:
+        return 'infinitiv';
+
+      case InflectionTag.Presens:
+        return 'presens';
+
+      case InflectionTag.Preteritum:
+        return 'preteritum';
+
+      case InflectionTag.PerfektPartisipp:
+        return 'perfekt partisipp';
+
+      case InflectionTag.PresensPartisipp:
+        return 'presens partisipp';
+
+      case InflectionTag.SPassiv:
+        return 's-passiv';
+
+      case InflectionTag.Imperativ:
+        return 'imperativ';
+
+      case InflectionTag.Passiv:
+        return 'passiv';
+
+      case InflectionTag.Adjektiv:
+        return 'adjektiv';
+
+      case InflectionTag.Adverb:
+        return 'adverb';
+
+      case InflectionTag.Eintal:
+        return 'eintal';
+
+      case InflectionTag.HankjoennHokjoenn:
+        return 'hankjønn/hokjønn';
+
+      case InflectionTag.Hankjoenn:
+        return 'hankjønn';
+
+      case InflectionTag.Hokjoenn:
+        return 'hokjønn';
+
+      case InflectionTag.Inkjekjoenn:
+        return 'inkjekjønn';
+
+      case InflectionTag.Ubestemt:
+        return 'ubestemt';
+
+      case InflectionTag.Bestemt:
+        return 'bestemt';
+
+      case InflectionTag.Fleirtal:
+        return 'fleirtal';
+
+      case InflectionTag.Superlativ:
+        return 'superlativ';
+
+      case InflectionTag.Komparativ:
+        return 'komparativ';
+
+      case InflectionTag.Positiv:
+        return 'positiv';
+
+      case InflectionTag.Nominativ:
+        return 'nominativ';
+
+      case InflectionTag.Akkusativ:
+        return 'akkusativ';
+
+      default:
+        return tag;
+    }
   }
 }

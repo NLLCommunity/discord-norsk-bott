@@ -83,13 +83,21 @@ export class OrdbokCommand {
       ephemeral: !sendToEveryone,
     });
 
+    const verbFormRegex = /å ([^\s]+)/i;
+    const verbFormMatch = word.match(verbFormRegex);
+
+    const [searchWord, searchWordClass] =
+      verbFormMatch && !wordClass
+        ? [verbFormMatch[1], WordClass.Verb]
+        : [word, wordClass];
+
     try {
       const response = await this.ordbokApi.definitions(
-        word,
+        searchWord,
         dictionary
           ? [dictionary]
           : [Dictionary.Bokmaalsordboka, Dictionary.Nynorskordboka],
-        wordClass,
+        searchWordClass,
       );
 
       const embeds: EmbedBuilder[] = response.map((article) =>

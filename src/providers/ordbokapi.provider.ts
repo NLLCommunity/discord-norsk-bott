@@ -48,6 +48,14 @@ export class OrdbokApiProvider {
             dictionary
             lemmas {
               lemma
+              splitInfinitive
+              paradigms {
+                inflections {
+                  tags
+                  wordForm
+                }
+                tags
+              }
             }
             gender
             wordClass
@@ -89,6 +97,14 @@ export class OrdbokApiProvider {
           dictionary
           lemmas {
             lemma
+            splitInfinitive
+            paradigms {
+              inflections {
+                tags
+                wordForm
+              }
+              tags
+            }
           }
           gender
           wordClass

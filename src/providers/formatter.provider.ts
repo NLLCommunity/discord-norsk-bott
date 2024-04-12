@@ -1,17 +1,17 @@
 import { Injectable } from '@nestjs/common';
-import {
-  Dictionary,
-  Gender,
-  InflectionTag,
-  WordDefinitionsQuery,
-} from '../gql/graphql';
+import { Dictionary, Gender, WordDefinitionsQuery } from '../gql/graphql';
 import { EmbedBuilder } from 'discord.js';
+import { InflectionFormatterProvider } from './inflection-formatter.provider';
 
 /**
  * Formats common data types for display in Discord.
  */
 @Injectable()
 export class FormatterProvider {
+  constructor(
+    private readonly inflectionFormatter: InflectionFormatterProvider,
+  ) {}
+
   /**
    * Formats a dictionary.
    * @param dictionary The dictionary to format.
@@ -52,86 +52,6 @@ export class FormatterProvider {
 
       default:
         return gender;
-    }
-  }
-
-  /**
-   * Formats an inflection tag.
-   * @param tag The tag to format.
-   */
-  formatInflectionTag(tag: InflectionTag): string {
-    switch (tag) {
-      case InflectionTag.Infinitiv:
-        return 'infinitiv';
-
-      case InflectionTag.Presens:
-        return 'presens';
-
-      case InflectionTag.Preteritum:
-        return 'preteritum';
-
-      case InflectionTag.PerfektPartisipp:
-        return 'perfekt partisipp';
-
-      case InflectionTag.PresensPartisipp:
-        return 'presens partisipp';
-
-      case InflectionTag.SPassiv:
-        return 's-passiv';
-
-      case InflectionTag.Imperativ:
-        return 'imperativ';
-
-      case InflectionTag.Passiv:
-        return 'passiv';
-
-      case InflectionTag.Adjektiv:
-        return 'adjektiv';
-
-      case InflectionTag.Adverb:
-        return 'adverb';
-
-      case InflectionTag.Eintal:
-        return 'eintal';
-
-      case InflectionTag.HankjoennHokjoenn:
-        return 'hankjønn/hokjønn';
-
-      case InflectionTag.Hankjoenn:
-        return 'hankjønn';
-
-      case InflectionTag.Hokjoenn:
-        return 'hokjønn';
-
-      case InflectionTag.Inkjekjoenn:
-        return 'inkjekjønn';
-
-      case InflectionTag.Ubestemt:
-        return 'ubestemt';
-
-      case InflectionTag.Bestemt:
-        return 'bestemt';
-
-      case InflectionTag.Fleirtal:
-        return 'fleirtal';
-
-      case InflectionTag.Superlativ:
-        return 'superlativ';
-
-      case InflectionTag.Komparativ:
-        return 'komparativ';
-
-      case InflectionTag.Positiv:
-        return 'positiv';
-
-      case InflectionTag.Nominativ:
-        return 'nominativ';
-
-      case InflectionTag.Akkusativ:
-        return 'akkusativ';
-
-      default:
-        return tag;
     }
   }
 
@@ -181,13 +101,61 @@ export class FormatterProvider {
       fallbackWord ??
       '[Ukjent ord]';
 
-    let articleHeader = `${
-      article.wordClass
-    }${genderString}\n_frå ${this.formatDictionary(article.dictionary)}_`;
     const url = this.getUrl(article);
+    const dictionaryText = url
+      ? `[_frå ${this.formatDictionary(article.dictionary)}_](${url})`
+      : `_frå ${this.formatDictionary(article.dictionary)}_`;
 
-    if (url) {
-      articleHeader += `\n[Les meir](${url})`;
+    let articleHeader = `${article.wordClass}${genderString}\n${dictionaryText}`;
+
+    let splitInfinitive = false;
+
+    const lemmas = article.lemmas ?? [];
+
+    const inflections: string[] = [];
+
+    for (const lemma of lemmas ?? []) {
+      if (lemma.splitInfinitive) {
+        splitInfinitive = true;
+      }
+
+      for (const paradigm of lemma.paradigms) {
+        let text = '';
+
+        const { groups, full: showLong } =
+          this.inflectionFormatter.formatInflections({
+            article,
+            paradigm,
+          });
+
+        if (!showLong) {
+          for (const inflections of groups) {
+            let formList = '';
+
+            for (const { forms } of inflections) {
+              formList += formList ? `; ${forms}` : forms;
+            }
+
+            text += `> ${formList}\n`;
+          }
+        }
+
+        const trimmed = text.trim();
+
+        if (!trimmed || inflections.includes(trimmed)) {
+          continue;
+        }
+
+        inflections.push(trimmed);
+      }
+    }
+
+    if (splitInfinitive) {
+      articleHeader += '\n\nKløyvd infinitiv: -a\n';
+    }
+
+    if (inflections.length) {
+      articleHeader += `\n${inflections.join('\n')}\n`;
     }
 
     const body = `${articleHeader}\n${definitions}`;

@@ -138,7 +138,7 @@ export class BøyingCommand {
             if (paradigm.tags.length) {
               paradigmText =
                 paradigm.tags
-                  .map(this.formatter.formatInflectionTag)
+                  .map(this.inflectionFormatter.formatInflectionTag)
                   .join(', ') + (lemmas.length > 1 ? ` (${lemma.lemma})` : '');
             } else {
               paradigmText =
