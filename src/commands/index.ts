@@ -1,6 +1,7 @@
 export * from './bøying.command';
 export * from './detect-language.command';
 export * from './giveaway.command';
+export * from './myuserid.command';
 export * from './notion';
 export * from './ordbok.command';
 export * from './random.command';
