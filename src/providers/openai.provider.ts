@@ -5,23 +5,23 @@ import { Stream } from 'openai/streaming';
 
 @Injectable()
 export class OpenAiProvider {
-  readonly #openAI?: OpenAI;
+  readonly #client?: OpenAI;
   readonly #logger = new Logger(OpenAiProvider.name);
 
   constructor(private configService: ConfigService) {
     const openAIKey = this.configService.get<string>('OPENAI_API_KEY');
 
     if (openAIKey) {
-      this.#openAI = new OpenAI({ apiKey: openAIKey, fetch });
+      this.#client = new OpenAI({ apiKey: openAIKey, fetch });
     }
   }
 
-  get openAI(): OpenAI | undefined {
-    return this.#openAI;
+  get client(): OpenAI | undefined {
+    return this.#client;
   }
 
   get isAvailable(): boolean {
-    return Boolean(this.#openAI);
+    return Boolean(this.#client);
   }
 
   /**
@@ -29,12 +29,12 @@ export class OpenAiProvider {
    * other words, is the content inoffensive and safe for work?
    */
   async isSafeForWork(content: string): Promise<boolean> {
-    if (!this.#openAI) {
+    if (!this.#client) {
       return false;
     }
 
     try {
-      const response = await this.#openAI.chat.completions.create({
+      const response = await this.#client.chat.completions.create({
         model: 'gpt-3.5-turbo',
         messages: [
           {
@@ -69,12 +69,12 @@ Only respond with "safe" or "unsafe" — do not include any other text in your r
     content: string,
     context?: string,
   ): Promise<Stream<OpenAI.Chat.Completions.ChatCompletionChunk> | null> {
-    if (!this.#openAI) {
+    if (!this.#client) {
       return null;
     }
 
     try {
-      const response = await this.#openAI.chat.completions.create({
+      const response = await this.#client.chat.completions.create({
         model: 'gpt-4-0125-preview',
         n: 1,
         messages: [

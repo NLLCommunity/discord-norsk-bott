@@ -1,5 +1,7 @@
 export * from './bøying.command';
 export * from './detect-language.command';
+export * from './explain.command';
+export * from './forklar.command';
 export * from './giveaway.command';
 export * from './myuserid.command';
 export * from './notion';

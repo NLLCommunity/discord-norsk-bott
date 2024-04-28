@@ -490,7 +490,7 @@ export class TranslatorProvider {
     const pipeline = this.#getTranslationPipeline(sourceLang, to);
     const shouldRateLimit = pipeline.expensive || !ephemeral;
     const [rateLimitKey, window, maxPerWindow] = pipeline.expensive
-      ? [`${TranslatorProvider.name}-expensive`, 30 * 60 * 1000, 3]
+      ? [`${TranslatorProvider.name}-expensive`, 30 * 60 * 1000, 5]
       : [`${TranslatorProvider.name}-cheap`];
 
     this.#logger.debug(

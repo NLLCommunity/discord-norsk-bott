@@ -1,5 +1,6 @@
 export * from './apertium.provider';
 export * from './deepl.provider';
+export * from './explanation.provider';
 export * from './fetch-message.provider';
 export * from './formatter.provider';
 export * from './guild-button-collector.provider';
