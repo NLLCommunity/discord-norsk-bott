@@ -101,7 +101,7 @@ export class ForklarCommand {
       }
 
       let summary = `> ⚠️ **Merk:** Denne forklaringa er generert av ein AI-modell og kan vere unøyaktig eller variere kvar gong den blir generert. For den mest nøyaktige informasjonen, spør ein menneskeleg ekspert.
->_Visste du at me betalar for kvar forklaring? Hjelp oss med å tilby forklaringar [ved å donera til Ada](https://github.com/sponsors/adalinesimonian)._
+> _Visste du at me betalar for kvar forklaring? Hjelp oss med å tilby forklaringar [ved å donera til Ada](https://github.com/sponsors/adalinesimonian)._
 
 `;
       let lastLength = 0;
