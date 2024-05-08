@@ -1,9 +1,9 @@
 import { CanActivate, ExecutionContext } from '@nestjs/common';
-import { ChannelType, MessageReaction } from 'discord.js';
+import { ChannelType, Message } from 'discord.js';
 
-export class OnlyStandardChannelsGuard implements CanActivate {
+export class MessageOnlyStandardChannelsGuard implements CanActivate {
   canActivate(context: ExecutionContext): boolean {
-    const reaction = context.getArgByIndex(0) as MessageReaction;
+    const reaction = context.getArgByIndex(0) as Message;
 
     return Boolean(
       [
@@ -11,7 +11,7 @@ export class OnlyStandardChannelsGuard implements CanActivate {
         ChannelType.PrivateThread,
         ChannelType.GuildVoice,
         ChannelType.GuildText,
-      ].includes(reaction.message.channel.type),
+      ].includes(reaction.channel.type),
     );
   }
 }

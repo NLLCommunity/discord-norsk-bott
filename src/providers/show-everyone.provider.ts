@@ -141,9 +141,6 @@ export class ShowEveryoneProvider {
       // Take the existing translation message and send a copy to the channel
       // that isn't ephemeral
 
-      // Create a new message with the same content as the original message
-      const newMessage = message.embeds[0].toJSON();
-
       // Modify the embed such that the requesting user's name is added to the
       // beginning of the footer
 
@@ -155,6 +152,21 @@ export class ShowEveryoneProvider {
         : MessageText[language][Messages.RequestedBy](
             '@' + collectorInteraction.user.tag,
           );
+
+      // If the message has an embed, clone it and add the requestedBy text to
+      // the footer. If it doesn't have an embed, copy the message content
+      // instead of using an embed.
+
+      if (!message.embeds.length) {
+        await collectorInteraction.reply({
+          content: `${message.content}\n\n_${requestedBy}_`,
+        });
+
+        return;
+      }
+
+      // Create a new message with the same content as the original message
+      const newMessage = message.embeds[0].toJSON();
 
       newMessage.footer = {
         ...(newMessage.footer ?? {}),

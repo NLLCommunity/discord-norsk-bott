@@ -4,7 +4,7 @@ import { Client, Events, Message, MessageReaction, User } from 'discord.js';
 import {
   FetchedReactionGuard,
   IsTranslateEmojiGuard,
-  OnlyStandardChannelsGuard,
+  ReactionOnlyStandardChannelsGuard,
   ReactionInServerGuard,
   ReactionOnUserMessageGuard,
 } from './guards';
@@ -66,7 +66,7 @@ export class TranslationReactionHandler {
     FetchedReactionGuard,
     ReactionInServerGuard,
     ReactionOnUserMessageGuard,
-    OnlyStandardChannelsGuard,
+    ReactionOnlyStandardChannelsGuard,
     UserHasPermissionsGuard,
   )
   async onMessageReactionAdd(
