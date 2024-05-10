@@ -50,6 +50,17 @@ export class SongLinkProvider {
       {} as Partial<Record<SongLinkApiPlatform, string>>,
     );
 
+    // Special case for YouTube as it can return YouTube Music even if it's not
+    // a song and just a video.
+
+    if (
+      originalPlatform === SongLinkApiPlatform.Youtube &&
+      Object.keys(otherPlatformUrls).length === 1 &&
+      SongLinkApiPlatform.YoutubeMusic in otherPlatformUrls
+    ) {
+      return null;
+    }
+
     return { originalPlatform, otherPlatformUrls };
   }
 }
