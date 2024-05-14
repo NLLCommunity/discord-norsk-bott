@@ -88,7 +88,7 @@ SVARET DITT MÅ IKKE VÆRE LENGRE ENN 1700 TEGN. Hvis svaret ditt er lengre, VIL
       async (): Promise<Stream<ChatCompletionChunk> | null> => {
         try {
           const response = await client.chat.completions.create({
-            model: 'gpt-4-0125-preview',
+            model: 'gpt-4o',
             n: 1,
             messages,
             stream: true,

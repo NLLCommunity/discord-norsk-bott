@@ -75,7 +75,7 @@ Only respond with "safe" or "unsafe" — do not include any other text in your r
 
     try {
       const response = await this.#client.chat.completions.create({
-        model: 'gpt-4-0125-preview',
+        model: 'gpt-4o',
         n: 1,
         messages: [
           {
