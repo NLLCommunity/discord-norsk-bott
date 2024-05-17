@@ -8,6 +8,7 @@ import {
   ForumChannel,
   GuildBasedChannel,
   Message,
+  MessageMentionOptions,
   PublicThreadChannel,
   TextChannel,
   User,
@@ -41,6 +42,12 @@ type ChannelInfo =
       channel: ForumChannel;
       webhook?: Webhook;
     };
+
+const allowedMentions: MessageMentionOptions = {
+  users: [],
+  roles: [],
+  repliedUser: false,
+};
 
 @Injectable()
 @SubCommand({
@@ -245,9 +252,15 @@ export class SyncSubCommand {
 
         for (const message of newMessages) {
           if (info.webhook) {
-            await info.webhook.send({ content: message });
+            await info.webhook.send({
+              content: message,
+              allowedMentions,
+            });
           } else {
-            await info.channel.send({ content: message });
+            await info.channel.send({
+              content: message,
+              allowedMentions,
+            });
           }
         }
       }
@@ -337,12 +350,16 @@ export class SyncSubCommand {
           // Post the rest of the messages in the thread
 
           for (const message of newMessages) {
-            await thread.send({ content: message });
+            await thread.send({
+              content: message,
+              allowedMentions,
+            });
           }
         } else {
           const firstMessage = await info.webhook.send({
             content: starter,
             threadName: page.title,
+            allowedMentions,
           });
 
           // Find the thread with the first message ID
@@ -364,6 +381,7 @@ export class SyncSubCommand {
             await info.webhook.send({
               content: message,
               threadId: thread.id,
+              allowedMentions,
             });
           }
         }
@@ -461,7 +479,10 @@ export class SyncSubCommand {
       }
 
       for (const message of paginated) {
-        await channel.send({ content: message });
+        await channel.send({
+          content: message,
+          allowedMentions,
+        });
       }
 
       return;
@@ -477,12 +498,19 @@ export class SyncSubCommand {
           await channel.editMessage(oldMessage.id, {
             content: paginated[i],
             threadId,
+            allowedMentions,
           });
         } else {
-          await oldMessage.edit(paginated[i]);
+          await oldMessage.edit({
+            content: paginated[i],
+            allowedMentions,
+          });
         }
       } else {
-        await channel.send({ content: paginated[i] });
+        await channel.send({
+          content: paginated[i],
+          allowedMentions,
+        });
       }
     }
   }
