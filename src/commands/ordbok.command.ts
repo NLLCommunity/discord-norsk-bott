@@ -20,7 +20,7 @@ import {
   ShowEveryoneParam,
 } from '../utils';
 import { DisplayLanguage } from '../types';
-import { Dictionary, WordClass } from '../gql/graphql';
+import { Dictionary, Gender, WordClass } from '../gql/graphql';
 
 export class OrdbokCommandParams {
   @WordParam()
@@ -86,10 +86,32 @@ export class OrdbokCommand {
     const verbFormRegex = /å ([^\s]+)/i;
     const verbFormMatch = word.match(verbFormRegex);
 
-    const [searchWord, searchWordClass] =
-      verbFormMatch && !wordClass
-        ? [verbFormMatch[1], WordClass.Verb]
-        : [word, wordClass];
+    const nounFormRegex = /(ei?n?|ei?t) ([^\s]+)/i;
+    const nounFormMatch = word.match(nounFormRegex);
+
+    let searchWord = word;
+    let searchWordClass = wordClass;
+    let gender: Gender | undefined;
+
+    if (!searchWordClass) {
+      if (verbFormMatch) {
+        searchWord = verbFormMatch[1];
+        searchWordClass = WordClass.Verb;
+      } else if (nounFormMatch) {
+        searchWord = nounFormMatch[2];
+        searchWordClass = WordClass.Substantiv;
+
+        const lastChar = nounFormMatch[1][nounFormMatch[1].length - 1];
+
+        if (lastChar === 'i') {
+          gender = Gender.Hokjoenn;
+        } else if (lastChar === 'n') {
+          gender = Gender.Hankjoenn;
+        } else {
+          gender = Gender.Inkjekjoenn;
+        }
+      }
+    }
 
     try {
       const response = await this.ordbokApi.definitions(
@@ -100,7 +122,16 @@ export class OrdbokCommand {
         searchWordClass,
       );
 
-      const embeds: EmbedBuilder[] = response.map((article) =>
+      const filtered = gender
+        ? response.filter(
+            (article) =>
+              article.gender === gender ||
+              (article.gender === Gender.HankjoennHokjoenn &&
+                (gender === Gender.Hankjoenn || gender === Gender.Hokjoenn)),
+          )
+        : response;
+
+      const embeds: EmbedBuilder[] = filtered.map((article) =>
         this.formatter.embedForArticle(article, word),
       );
 
