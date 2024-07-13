@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import * as levenshtein from 'fast-levenshtein';
 import { request, gql } from 'graphql-request';
 import {
   Dictionary,
@@ -9,6 +10,8 @@ import {
   WordDefinitionsQueryVariables,
   WordInflectionsQuery,
   WordInflectionsQueryVariables,
+  SuggestionsQuery,
+  SuggestionsQueryVariables,
 } from '../gql/graphql';
 
 @Injectable()
@@ -177,5 +180,59 @@ export class OrdbokApiProvider {
     >(this.#endpoint, query, { word, dictionaries, wordClass });
 
     return data.word?.articles ?? [];
+  }
+
+  /**
+   * Retrieves a list of suggestions for a query.
+   * @param text The query to get suggestions for.
+   * @param dictionaries The dictionaries to search for suggestions in.
+   * @returns A promise that resolves to an array of suggestions.
+   */
+  async suggestions(
+    text: string,
+    dictionaries: Dictionary[],
+  ): Promise<string[]> {
+    const query = gql`
+      query Suggestions($text: String!, $dictionaries: [Dictionary!]) {
+        suggestions(word: $text, dictionaries: $dictionaries) {
+          exact {
+            word
+          }
+          similar {
+            word
+          }
+          freetext {
+            word
+          }
+        }
+      }
+    `;
+
+    const data = await request<SuggestionsQuery, SuggestionsQueryVariables>(
+      this.#endpoint,
+      query,
+      { text, dictionaries },
+    );
+
+    const suggestions = new Set<string>();
+
+    for (const list of [
+      data.suggestions.exact,
+      data.suggestions.similar,
+      data.suggestions.freetext,
+    ]) {
+      for (const suggestion of list) {
+        suggestions.add(suggestion.word);
+      }
+    }
+
+    // Sort the suggestions by their Levenshtein distance to the query.
+
+    return [...suggestions].sort((a, b) => {
+      const distanceA = levenshtein.get(text, a, { useCollator: true });
+      const distanceB = levenshtein.get(text, b, { useCollator: true });
+
+      return distanceA - distanceB;
+    });
   }
 }

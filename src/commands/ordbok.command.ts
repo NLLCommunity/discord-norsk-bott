@@ -113,12 +113,14 @@ export class OrdbokCommand {
       }
     }
 
+    const dictionaries = dictionary
+      ? [dictionary]
+      : [Dictionary.Bokmaalsordboka, Dictionary.Nynorskordboka];
+
     try {
       const response = await this.ordbokApi.definitions(
         searchWord,
-        dictionary
-          ? [dictionary]
-          : [Dictionary.Bokmaalsordboka, Dictionary.Nynorskordboka],
+        dictionaries,
         searchWordClass,
       );
 
@@ -136,9 +138,22 @@ export class OrdbokCommand {
       );
 
       if (!embeds.length) {
-        await interaction.editReply(
-          `Ingen treff for ${word}${dictionary ? `i ${this.formatter.formatDictionary(dictionary)}` : ''}`,
+        const suggestions = await this.ordbokApi.suggestions(
+          word,
+          dictionaries,
         );
+
+        let reply = `Ingen treff for *${word}*${dictionary ? ` i ${this.formatter.formatDictionary(dictionary)}` : ''}.`;
+
+        if (suggestions.length) {
+          reply += ` Kanskje du meinte eit av desse alternativa?\n\n${suggestions
+            .slice(0, 3)
+            .map((suggestion, index) => `${index + 1}. *${suggestion}*`)
+            .join('\n')}`;
+        }
+
+        await interaction.editReply(reply);
+
         return;
       }
 
