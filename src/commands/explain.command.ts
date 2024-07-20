@@ -16,7 +16,7 @@ import {
   RateLimiterProvider,
   ShowEveryoneProvider,
 } from '../providers';
-import { ShowEveryoneParamEn } from 'src/utils';
+import { ShowEveryoneParamEn } from '../utils';
 
 export class ExplainCommandParams {
   @Param({

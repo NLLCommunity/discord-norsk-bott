@@ -1,11 +1,12 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { DiscordModule } from '@discord-nestjs/core';
-import { Client, GatewayIntentBits, Partials } from 'discord.js';
+import { BaseClient, Client, GatewayIntentBits, Partials } from 'discord.js';
 import { NestClassCollection } from './utils';
 import * as providers from './providers';
 import * as commands from './commands';
 import * as handlers from './handlers';
+import EventEmitter from 'events';
 
 @Module({
   imports: [
@@ -27,7 +28,8 @@ import * as handlers from './handlers';
         failOnLogin: true,
       }),
       setupClientFactory: (client: Client) => {
-        client.setMaxListeners(100);
+        // Ugly cast required due to https://github.com/discordjs/discord.js/issues/10358
+        (client as unknown as EventEmitter).setMaxListeners(100);
       },
       inject: [ConfigService],
     }),

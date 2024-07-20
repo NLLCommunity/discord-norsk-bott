@@ -17,7 +17,7 @@ import {
   ShowEveryoneProvider,
 } from '../providers';
 import { DisplayLanguage } from '../types';
-import { ShowEveryoneParam } from 'src/utils';
+import { ShowEveryoneParam } from '../utils';
 
 export class ForklarCommandParams {
   @Param({
