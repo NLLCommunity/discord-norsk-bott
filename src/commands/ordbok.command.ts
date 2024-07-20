@@ -138,10 +138,33 @@ export class OrdbokCommand {
       );
 
       if (!embeds.length) {
-        const suggestions = await this.ordbokApi.suggestions(
-          word,
-          dictionaries,
-        );
+        const indefinitePrefixForArticle = (article: (typeof response)[0]) => {
+          switch (article.gender) {
+            case Gender.Hankjoenn:
+              return article.dictionary === Dictionary.Bokmaalsordboka
+                ? 'en '
+                : 'ein ';
+
+            case Gender.Hokjoenn:
+              return 'ei ';
+
+            case Gender.Inkjekjoenn:
+              return article.dictionary === Dictionary.Bokmaalsordboka
+                ? 'et '
+                : 'eit ';
+
+            default:
+              return '';
+          }
+        };
+
+        const suggestions =
+          filtered.length !== response.length
+            ? response.map(
+                (article) =>
+                  `${indefinitePrefixForArticle(article)}${article.lemmas?.[0].lemma}`,
+              )
+            : await this.ordbokApi.suggestions(searchWord, dictionaries);
 
         let reply = `Ingen treff for *${word}*${dictionary ? ` i ${this.formatter.formatDictionary(dictionary)}` : ''}.`;
 
