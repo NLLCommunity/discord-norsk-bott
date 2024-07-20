@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import * as levenshtein from 'fast-levenshtein';
+import levenshtein from 'fast-levenshtein';
 import { request, gql } from 'graphql-request';
 import {
   Dictionary,
