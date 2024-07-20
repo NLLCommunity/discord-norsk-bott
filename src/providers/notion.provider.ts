@@ -5,7 +5,7 @@ import {
   PageObjectResponse,
   PartialPageObjectResponse,
   RichTextItemResponse,
-} from '@notionhq/client/build/src/api-endpoints';
+} from '@notionhq/client/build/src/api-endpoints.js';
 import { NotionToMarkdown } from 'notion-to-md';
 import * as YAML from 'yaml';
 import * as crypto from 'crypto';

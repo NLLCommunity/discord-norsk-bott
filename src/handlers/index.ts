@@ -1,3 +1,3 @@
-export * from './guards';
-export * from './music-link.handler';
-export * from './translation-reaction.handler';
+export * from './guards/index.js';
+export * from './music-link.handler.js';
+export * from './translation-reaction.handler.js';

@@ -12,15 +12,15 @@ import {
   FormatterProvider,
   RateLimiterProvider,
   ShowEveryoneProvider,
-} from '../providers';
+} from '../providers/index.js';
 import {
   DictParam,
   WordParam,
   WordClassParam,
   ShowEveryoneParam,
-} from '../utils';
-import { DisplayLanguage } from '../types';
-import { Dictionary, Gender, WordClass } from '../gql/graphql';
+} from '../utils/index.js';
+import { DisplayLanguage } from '../types/index.js';
+import { Dictionary, Gender, WordClass } from '../gql/graphql.js';
 
 export class OrdbokCommandParams {
   @WordParam()

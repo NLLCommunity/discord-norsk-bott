@@ -1,3 +1,3 @@
-export * from './languages';
-export * from './pseudo-interaction';
-export * from './translation-emojis';
+export * from './languages.js';
+export * from './pseudo-interaction.js';
+export * from './translation-emojis.js';

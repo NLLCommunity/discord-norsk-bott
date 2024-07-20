@@ -7,9 +7,9 @@ import {
   ActionRowBuilder,
 } from 'discord.js';
 import { InjectDiscordClient } from '@discord-nestjs/core';
-import { RateLimiterProvider } from './rate-limiter.provider';
-import { GuildButtonCollectorProvider } from './guild-button-collector.provider';
-import { DisplayLanguage } from '../types';
+import { RateLimiterProvider } from './rate-limiter.provider.js';
+import { GuildButtonCollectorProvider } from './guild-button-collector.provider.js';
+import { DisplayLanguage } from '../types/index.js';
 
 enum Messages {
   ShowEveryone,

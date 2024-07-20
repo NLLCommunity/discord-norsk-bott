@@ -1,3 +1,3 @@
-export * from './param-helpers';
-export * from './decorator-union';
-export * from './nest-class-collection';
+export * from './param-helpers.js';
+export * from './decorator-union.js';
+export * from './nest-class-collection.js';

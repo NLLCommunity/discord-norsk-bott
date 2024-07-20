@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PermissionFlagsBits } from 'discord.js';
-import { InteractionVariant } from '../types';
+import { InteractionVariant } from '../types/index.js';
 
 export interface InteractionData {
   getChannelName: () => string;

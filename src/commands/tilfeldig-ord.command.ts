@@ -11,10 +11,10 @@ import {
   RateLimiterProvider,
   ShowEveryoneProvider,
   OpenAiProvider,
-} from '../providers';
-import { DictParam, ShowEveryoneParam } from '../utils';
-import { DisplayLanguage } from '../types';
-import { Dictionary } from '../gql/graphql';
+} from '../providers/index.js';
+import { DictParam, ShowEveryoneParam } from '../utils/index.js';
+import { DisplayLanguage } from '../types/index.js';
+import { Dictionary } from '../gql/graphql.js';
 
 export class TilfeldigOrdCommandParams {
   @DictParam({ required: true })

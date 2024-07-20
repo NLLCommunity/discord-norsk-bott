@@ -12,7 +12,7 @@ import {
   WordInflectionsQueryVariables,
   SuggestionsQuery,
   SuggestionsQueryVariables,
-} from '../gql/graphql';
+} from '../gql/graphql.js';
 
 @Injectable()
 export class OrdbokApiProvider {
@@ -145,7 +145,9 @@ export class OrdbokApiProvider {
     word: string,
     dictionaries: Dictionary[],
     wordClass?: WordClass,
-  ) {
+  ): Promise<
+    NonNullable<NonNullable<WordInflectionsQuery['word']>['articles']>
+  > {
     const query = gql`
       query WordInflections(
         $word: String!

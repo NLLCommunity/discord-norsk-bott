@@ -19,15 +19,15 @@ import {
   RateLimiterProvider,
   ShowEveryoneProvider,
   InflectionFormatterProvider,
-} from '../providers';
+} from '../providers/index.js';
 import {
   DictParam,
   WordParam,
   WordClassParam,
   ShowEveryoneParam,
-} from '../utils';
-import { DisplayLanguage } from '../types';
-import { Dictionary, WordClass } from '../gql/graphql';
+} from '../utils/index.js';
+import { DisplayLanguage } from '../types/index.js';
+import { Dictionary, WordClass } from '../gql/graphql.js';
 
 export class BøyingCommandParams {
   @WordParam()

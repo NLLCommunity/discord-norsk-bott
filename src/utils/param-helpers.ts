@@ -1,7 +1,7 @@
 import { Param, ParamType, Choice } from '@discord-nestjs/core';
-import { WordClass, Dictionary } from '../gql/graphql';
-import { Union } from './decorator-union';
-import { ParamOptions } from '@discord-nestjs/core/dist/decorators/option/param/param-options';
+import { WordClass, Dictionary } from '../gql/graphql.js';
+import { Union } from './decorator-union.js';
+import { ParamOptions } from '@discord-nestjs/core/dist/decorators/option/param/param-options.js';
 
 /**
  * Adds an "ord" option to the command.

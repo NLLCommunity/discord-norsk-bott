@@ -1,15 +1,15 @@
 import { Injectable, Inject, Logger } from '@nestjs/common';
 import { EmbedBuilder, ButtonBuilder, ActionRowBuilder } from 'discord.js';
-import { ApertiumProvider, ApertiumLanguage } from './apertium.provider';
-import { RateLimiterProvider } from './rate-limiter.provider';
+import { ApertiumProvider, ApertiumLanguage } from './apertium.provider.js';
+import { RateLimiterProvider } from './rate-limiter.provider.js';
 import {
   DeepLProvider,
   DeepLSourceLanguage,
   DeepLTargetLanguage,
-} from './deepl.provider';
-import { SanitizationProvider } from './sanitization.provider';
-import { ShowEveryoneProvider } from './show-everyone.provider';
-import { DisplayLanguage, InteractionVariant } from '../types';
+} from './deepl.provider.js';
+import { SanitizationProvider } from './sanitization.provider.js';
+import { ShowEveryoneProvider } from './show-everyone.provider.js';
+import { DisplayLanguage, InteractionVariant } from '../types/index.js';
 
 enum Messages {
   RateLimited,

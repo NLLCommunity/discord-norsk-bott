@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { InteractionDataProvider } from './interaction-data.provider';
-import { InteractionVariant } from '../types';
+import { InteractionDataProvider } from './interaction-data.provider.js';
+import { InteractionVariant } from '../types/index.js';
 
 export interface RateLimiterOptions {
   /**

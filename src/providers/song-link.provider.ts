@@ -3,7 +3,7 @@ import { Logger } from '@nestjs/common';
 import {
   SongLinkApiProvider,
   SongLinkApiPlatform,
-} from './song-link-api.provider';
+} from './song-link-api.provider.js';
 
 export interface SongLinks {
   originalPlatform: SongLinkApiPlatform;

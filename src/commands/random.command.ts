@@ -12,8 +12,8 @@ import {
   PermissionFlagsBits,
   type ChatInputCommandInteraction,
 } from 'discord.js';
-import { RateLimiterProvider } from '../providers';
-import { ShowEveryoneParamEn } from '../utils';
+import { RateLimiterProvider } from '../providers/index.js';
+import { ShowEveryoneParamEn } from '../utils/index.js';
 
 export class RandomCommandParams {
   @Param({

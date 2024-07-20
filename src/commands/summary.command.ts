@@ -8,7 +8,7 @@ import {
   PermissionFlagsBits,
   type ChatInputCommandInteraction,
 } from 'discord.js';
-import { OpenAiProvider } from '../providers';
+import { OpenAiProvider } from '../providers/index.js';
 
 export class SummarizeCommandParams {}
 

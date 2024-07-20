@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Command } from '@discord-nestjs/core';
-import { SyncSubCommand } from './sync.command';
+import { SyncSubCommand } from './sync.command.js';
 import { PermissionFlagsBits } from 'discord.js';
 
 @Injectable()

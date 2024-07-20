@@ -1,4 +1,4 @@
-import { Language } from './languages';
+import { Language } from './languages.js';
 
 /**
  * Emojis for a language.

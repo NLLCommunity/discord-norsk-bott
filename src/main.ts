@@ -1,6 +1,6 @@
 import { LogLevel } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
+import { AppModule } from './app.module.js';
 
 async function main() {
   if (process.argv.includes('--help')) {

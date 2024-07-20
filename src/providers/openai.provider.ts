@@ -12,7 +12,7 @@ export class OpenAiProvider {
     const openAIKey = this.configService.get<string>('OPENAI_API_KEY');
 
     if (openAIKey) {
-      this.#client = new OpenAI({ apiKey: openAIKey, fetch });
+      this.#client = new OpenAI({ apiKey: openAIKey, fetch: fetch as any });
     }
   }
 

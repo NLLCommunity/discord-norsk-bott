@@ -15,9 +15,9 @@ import {
   ExplanationProvider,
   RateLimiterProvider,
   ShowEveryoneProvider,
-} from '../providers';
-import { DisplayLanguage } from '../types';
-import { ShowEveryoneParam } from '../utils';
+} from '../providers/index.js';
+import { DisplayLanguage } from '../types/index.js';
+import { ShowEveryoneParam } from '../utils/index.js';
 
 export class ForklarCommandParams {
   @Param({

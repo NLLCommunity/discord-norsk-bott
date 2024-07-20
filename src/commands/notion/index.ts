@@ -1,2 +1,2 @@
-export * from './notion.command';
-export * from './sync.command';
+export * from './notion.command.js';
+export * from './sync.command.js';

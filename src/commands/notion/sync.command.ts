@@ -18,7 +18,7 @@ import {
   InteractionDataProvider,
   NotionService,
   SyncPage,
-} from '../../providers';
+} from '../../providers/index.js';
 
 const norwegianTime = new Intl.DateTimeFormat('no-NO', {
   timeZone: 'Europe/Oslo',

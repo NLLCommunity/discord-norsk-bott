@@ -1,13 +1,13 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Stream } from 'openai/streaming';
-import { OpenAiProvider } from './openai.provider';
-import { OrdbokApiProvider } from './ordbokapi.provider';
-import { DisplayLanguage } from '../types';
-import { Dictionary } from '../gql/graphql';
+import { OpenAiProvider } from './openai.provider.js';
+import { OrdbokApiProvider } from './ordbokapi.provider.js';
+import { DisplayLanguage } from '../types/index.js';
+import { Dictionary } from '../gql/graphql.js';
 import {
   ChatCompletionChunk,
   ChatCompletionMessageParam,
-} from 'openai/resources';
+} from 'openai/resources/index.js';
 
 @Injectable()
 export class ExplanationProvider {

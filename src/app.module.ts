@@ -2,10 +2,10 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { DiscordModule } from '@discord-nestjs/core';
 import { Client, GatewayIntentBits, Partials } from 'discord.js';
-import { NestClassCollection } from './utils';
-import * as providers from './providers';
-import * as commands from './commands';
-import * as handlers from './handlers';
+import { NestClassCollection } from './utils/index.js';
+import * as providers from './providers/index.js';
+import * as commands from './commands/index.js';
+import * as handlers from './handlers/index.js';
 import EventEmitter from 'events';
 
 @Module({
@@ -27,10 +27,10 @@ import EventEmitter from 'events';
         registerCommandOptions: [{ removeCommandsBefore: true }],
         failOnLogin: true,
       }),
-      setupClientFactory: (client: Client) => {
+      setupClientFactory: ((client: Client) => {
         // Ugly cast required due to https://github.com/discordjs/discord.js/issues/10358
         (client as unknown as EventEmitter).setMaxListeners(100);
-      },
+      }) as any, // Ugly cast to fix "Types of parameters 'client' and 'client' are incompatible."
       inject: [ConfigService],
     }),
     DiscordModule.forFeature(),

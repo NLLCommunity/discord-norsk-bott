@@ -19,7 +19,7 @@ import {
 import {
   InteractionDataProvider,
   GuildButtonCollectorProvider,
-} from '../providers';
+} from '../providers/index.js';
 
 export class GiveawayCommandParams {
   @Param({

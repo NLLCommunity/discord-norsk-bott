@@ -1,4 +1,4 @@
-import { INJECTABLE_WATERMARK } from '@nestjs/common/constants';
+import { INJECTABLE_WATERMARK } from '@nestjs/common/constants.js';
 
 export type ClassExports<T extends Record<string, any>> = {
   [K in keyof T]: T[K] extends new (...args: any[]) => any ? K : never;

@@ -5,8 +5,11 @@ import {
   ApplicationCommandType,
   PermissionFlagsBits,
 } from 'discord.js';
-import { TranslationLanguage, TranslatorProvider } from '../../providers';
-import { DisplayLanguage } from '../../types';
+import {
+  TranslationLanguage,
+  TranslatorProvider,
+} from '../../providers/index.js';
+import { DisplayLanguage } from '../../types/index.js';
 
 /**
  * Translates messages to Nynorsk.

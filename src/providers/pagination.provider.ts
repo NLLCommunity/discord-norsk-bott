@@ -7,7 +7,7 @@ import {
   ComponentType,
   type ChatInputCommandInteraction,
 } from 'discord.js';
-import { InteractionDataProvider } from './interaction-data.provider';
+import { InteractionDataProvider } from './interaction-data.provider.js';
 
 export interface PaginationOptions {
   /** The interaction to paginate for. */

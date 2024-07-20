@@ -1,6 +1,6 @@
 import { CanActivate, ExecutionContext } from '@nestjs/common';
 import { MessageReaction, PartialMessageReaction } from 'discord.js';
-import { getEmojiData } from '../../types';
+import { getEmojiData } from '../../types/index.js';
 
 export class IsTranslateEmojiGuard implements CanActivate {
   async canActivate(context: ExecutionContext): Promise<boolean> {

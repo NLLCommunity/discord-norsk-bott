@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Language } from '../types';
+import { Language } from '../types/index.js';
 
 export interface LanguageCandidate {
   language: ApertiumLanguage;

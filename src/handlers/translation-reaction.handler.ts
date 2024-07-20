@@ -7,22 +7,22 @@ import {
   ReactionOnlyStandardChannelsGuard,
   ReactionInServerGuard,
   ReactionOnUserMessageGuard,
-} from './guards';
+  UserHasPermissionsGuard,
+} from './guards/index.js';
 import {
   TranslationEmojis,
   Language,
   getEmojiData,
   interactionFromReaction,
   DisplayLanguage,
-} from '../types';
+} from '../types/index.js';
 import {
   ApertiumLanguage,
   ApertiumProvider,
   TranslationLanguage,
   TranslatorProvider,
   convertLanguageEnum,
-} from '../providers';
-import { UserHasPermissionsGuard } from './guards/user-has-permissions.guard';
+} from '../providers/index.js';
 
 @Injectable()
 export class TranslationReactionHandler {

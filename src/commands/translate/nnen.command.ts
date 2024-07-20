@@ -11,9 +11,12 @@ import {
   PermissionFlagsBits,
   type ChatInputCommandInteraction,
 } from 'discord.js';
-import { TranslatorProvider, TranslationLanguage } from '../../providers';
-import { ShowEveryoneParamEn } from '../../utils';
-import { DisplayLanguage } from '../../types';
+import {
+  TranslatorProvider,
+  TranslationLanguage,
+} from '../../providers/index.js';
+import { ShowEveryoneParamEn } from '../../utils/index.js';
+import { DisplayLanguage } from '../../types/index.js';
 
 export class NnenCommandParams {
   @Param({

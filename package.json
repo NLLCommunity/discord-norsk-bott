@@ -3,6 +3,7 @@
   "private": true,
   "packageManager": "yarn@4.3.1",
   "bin": "main.js",
+  "type": "module",
   "scripts": {
     "build": "yarn codegen && nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
@@ -30,7 +31,7 @@
     "discord.js": "^14.15.3",
     "fast-levenshtein": "^3.0.0",
     "graphql": "^16.9.0",
-    "graphql-request": "^6.1.0",
+    "graphql-request": "^7.1.0",
     "notion-to-md": "^3.1.1",
     "openai": "^4.52.7",
     "reflect-metadata": "^0.2.2",

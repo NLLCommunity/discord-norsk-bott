@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { Dictionary, Gender, WordDefinitionsQuery } from '../gql/graphql';
+import { Dictionary, Gender, WordDefinitionsQuery } from '../gql/graphql.js';
 import { EmbedBuilder } from 'discord.js';
-import { InflectionFormatterProvider } from './inflection-formatter.provider';
+import { InflectionFormatterProvider } from './inflection-formatter.provider.js';
 
 /**
  * Formats common data types for display in Discord.

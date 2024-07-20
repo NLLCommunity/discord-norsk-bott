@@ -20,7 +20,7 @@ import {
   RateLimiterProvider,
   SanitizationProvider,
   TenorProvider,
-} from '../providers';
+} from '../providers/index.js';
 
 export class QuoteCommandParams {
   @Param({

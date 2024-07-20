@@ -5,7 +5,7 @@ import {
   InflectionTag,
   WordClass,
   WordInflectionsQuery,
-} from '../gql/graphql';
+} from '../gql/graphql.js';
 
 type InflectionsQueryArticle = NonNullable<
   NonNullable<WordInflectionsQuery['word']>['articles']

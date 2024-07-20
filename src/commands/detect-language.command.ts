@@ -12,7 +12,7 @@ import {
   SanitizationProvider,
   ShowEveryoneProvider,
   getEnumKeyByValue,
-} from '../providers';
+} from '../providers/index.js';
 
 /**
  * Detects the language of a message and responds with the most likely
