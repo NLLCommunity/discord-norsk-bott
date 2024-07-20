@@ -291,11 +291,11 @@ export class TranslatorProvider {
         const fromLang =
           from === 'auto'
             ? null
-            : convertLanguageEnum(
+            : (convertLanguageEnum(
                 from,
                 TranslationLanguage,
                 DeepLSourceLanguage,
-              ) ?? null;
+              ) ?? null);
         const toLang = convertLanguageEnum(
           to,
           TranslationLanguage,

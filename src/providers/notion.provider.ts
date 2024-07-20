@@ -219,7 +219,7 @@ export class NotionService {
       hash,
       title:
         'properties' in page
-          ? Object.values(page.properties)
+          ? (Object.values(page.properties)
               .find(
                 (
                   p,
@@ -230,7 +230,7 @@ export class NotionService {
                 } => 'title' in p,
               )
               ?.title.reduce((acc, text) => acc + text.plain_text, '') ??
-            'Untitled'
+            'Untitled')
           : 'Unknown',
       content,
     };
