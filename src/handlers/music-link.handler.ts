@@ -73,7 +73,7 @@ export class MusicLinkHandler {
       .join(', ');
 
     message.reply({
-      content: `This song is also available on ${otherPlatforms}.`,
+      content: `-# This song is also available on ${otherPlatforms}.`,
       allowedMentions: { repliedUser: false },
     });
   }
