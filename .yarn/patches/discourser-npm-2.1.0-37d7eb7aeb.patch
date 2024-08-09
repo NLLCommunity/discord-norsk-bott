@@ -1,0 +1,21 @@
+diff --git a/package.json b/package.json
+index 5545aa3100c655eac62f46f6be6dc849d9055fd5..b7ae375060943a2c1402b596440e0faf142bd3db 100644
+--- a/package.json
++++ b/package.json
+@@ -134,13 +134,14 @@
+     }
+   ],
+   "bin": "bin.cjs",
+-  "types": "./compiled-types/",
++  "types": "./compiled-types/index.d.ts",
+   "type": "module",
+   "main": "edition-es2018/index.js",
+   "exports": {
+     "node": {
+       "import": "./edition-es2018-esm/index.js",
+-      "require": "./edition-es2018/index.js"
++      "require": "./edition-es2018/index.js",
++      "types": "./compiled-types/index.d.ts"
+     },
+     "browser": {
+       "import": "./edition-browsers/index.js"

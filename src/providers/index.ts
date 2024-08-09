@@ -1,5 +1,6 @@
 export * from './apertium.provider.js';
 export * from './deepl.provider.js';
+export * from './discourse.provider.js';
 export * from './explanation.provider.js';
 export * from './fetch-message.provider.js';
 export * from './formatter.provider.js';
