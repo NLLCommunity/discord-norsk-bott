@@ -46,6 +46,7 @@ export class CommandEventLogHandler {
       distinctId: interaction.user.id,
       event: PosthogEvent.Interaction,
       properties: {
+        interactionId: interaction.id,
         guildId: interaction.guildId,
         channelId: interaction.channelId,
         commandName: interaction.isCommand()
