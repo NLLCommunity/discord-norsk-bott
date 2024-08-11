@@ -3324,6 +3324,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"axios@npm:^1.6.2":
+  version: 1.7.3
+  resolution: "axios@npm:1.7.3"
+  dependencies:
+    follow-redirects: "npm:^1.15.6"
+    form-data: "npm:^4.0.0"
+    proxy-from-env: "npm:^1.1.0"
+  checksum: 10c0/a18cbe559203efa05fb1fec2d1898e23bf6329bd2575784ee32aa11b5bbe1d54b9f472c49a261294125519cf62aa4fe5ef6e647bb7482eafc15bffe15ab314ce
+  languageName: node
+  linkType: hard
+
 "axios@npm:^1.6.4":
   version: 1.7.2
   resolution: "axios@npm:1.7.2"
@@ -4348,6 +4359,7 @@ __metadata:
     jest: "npm:^29.7.0"
     notion-to-md: "npm:^3.1.1"
     openai: "npm:^4.52.7"
+    posthog-node: "npm:^4.0.1"
     prettier: "npm:^3.3.3"
     reflect-metadata: "npm:^0.2.2"
     rxjs: "npm:^7.8.1"
@@ -7987,6 +7999,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"posthog-node@npm:^4.0.1":
+  version: 4.0.1
+  resolution: "posthog-node@npm:4.0.1"
+  dependencies:
+    axios: "npm:^1.6.2"
+    rusha: "npm:^0.8.14"
+  checksum: 10c0/04389265fa47afedac7f31fc2314b99e2075a3051ba6d5f1b680fe4cafceaa9e7b22a33fd4a38a21803568e236aa0e202a0651f86c0a46baa9df9d7f983d5108
+  languageName: node
+  linkType: hard
+
 "prelude-ls@npm:^1.2.1":
   version: 1.2.1
   resolution: "prelude-ls@npm:1.2.1"
@@ -8373,6 +8395,13 @@ __metadata:
   dependencies:
     queue-microtask: "npm:^1.2.2"
   checksum: 10c0/200b5ab25b5b8b7113f9901bfe3afc347e19bb7475b267d55ad0eb86a62a46d77510cb0f232507c9e5d497ebda569a08a9867d0d14f57a82ad5564d991588b39
+  languageName: node
+  linkType: hard
+
+"rusha@npm:^0.8.14":
+  version: 0.8.14
+  resolution: "rusha@npm:0.8.14"
+  checksum: 10c0/5009ac30a0f8d17886c54b0eaf4f316dbd3ae21c07f9d6827c4d73a2d26f270278a6a40e4e86d22932c4c4a785c0300f2232c3c2404bf670f69647f3a48ae8bc
   languageName: node
   linkType: hard
 

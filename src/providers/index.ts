@@ -11,6 +11,7 @@ export * from './notion.provider.js';
 export * from './openai.provider.js';
 export * from './ordbokapi.provider.js';
 export * from './pagination.provider.js';
+export * from './posthog.provider.js';
 export * from './rate-limiter.provider.js';
 export * from './sanitization.provider.js';
 export * from './show-everyone.provider.js';
