@@ -1,6 +1,6 @@
 import { On } from '@discord-nestjs/core';
 import { Injectable, Logger } from '@nestjs/common';
-import { ClientEvents, Events } from 'discord.js';
+import { ClientEvents, Events, Guild, Role } from 'discord.js';
 import { PosthogProvider, PosthogEvent } from '../providers/index.js';
 
 @Injectable()
@@ -8,6 +8,19 @@ export class CommandEventLogHandler {
   #logger = new Logger(CommandEventLogHandler.name);
 
   constructor(private readonly posthog: PosthogProvider) {}
+
+  async getUserRoles(guild: Guild, userId: string): Promise<string[]> {
+    const mapRoles = (role: Role): string => role.id;
+    const cached = guild.members.cache.get(userId);
+
+    if (cached) {
+      return cached.roles.cache.map(mapRoles);
+    }
+
+    const member = await guild.members.fetch(userId);
+
+    return member.roles.cache.map(mapRoles);
+  }
 
   @On(Events.InteractionCreate)
   async handleInteractionCreate(
@@ -33,7 +46,6 @@ export class CommandEventLogHandler {
       distinctId: interaction.user.id,
       event: PosthogEvent.Interaction,
       properties: {
-        interactionId: interaction.id,
         guildId: interaction.guildId,
         channelId: interaction.channelId,
         commandName: interaction.isCommand()
@@ -51,6 +63,14 @@ export class CommandEventLogHandler {
         $set: {
           name: interaction.user.displayName,
           username: interaction.user.username,
+          ...(interaction.guildId
+            ? {
+                [`roles_${interaction.guildId}`]: await this.getUserRoles(
+                  interaction.guild as Guild,
+                  interaction.user.id,
+                ),
+              }
+            : {}),
           lastInteraction: new Date(interaction.createdTimestamp),
         },
       },
