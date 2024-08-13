@@ -1,5 +1,6 @@
 export * from './bøying.command.js';
 export * from './detect-language.command.js';
+export * from './discourse/index.js';
 export * from './explain.command.js';
 export * from './forklar.command.js';
 export * from './giveaway.command.js';

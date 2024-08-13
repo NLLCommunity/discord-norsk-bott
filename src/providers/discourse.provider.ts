@@ -110,6 +110,10 @@ export class DiscourseProvider {
     return Boolean(this.#url && this.#apiKey && this.#username);
   }
 
+  get client(): Discourser | undefined {
+    return this.#client;
+  }
+
   /**
    * Finds similar topics in the Discourse forum to a given prospective topic.
    * @param title The title of the topic being used as a reference.
