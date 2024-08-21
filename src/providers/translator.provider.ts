@@ -9,6 +9,7 @@ import {
 } from './deepl.provider.js';
 import { SanitizationProvider } from './sanitization.provider.js';
 import { ShowEveryoneProvider } from './show-everyone.provider.js';
+import { PosthogFeatureFlag, PosthogProvider } from './posthog.provider.js';
 import { DisplayLanguage, InteractionVariant } from '../types/index.js';
 
 enum Messages {
@@ -269,6 +270,7 @@ export class TranslatorProvider {
     private readonly rateLimiter: RateLimiterProvider,
     private readonly sanitizer: SanitizationProvider,
     private readonly showEveryone: ShowEveryoneProvider,
+    private readonly posthog: PosthogProvider,
   ) {}
 
   #logger = new Logger(TranslatorProvider.name);
@@ -490,7 +492,7 @@ export class TranslatorProvider {
     const pipeline = this.#getTranslationPipeline(sourceLang, to);
     const shouldRateLimit = pipeline.expensive || !ephemeral;
     const [rateLimitKey, window, maxPerWindow] = pipeline.expensive
-      ? [`${TranslatorProvider.name}-expensive`, 30 * 60 * 1000, 5]
+      ? [`${TranslatorProvider.name}-expensive`, 30 * 60 * 1000, 30]
       : [`${TranslatorProvider.name}-cheap`];
 
     this.#logger.debug(
@@ -556,6 +558,26 @@ export class TranslatorProvider {
 
       // use embeeds for cleaner output
 
+      let description = this.sanitizer.truncate(
+        this.sanitizer.sanitize(finalText),
+        1800,
+      );
+
+      if (
+        pipeline.expensive &&
+        (await this.posthog.client?.isFeatureEnabled(
+          PosthogFeatureFlag.ShowTranslationDonationMessage,
+          interaction.user.id,
+        )) &&
+        Math.random() <
+          ((await this.posthog.client?.getFeatureFlagPayload(
+            PosthogFeatureFlag.ShowTranslationDonationMessage,
+            interaction.user.id,
+          )) as number)
+      ) {
+        description += `\n\n${MessageText[displayLanguage][Messages.DonationPrompt]()}`;
+      }
+
       const embed = new EmbedBuilder()
         .setTitle(
           MessageText[displayLanguage][Messages.Translated](
@@ -564,12 +586,7 @@ export class TranslatorProvider {
           ),
         )
         .setColor('#00FF00')
-        .setDescription(
-          this.sanitizer.truncate(this.sanitizer.sanitize(finalText), 1800) +
-            (pipeline.expensive && Math.random() < 1 / 3
-              ? `\n\n${MessageText[displayLanguage][Messages.DonationPrompt]()}`
-              : ''),
-        );
+        .setDescription(description);
 
       // Add a button to send the message to the channel for everyone to see,
       // if the message is ephemeral and sent to a guild channel
@@ -586,16 +603,27 @@ export class TranslatorProvider {
       }
 
       if (rateLimitInfo?.usesLeft !== undefined) {
-        embed.setFooter({
-          text:
-            ('isPseudoInteraction' in interaction
-              ? `@${interaction.user.tag} `
-              : '') +
+        let footer =
+          'isPseudoInteraction' in interaction
+            ? `@${interaction.user.tag} `
+            : '';
+
+        if (
+          await this.posthog.client?.isFeatureEnabled(
+            PosthogFeatureFlag.ShowTranslationUsesRemaining,
+            interaction.user.id,
+          )
+        ) {
+          footer +=
             MessageText[displayLanguage][Messages.UsesRemaining](
               rateLimitInfo.usesLeft,
-            ) +
-            '\n' +
-            MessageText[displayLanguage][Messages.InaccuracyWarning](),
+            ) + '\n';
+        }
+
+        footer += MessageText[displayLanguage][Messages.InaccuracyWarning]();
+
+        embed.setFooter({
+          text: footer,
         });
       } else if ('isPseudoInteraction' in interaction) {
         embed.setFooter({

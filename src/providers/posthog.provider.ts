@@ -7,6 +7,11 @@ export enum PosthogEvent {
   SetPersonProperties = '$set',
 }
 
+export enum PosthogFeatureFlag {
+  ShowTranslationDonationMessage = 'show-translation-donation-message',
+  ShowTranslationUsesRemaining = 'show-translation-uses-remaining',
+}
+
 @Injectable()
 export class PosthogProvider {
   readonly #client?: PostHog;
