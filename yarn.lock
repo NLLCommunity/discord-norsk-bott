@@ -3324,17 +3324,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"axios@npm:^1.6.2":
-  version: 1.7.3
-  resolution: "axios@npm:1.7.3"
-  dependencies:
-    follow-redirects: "npm:^1.15.6"
-    form-data: "npm:^4.0.0"
-    proxy-from-env: "npm:^1.1.0"
-  checksum: 10c0/a18cbe559203efa05fb1fec2d1898e23bf6329bd2575784ee32aa11b5bbe1d54b9f472c49a261294125519cf62aa4fe5ef6e647bb7482eafc15bffe15ab314ce
-  languageName: node
-  linkType: hard
-
 "axios@npm:^1.7.4":
   version: 1.7.4
   resolution: "axios@npm:1.7.4"
@@ -8010,12 +7999,12 @@ __metadata:
   linkType: hard
 
 "posthog-node@npm:^4.0.1":
-  version: 4.0.1
-  resolution: "posthog-node@npm:4.0.1"
+  version: 4.1.1
+  resolution: "posthog-node@npm:4.1.1"
   dependencies:
-    axios: "npm:^1.6.2"
+    axios: "npm:^1.7.4"
     rusha: "npm:^0.8.14"
-  checksum: 10c0/04389265fa47afedac7f31fc2314b99e2075a3051ba6d5f1b680fe4cafceaa9e7b22a33fd4a38a21803568e236aa0e202a0651f86c0a46baa9df9d7f983d5108
+  checksum: 10c0/d8be4d4931dfa3eed935451513a0678aeb2ac704db4e56284741d56ac46c9711ba76d5f3024f038da7480badcedc73ca6826ad8d1ea37bd50cfdcf961e434d6c
   languageName: node
   linkType: hard
 
