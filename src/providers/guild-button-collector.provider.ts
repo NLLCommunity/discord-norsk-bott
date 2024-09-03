@@ -8,6 +8,7 @@ import {
   Events,
   ChannelType,
   ThreadChannel,
+  PartialGroupDMChannel,
 } from 'discord.js';
 import { InjectDiscordClient } from '@discord-nestjs/core';
 
@@ -77,7 +78,9 @@ export class GuildButtonCollectorProvider {
    * Adds a collector to the given channel.
    * @param channel The channel to add the collector to.
    */
-  #addCollector(channel: TextBasedChannel | ThreadChannel): void {
+  #addCollector(
+    channel: Exclude<TextBasedChannel, PartialGroupDMChannel> | ThreadChannel,
+  ): void {
     const collector = channel.createMessageComponentCollector({
       componentType: ComponentType.Button,
     });

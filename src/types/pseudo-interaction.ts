@@ -8,6 +8,7 @@ import {
   Message,
   MessageCreateOptions,
   MessageContextMenuCommandInteraction,
+  ChannelType,
 } from 'discord.js';
 
 export type InteractionVariant =
@@ -55,6 +56,10 @@ export function interactionFromReaction(
       return this.reply(options);
     },
     async reply(options) {
+      if (reaction.message.channel.type === ChannelType.GroupDM) {
+        throw new Error('Cannot reply to a message in a Group DM.');
+      }
+
       return reaction.message.channel.send({
         ...options,
         reply:
