@@ -4226,14 +4226,14 @@ __metadata:
   linkType: hard
 
 "deepl-node@npm:^1.13.0":
-  version: 1.13.1
-  resolution: "deepl-node@npm:1.13.1"
+  version: 1.14.0
+  resolution: "deepl-node@npm:1.14.0"
   dependencies:
     "@types/node": "npm:>=12.0"
     axios: "npm:^1.7.4"
     form-data: "npm:^3.0.0"
     loglevel: "npm:>=1.6.2"
-  checksum: 10c0/b16e502df5858db0cd78d3c6bdd87b95ae97a0deae67cce7520dc29cf38ae2fac7c1fd820601a0679ce14d47bcb18f704bb0003945ddbc4f45126e5e402787d7
+  checksum: 10c0/fc01f8be15f56f4d436eab18b3dbf974a88485ddaa07aacd06e825fb791903089342e2738b06cfe968ad12035f0cc012071875a7ceda2575daa4ca6c313a0f72
   languageName: node
   linkType: hard
 
