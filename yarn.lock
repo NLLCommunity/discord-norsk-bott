@@ -2112,8 +2112,8 @@ __metadata:
   linkType: hard
 
 "@nestjs/common@npm:^10.3.10":
-  version: 10.4.3
-  resolution: "@nestjs/common@npm:10.4.3"
+  version: 10.4.4
+  resolution: "@nestjs/common@npm:10.4.4"
   dependencies:
     iterare: "npm:1.2.1"
     tslib: "npm:2.7.0"
@@ -2128,7 +2128,7 @@ __metadata:
       optional: true
     class-validator:
       optional: true
-  checksum: 10c0/3f376333f0438ce3ba21f7887a2ca95acf267086308dd7ef2f9a893b5e286acf73fbee56cc01783c79377218b8d1ba601f694a9a2bd4765f1a14b7570606b7db
+  checksum: 10c0/af9d0df92320752323cfa1144cf5eb47e6ec9df6378c7d6499e95994e3a440275621c48feab2d7bcce1c4f56cf29193651b7ea1c48d8771b3a70580c642687ba
   languageName: node
   linkType: hard
 
@@ -2147,8 +2147,8 @@ __metadata:
   linkType: hard
 
 "@nestjs/core@npm:^10.3.10":
-  version: 10.4.3
-  resolution: "@nestjs/core@npm:10.4.3"
+  version: 10.4.4
+  resolution: "@nestjs/core@npm:10.4.4"
   dependencies:
     "@nuxtjs/opencollective": "npm:0.3.2"
     fast-safe-stringify: "npm:2.1.1"
@@ -2170,7 +2170,7 @@ __metadata:
       optional: true
     "@nestjs/websockets":
       optional: true
-  checksum: 10c0/86f6ea196ee944e121e7f0b80bdcc796abccc266be48ab169114fc059d9633ccc8ffe646bc4e87933c503a34ffa782bf1f3efe848ae668f88aa7fa6f04568aa8
+  checksum: 10c0/ddfbcf392c2e0708ce24a145cf3f5d707345bfa6567dfc9dd924272ee08abd322cf4816b83b09383ba32e290637f2ceeb67f10e2310dec5f1e7295ef92fec862
   languageName: node
   linkType: hard
 
@@ -2207,8 +2207,8 @@ __metadata:
   linkType: hard
 
 "@nestjs/testing@npm:^10.3.10":
-  version: 10.4.3
-  resolution: "@nestjs/testing@npm:10.4.3"
+  version: 10.4.4
+  resolution: "@nestjs/testing@npm:10.4.4"
   dependencies:
     tslib: "npm:2.7.0"
   peerDependencies:
@@ -2221,7 +2221,7 @@ __metadata:
       optional: true
     "@nestjs/platform-express":
       optional: true
-  checksum: 10c0/2e6ce0fa2edd200635358b67a7fb51b12ac3d98dc1fe987c4addaf92f4db7358b00f061589331276220a100dcf765311c97a7ee267f5c442b16dc47f05697314
+  checksum: 10c0/a89a54ab9685742b0ed83ebf112a3435d88762c1f53c8b3aae1369fa50b1cc35165ea821a068e82e46a106ce23cd2275a8c88e1fdb927463de5f9c29d7a456af
   languageName: node
   linkType: hard
 
