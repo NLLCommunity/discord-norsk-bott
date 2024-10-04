@@ -37,11 +37,8 @@ import EventEmitter from 'events';
   ],
   providers: NestClassCollection.fromInjectables(providers)
     .concat(NestClassCollection.fromInjectables(commands))
-    .concat(
-      NestClassCollection.fromInjectables(handlers).except(
-        handlers.MusicLinkHandler,
-      ),
-    )
+    .concat(NestClassCollection.fromInjectables(handlers))
+    .except(handlers.MusicLinkHandler)
     .toArray(),
 })
 export class AppModule {}
