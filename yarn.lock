@@ -4268,14 +4268,14 @@ __metadata:
   linkType: hard
 
 "deepl-node@npm:^1.13.0":
-  version: 1.14.0
-  resolution: "deepl-node@npm:1.14.0"
+  version: 1.15.0
+  resolution: "deepl-node@npm:1.15.0"
   dependencies:
     "@types/node": "npm:>=12.0"
     axios: "npm:^1.7.4"
     form-data: "npm:^3.0.0"
     loglevel: "npm:>=1.6.2"
-  checksum: 10c0/fc01f8be15f56f4d436eab18b3dbf974a88485ddaa07aacd06e825fb791903089342e2738b06cfe968ad12035f0cc012071875a7ceda2575daa4ca6c313a0f72
+  checksum: 10c0/d30642059b657781e6a8d2f2adfdc2e4eecfd4e76348713dac1e7a460e420ee690c15309498a42af4ed85023cce9252298a9991fa1ecfeab3a30225d005e8d29
   languageName: node
   linkType: hard
 
@@ -9466,7 +9466,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@npm:5.6.3":
+"typescript@npm:5.6.3, typescript@npm:^5.5.3":
   version: 5.6.3
   resolution: "typescript@npm:5.6.3"
   bin:
@@ -9476,27 +9476,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@npm:^5.5.3":
-  version: 5.6.3
-  resolution: "typescript@npm:5.6.3"
-  bin:
-    tsc: bin/tsc
-    tsserver: bin/tsserver
-  checksum: 10c0/44f61d3fb15c35359bc60399cb8127c30bae554cd555b8e2b46d68fa79d680354b83320ad419ff1b81a0bdf324197b29affe6cc28988cd6a74d4ac60c94f9799
-  languageName: node
-  linkType: hard
-
-"typescript@patch:typescript@npm%3A5.6.3#optional!builtin<compat/typescript>":
-  version: 5.6.3
-  resolution: "typescript@patch:typescript@npm%3A5.6.3#optional!builtin<compat/typescript>::version=5.6.3&hash=8c6c40"
-  bin:
-    tsc: bin/tsc
-    tsserver: bin/tsserver
-  checksum: 10c0/7c9d2e07c81226d60435939618c91ec2ff0b75fbfa106eec3430f0fcf93a584bc6c73176676f532d78c3594fe28a54b36eb40b3d75593071a7ec91301533ace7
-  languageName: node
-  linkType: hard
-
-"typescript@patch:typescript@npm%3A^5.5.3#optional!builtin<compat/typescript>":
+"typescript@patch:typescript@npm%3A5.6.3#optional!builtin<compat/typescript>, typescript@patch:typescript@npm%3A^5.5.3#optional!builtin<compat/typescript>":
   version: 5.6.3
   resolution: "typescript@patch:typescript@npm%3A5.6.3#optional!builtin<compat/typescript>::version=5.6.3&hash=8c6c40"
   bin:
