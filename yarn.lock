@@ -2129,8 +2129,8 @@ __metadata:
   linkType: hard
 
 "@nestjs/cli@npm:^10.4.2":
-  version: 10.4.7
-  resolution: "@nestjs/cli@npm:10.4.7"
+  version: 10.4.8
+  resolution: "@nestjs/cli@npm:10.4.8"
   dependencies:
     "@angular-devkit/core": "npm:17.3.11"
     "@angular-devkit/schematics": "npm:17.3.11"
@@ -2141,13 +2141,13 @@ __metadata:
     cli-table3: "npm:0.6.5"
     commander: "npm:4.1.1"
     fork-ts-checker-webpack-plugin: "npm:9.0.2"
-    glob: "npm:10.4.2"
+    glob: "npm:10.4.5"
     inquirer: "npm:8.2.6"
     node-emoji: "npm:1.11.0"
     ora: "npm:5.4.1"
     tree-kill: "npm:1.2.2"
     tsconfig-paths: "npm:4.2.0"
-    tsconfig-paths-webpack-plugin: "npm:4.1.0"
+    tsconfig-paths-webpack-plugin: "npm:4.2.0"
     typescript: "npm:5.6.3"
     webpack: "npm:5.96.1"
     webpack-node-externals: "npm:3.0.0"
@@ -2161,16 +2161,16 @@ __metadata:
       optional: true
   bin:
     nest: bin/nest.js
-  checksum: 10c0/d21f329d13581e4d85149908fd82cf541b0fbf29980e7e7d361e537149e37e923e3829ba0fb3a6ec0b18710f0958aa68a547e119e4e71f29bff1709dd8472386
+  checksum: 10c0/6bc70cf478e6f92318c78da4bb1da186b7c89dbea4a7b24b50afb0c41834834373892ca1780b356110d03efd1fb2c272d823fb67a3fa2795859337d7045beca3
   languageName: node
   linkType: hard
 
 "@nestjs/common@npm:^10.3.10":
-  version: 10.4.7
-  resolution: "@nestjs/common@npm:10.4.7"
+  version: 10.4.13
+  resolution: "@nestjs/common@npm:10.4.13"
   dependencies:
     iterare: "npm:1.2.1"
-    tslib: "npm:2.7.0"
+    tslib: "npm:2.8.1"
     uid: "npm:2.0.2"
   peerDependencies:
     class-transformer: "*"
@@ -2182,7 +2182,7 @@ __metadata:
       optional: true
     class-validator:
       optional: true
-  checksum: 10c0/c786d72a160a5cde0cbcce61fa96f34bd2b860adf92091b865c7d94682772217b328b3051a7f58988cdedf083c34258c42bc3309c9df5cf9a698e1fa94d9d54d
+  checksum: 10c0/0473653b7a71d2bfb8d4244cbcbd93c9f8fe4a9eabad7fafe63d89e15de8bdb5dd7182569ef96fe28d751662238d09b843fa1028898fae655cead4a148f3e3cf
   languageName: node
   linkType: hard
 
@@ -2201,14 +2201,14 @@ __metadata:
   linkType: hard
 
 "@nestjs/core@npm:^10.3.10":
-  version: 10.4.7
-  resolution: "@nestjs/core@npm:10.4.7"
+  version: 10.4.13
+  resolution: "@nestjs/core@npm:10.4.13"
   dependencies:
     "@nuxtjs/opencollective": "npm:0.3.2"
     fast-safe-stringify: "npm:2.1.1"
     iterare: "npm:1.2.1"
     path-to-regexp: "npm:3.3.0"
-    tslib: "npm:2.7.0"
+    tslib: "npm:2.8.1"
     uid: "npm:2.0.2"
   peerDependencies:
     "@nestjs/common": ^10.0.0
@@ -2224,7 +2224,7 @@ __metadata:
       optional: true
     "@nestjs/websockets":
       optional: true
-  checksum: 10c0/34c1601bd09ef7ca56ec57a9e7a729480ffc5ea102bf60427e34ae3642e8a8baa475b3f425b9258c076d110c29aa5b0027acdfb8dca290ad49566cd97be20d60
+  checksum: 10c0/d6823aa290bccce332613f772f0002dc6ad874720ffbfa7573ab051003d6abca6618b81f8047d690433791126d1d3d3c42a0c790699d1582a3983c3851cdcd75
   languageName: node
   linkType: hard
 
@@ -2261,10 +2261,10 @@ __metadata:
   linkType: hard
 
 "@nestjs/testing@npm:^10.3.10":
-  version: 10.4.7
-  resolution: "@nestjs/testing@npm:10.4.7"
+  version: 10.4.13
+  resolution: "@nestjs/testing@npm:10.4.13"
   dependencies:
-    tslib: "npm:2.7.0"
+    tslib: "npm:2.8.1"
   peerDependencies:
     "@nestjs/common": ^10.0.0
     "@nestjs/core": ^10.0.0
@@ -2275,7 +2275,7 @@ __metadata:
       optional: true
     "@nestjs/platform-express":
       optional: true
-  checksum: 10c0/8bd59a951e2513721bbd683225f1f834db3f40ef8fc1f77213b3c854acd042e5f012c43d81d71b477582f522ef248932b6579c273e9622c82eaa5652178a0ee1
+  checksum: 10c0/8c60243def2760cb4f2efcab62afad767a29686911c30aecb379cab176af6056288b66e8863e48baa5ff93c730f1b88b249a28836aafdf7a405b8f4ce45bb38b
   languageName: node
   linkType: hard
 
@@ -5544,23 +5544,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"glob@npm:10.4.2":
-  version: 10.4.2
-  resolution: "glob@npm:10.4.2"
-  dependencies:
-    foreground-child: "npm:^3.1.0"
-    jackspeak: "npm:^3.1.2"
-    minimatch: "npm:^9.0.4"
-    minipass: "npm:^7.1.2"
-    package-json-from-dist: "npm:^1.0.0"
-    path-scurry: "npm:^1.11.1"
-  bin:
-    glob: dist/esm/bin.mjs
-  checksum: 10c0/2c7296695fa75a935f3ad17dc62e4e170a8bb8752cf64d328be8992dd6ad40777939003754e10e9741ff8fbe43aa52fba32d6930d0ffa0e3b74bc3fb5eebaa2f
-  languageName: node
-  linkType: hard
-
-"glob@npm:^10.2.2, glob@npm:^10.3.10":
+"glob@npm:10.4.5, glob@npm:^10.2.2, glob@npm:^10.3.10":
   version: 10.4.5
   resolution: "glob@npm:10.4.5"
   dependencies:
@@ -9348,14 +9332,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tsconfig-paths-webpack-plugin@npm:4.1.0":
-  version: 4.1.0
-  resolution: "tsconfig-paths-webpack-plugin@npm:4.1.0"
+"tsconfig-paths-webpack-plugin@npm:4.2.0":
+  version: 4.2.0
+  resolution: "tsconfig-paths-webpack-plugin@npm:4.2.0"
   dependencies:
     chalk: "npm:^4.1.0"
     enhanced-resolve: "npm:^5.7.0"
+    tapable: "npm:^2.2.1"
     tsconfig-paths: "npm:^4.1.2"
-  checksum: 10c0/c030e867e70a3f6d1799fdffa209c3a35e1435ad99aac01946b9ebb0fa8208b7b508c1dfe8c8e13d6a2ef70c75b4db062fbfd3c1f3362c69b6c65ffd4a50e226
+  checksum: 10c0/495c5ab7c1cb079217d98fe25d61def01e4bab38047c7ab25ec11876cc8c697ff01f43ea6c9933181875e51e49835407fc71afd92ea6cca1ba1bebf513dfb510
   languageName: node
   linkType: hard
 
@@ -9370,10 +9355,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tslib@npm:2.7.0":
-  version: 2.7.0
-  resolution: "tslib@npm:2.7.0"
-  checksum: 10c0/469e1d5bf1af585742128827000711efa61010b699cb040ab1800bcd3ccdd37f63ec30642c9e07c4439c1db6e46345582614275daca3e0f4abae29b0083f04a6
+"tslib@npm:2.8.1":
+  version: 2.8.1
+  resolution: "tslib@npm:2.8.1"
+  checksum: 10c0/9c4759110a19c53f992d9aae23aac5ced636e99887b51b9e61def52611732872ff7668757d4e4c61f19691e36f4da981cd9485e869b4a7408d689f6bf1f14e62
   languageName: node
   linkType: hard
 
@@ -9466,7 +9451,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@npm:5.6.3":
+"typescript@npm:5.6.3, typescript@npm:^5.5.3":
   version: 5.6.3
   resolution: "typescript@npm:5.6.3"
   bin:
@@ -9476,27 +9461,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@npm:^5.5.3":
-  version: 5.6.3
-  resolution: "typescript@npm:5.6.3"
-  bin:
-    tsc: bin/tsc
-    tsserver: bin/tsserver
-  checksum: 10c0/44f61d3fb15c35359bc60399cb8127c30bae554cd555b8e2b46d68fa79d680354b83320ad419ff1b81a0bdf324197b29affe6cc28988cd6a74d4ac60c94f9799
-  languageName: node
-  linkType: hard
-
-"typescript@patch:typescript@npm%3A5.6.3#optional!builtin<compat/typescript>":
-  version: 5.6.3
-  resolution: "typescript@patch:typescript@npm%3A5.6.3#optional!builtin<compat/typescript>::version=5.6.3&hash=8c6c40"
-  bin:
-    tsc: bin/tsc
-    tsserver: bin/tsserver
-  checksum: 10c0/7c9d2e07c81226d60435939618c91ec2ff0b75fbfa106eec3430f0fcf93a584bc6c73176676f532d78c3594fe28a54b36eb40b3d75593071a7ec91301533ace7
-  languageName: node
-  linkType: hard
-
-"typescript@patch:typescript@npm%3A^5.5.3#optional!builtin<compat/typescript>":
+"typescript@patch:typescript@npm%3A5.6.3#optional!builtin<compat/typescript>, typescript@patch:typescript@npm%3A^5.5.3#optional!builtin<compat/typescript>":
   version: 5.6.3
   resolution: "typescript@patch:typescript@npm%3A5.6.3#optional!builtin<compat/typescript>::version=5.6.3&hash=8c6c40"
   bin:
