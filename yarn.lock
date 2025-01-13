@@ -883,10 +883,10 @@ __metadata:
   linkType: hard
 
 "@discord-nestjs/common@npm:^5.2.12":
-  version: 5.2.12
-  resolution: "@discord-nestjs/common@npm:5.2.12"
+  version: 5.3.1
+  resolution: "@discord-nestjs/common@npm:5.3.1"
   dependencies:
-    "@nestjs/mapped-types": "npm:2.0.5"
+    "@nestjs/mapped-types": "npm:2.0.6"
     class-transformer: "npm:0.5.1"
     class-validator: "npm:0.14.1"
   peerDependencies:
@@ -896,7 +896,7 @@ __metadata:
     discord.js: 14.*
     reflect-metadata: ^0.1.12 || ^0.2.0
     rxjs: ^7.*
-  checksum: 10c0/d87813f299d2726e11b8066019b6cf195964c2810810f3e87d3a4c0428810f7a323a379643817bbf2a1d5bea2a1e23acef44f86d60894fa9dcc3981d920b4905
+  checksum: 10c0/38107eee2477ef02ada1118ff196361eef94640e3c4cd1ba798ac5eeab8001b8f37233b00e6bced65ec1d59c5991589b82cff726e0869dbe3c7afd9c79ae815c
   languageName: node
   linkType: hard
 
@@ -2203,9 +2203,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nestjs/mapped-types@npm:2.0.5":
-  version: 2.0.5
-  resolution: "@nestjs/mapped-types@npm:2.0.5"
+"@nestjs/mapped-types@npm:2.0.6":
+  version: 2.0.6
+  resolution: "@nestjs/mapped-types@npm:2.0.6"
   peerDependencies:
     "@nestjs/common": ^8.0.0 || ^9.0.0 || ^10.0.0
     class-transformer: ^0.4.0 || ^0.5.0
@@ -2216,7 +2216,7 @@ __metadata:
       optional: true
     class-validator:
       optional: true
-  checksum: 10c0/f92743cb4c0fe3b1eecdf0c7c6a40f0e7478574a9e1a25ebdbd29db29a7319c2ae608c08d07f7b9525bea01a5e20dbd73222100204d3a13500db4f56676446a1
+  checksum: 10c0/c04ba9518d75c76ac6d00faa7a701d111b20bd220706bdef99777a4678f3423fa259ff5cc2968967a54bb58a08a85a7be6a781bfa07ddfb26304f82ee63c628b
   languageName: node
   linkType: hard
 
