@@ -7651,12 +7651,12 @@ __metadata:
   linkType: hard
 
 "notion-to-md@npm:^3.1.1":
-  version: 3.1.1
-  resolution: "notion-to-md@npm:3.1.1"
+  version: 3.1.4
+  resolution: "notion-to-md@npm:3.1.4"
   dependencies:
     markdown-table: "npm:^2.0.0"
     node-fetch: "npm:2"
-  checksum: 10c0/8366a2a3d448412661f784e98178d27193347588c535f2c93624a35d26ce67a52d7645ad1920209289d7d09ea620f5037ac54b6ec774a075bb4e7e4da90515a1
+  checksum: 10c0/955ff319718a6eea3860eb196dbc06c372d4baaf0b4187f96d0c48e7d2d06b2237e4e13f8470f326a2e927d97a1857ab6593e561fd8da9e848708cb078e3f70e
   languageName: node
   linkType: hard
 
