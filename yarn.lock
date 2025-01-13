@@ -7812,8 +7812,8 @@ __metadata:
   linkType: hard
 
 "openai@npm:^4.52.7":
-  version: 4.71.1
-  resolution: "openai@npm:4.71.1"
+  version: 4.78.1
+  resolution: "openai@npm:4.78.1"
   dependencies:
     "@types/node": "npm:^18.11.18"
     "@types/node-fetch": "npm:^2.6.4"
@@ -7829,7 +7829,7 @@ __metadata:
       optional: true
   bin:
     openai: bin/cli
-  checksum: 10c0/468721223a68ae775dd6d7d2e3f32f7aa1ffb6d3e7fcb91c3851e7aaff75d0bf40b322a418dbc24aef34b86267821891a71f839f4cfce1a3e5bbed2084326314
+  checksum: 10c0/3f76bd7d1b52be230bb0dcc5773911b06d276886ecfbed88ec7b2d9c24b151ac870299f8e71682c3cf4bad761a8c617bd35839d1b44012bc3d29e0969bc83b92
   languageName: node
   linkType: hard
 
@@ -9466,7 +9466,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@npm:5.6.3":
+"typescript@npm:5.6.3, typescript@npm:^5.5.3":
   version: 5.6.3
   resolution: "typescript@npm:5.6.3"
   bin:
@@ -9476,27 +9476,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@npm:^5.5.3":
-  version: 5.6.3
-  resolution: "typescript@npm:5.6.3"
-  bin:
-    tsc: bin/tsc
-    tsserver: bin/tsserver
-  checksum: 10c0/44f61d3fb15c35359bc60399cb8127c30bae554cd555b8e2b46d68fa79d680354b83320ad419ff1b81a0bdf324197b29affe6cc28988cd6a74d4ac60c94f9799
-  languageName: node
-  linkType: hard
-
-"typescript@patch:typescript@npm%3A5.6.3#optional!builtin<compat/typescript>":
-  version: 5.6.3
-  resolution: "typescript@patch:typescript@npm%3A5.6.3#optional!builtin<compat/typescript>::version=5.6.3&hash=8c6c40"
-  bin:
-    tsc: bin/tsc
-    tsserver: bin/tsserver
-  checksum: 10c0/7c9d2e07c81226d60435939618c91ec2ff0b75fbfa106eec3430f0fcf93a584bc6c73176676f532d78c3594fe28a54b36eb40b3d75593071a7ec91301533ace7
-  languageName: node
-  linkType: hard
-
-"typescript@patch:typescript@npm%3A^5.5.3#optional!builtin<compat/typescript>":
+"typescript@patch:typescript@npm%3A5.6.3#optional!builtin<compat/typescript>, typescript@patch:typescript@npm%3A^5.5.3#optional!builtin<compat/typescript>":
   version: 5.6.3
   resolution: "typescript@patch:typescript@npm%3A5.6.3#optional!builtin<compat/typescript>::version=5.6.3&hash=8c6c40"
   bin:
