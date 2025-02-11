@@ -87,7 +87,7 @@
     "testEnvironment": "node"
   },
   "volta": {
-    "node": "22.13.0",
+    "node": "22.14.0",
     "yarn": "4.6.0"
   },
   "engines": {
