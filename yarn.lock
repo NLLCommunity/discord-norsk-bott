@@ -943,17 +943,17 @@ __metadata:
   linkType: hard
 
 "@discord-nestjs/core@npm:^5.3.14":
-  version: 5.5.0
-  resolution: "@discord-nestjs/core@npm:5.5.0"
+  version: 5.5.1
+  resolution: "@discord-nestjs/core@npm:5.5.1"
   dependencies:
     class-transformer: "npm:0.5.1"
   peerDependencies:
-    "@nestjs/common": 9.* || 10.*
-    "@nestjs/core": 9.* || 10.*
+    "@nestjs/common": 9.* || 10.* || 11.*
+    "@nestjs/core": 9.* || 10.* || 11.*
     discord.js: 14.*
     reflect-metadata: ^0.1.12 || ^0.2.0
     rxjs: ^7.*
-  checksum: 10c0/31b1eb8369ff62d8151d3dc158dd4f36b3de6b56625c078ae1cb484a4f4c9c46d13b5e09c554cd12c3984b9b4289688e16dc98495bb48330e807f4d58b94cc38
+  checksum: 10c0/ef62c53cbfcf9408a9554839862118070d579371ab38d91106ebf1f4713baa9d871cbacabe75140c60ad805b79ba7f3aeb0997321a17cbfd2e6abcb3b62334b9
   languageName: node
   linkType: hard
 
