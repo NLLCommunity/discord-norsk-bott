@@ -4462,14 +4462,14 @@ __metadata:
   linkType: hard
 
 "deepl-node@npm:^1.13.0":
-  version: 1.15.0
-  resolution: "deepl-node@npm:1.15.0"
+  version: 1.16.0
+  resolution: "deepl-node@npm:1.16.0"
   dependencies:
     "@types/node": "npm:>=12.0"
     axios: "npm:^1.7.4"
     form-data: "npm:^3.0.0"
     loglevel: "npm:>=1.6.2"
-  checksum: 10c0/d30642059b657781e6a8d2f2adfdc2e4eecfd4e76348713dac1e7a460e420ee690c15309498a42af4ed85023cce9252298a9991fa1ecfeab3a30225d005e8d29
+  checksum: 10c0/c28c69b65035f45c713a6e98076d36cc0c21ebe19c6a96f8b2fdddbc476a7a62a46e2a375b3e8893944fc7f67adbaa51836057ad34f622ba0d9488cf64433c48
   languageName: node
   linkType: hard
 
