@@ -1,3 +1,9 @@
+# WARNING: The build tag uses github.run_number which is a unique counter for
+# this workflow. Renaming, moving, or deleting this workflow file will reset the
+# run number. Please do not change the workflow filename or its identity without
+# coordinating with the team, as a reset can cause previously higher build
+# numbers to be replaced with lower ones.
+
 name: Build and Push Docker Image to GHCR
 
 on:
@@ -30,6 +36,7 @@ jobs:
           push: true
           tags: |
             ghcr.io/nllcommunity/norsk-bott:${{ github.sha }}
+            ghcr.io/nllcommunity/norsk-bott:${{ github.run_number }}
             ghcr.io/nllcommunity/norsk-bott:latest
           labels: |
             org.opencontainers.image.created=${{ github.event.head_commit.timestamp }}
