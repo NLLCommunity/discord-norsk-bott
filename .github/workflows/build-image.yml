@@ -29,8 +29,8 @@ jobs:
           context: .
           push: true
           tags: |
-            ghcr.io/NLLCommunity/norsk-bott:${{ github.sha }}
-            ghcr.io/NLLCommunity/norsk-bott:latest
+            ghcr.io/nllcommunity/norsk-bott:${{ github.sha }}
+            ghcr.io/nllcommunity/norsk-bott:latest
           labels: |
             org.opencontainers.image.created=${{ github.event.head_commit.timestamp }}
             org.opencontainers.image.revision=${{ github.sha }}
