@@ -459,12 +459,12 @@ export class TranslatorProvider {
   }: TranslatorOptions): Promise<void> {
     this.#logger.log(`Omset frå ${from} til ${to}: ${text}`);
 
-    const replyFunction:
-      | typeof interaction.reply
-      | typeof interaction.editReply = (...args: [any]) =>
+    const replyFunction = ((...args: [any]) =>
       'deferred' in interaction && interaction.deferred
         ? interaction.editReply(...args)
-        : interaction.reply(...args);
+        : interaction.reply(...args)) as
+      | typeof interaction.reply
+      | typeof interaction.editReply;
 
     let sourceLang = from as SourceLanguage | undefined;
 
