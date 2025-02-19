@@ -2675,12 +2675,12 @@ __metadata:
   linkType: hard
 
 "@notionhq/client@npm:^2.2.15":
-  version: 2.2.15
-  resolution: "@notionhq/client@npm:2.2.15"
+  version: 2.2.16
+  resolution: "@notionhq/client@npm:2.2.16"
   dependencies:
     "@types/node-fetch": "npm:^2.5.10"
     node-fetch: "npm:^2.6.1"
-  checksum: 10c0/4153c2e5b47d2ba141d025f2753d0e79ca9b9f25bd8bbdfa9dbf74fe4c2e157ea7964c59387d05163972c4575830bdc48d02db29270e244d81398df0f89fd7dd
+  checksum: 10c0/67c3698c24642294b747cb44e73d7b4e362643f4d3095d41281c1099540235b828f25b4606d5450e88805151f6b3d6b33192b80d15d3299e0ba163e40726970e
   languageName: node
   linkType: hard
 
