@@ -8,6 +8,7 @@ import {
 } from '@discord-nestjs/core';
 import { SlashCommandPipe } from '@discord-nestjs/common';
 import {
+  MessageFlags,
   PermissionFlagsBits,
   type ChatInputCommandInteraction,
 } from 'discord.js';
@@ -39,7 +40,7 @@ export class ForklarCommandParams {
 @Injectable()
 @Command({
   name: 'forklar',
-  description: 'Forklarar eit ord eller ein frase / Explains a word or phrase',
+  description: 'Forklårar eit ord eller ein frase / Explains a word or phrase',
   defaultMemberPermissions: PermissionFlagsBits.SendMessages,
 })
 export class ForklarCommand {
@@ -78,14 +79,16 @@ export class ForklarCommand {
       await interaction.reply({
         content:
           'Denne kommandoen er ikkje tilgjengeleg fordi den ikkje er konfigurert.',
-        ephemeral: true,
+        flags: MessageFlags.Ephemeral,
       });
 
       return;
     }
 
     await interaction.deferReply({
-      ephemeral: !showEveryone,
+      flags: showEveryone
+        ? MessageFlags.SuppressEmbeds
+        : MessageFlags.SuppressEmbeds | MessageFlags.Ephemeral,
     });
 
     try {
@@ -96,17 +99,18 @@ export class ForklarCommand {
 
       if (!response) {
         this.#logger.warn('Failed to explain message');
-        interaction.editReply('Klarte ikkje å forklara meldinga.');
+        interaction.editReply('Klarte ikkje å forklåre meldinga.');
         return;
       }
 
-      let summary = `> ⚠️ **Merk:** Denne forklaringa er generert av ein AI-modell og kan vere unøyaktig eller variere kvar gong den blir generert. For den mest nøyaktige informasjonen, spør ein menneskeleg ekspert.
-> _Visste du at me betalar for kvar forklaring? Hjelp oss med å tilby forklaringar [ved å donera til Ada](https://github.com/sponsors/adalinesimonian)._
+      const header = `> ⚠️ **Merk:** Denne forklåringa er generert av ein KI-modell og kan vera unøyaktig eller variere kvar gong ho vert generert. For den mest nøyaktige informasjonen, spør ein menneskeleg ekspert.
 
 `;
+      let summary = header;
       let lastLength = 0;
 
       const interval = setInterval(() => {
+        // Update reply only if summary has changed, handling carriage returns
         if (summary.length === lastLength) {
           return;
         }
@@ -119,15 +123,21 @@ export class ForklarCommand {
       }, 500);
 
       for await (const chunk of response) {
-        summary += chunk.choices[0]?.delta.content ?? '';
+        const text = chunk.toString() as string;
+        // Handle carriage return: if present, replace the summary with the latest segment
+        if (text.includes('\r')) {
+          const segments = text.split('\r');
+          summary = header + segments[segments.length - 1];
+        } else {
+          summary += text;
+        }
 
         if (summary.length >= 2000) {
-          const tooLong = '…\n\n**Forklaringa er for lang, stoppar her.**';
+          const tooLong = '…\n\n**Forklåringa er for lang, stoppar her.**';
 
           summary = summary.slice(0, 2000 - tooLong.length) + tooLong;
-
-          response.controller.abort();
-
+          // Abort the underlying stream by destroying it
+          response.destroy();
           break;
         }
       }
@@ -136,6 +146,7 @@ export class ForklarCommand {
       await interaction.editReply({
         content: summary,
         components: showEveryone ? [] : [this.showEveryone.getActionRow()],
+        flags: MessageFlags.SuppressEmbeds,
       });
     } catch (err) {
       this.#logger.error('Failed to explain message', err);

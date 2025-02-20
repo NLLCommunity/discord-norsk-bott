@@ -1,12 +1,11 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { DiscordModule } from '@discord-nestjs/core';
-import { Client, GatewayIntentBits, Partials } from 'discord.js';
-import { NestClassCollection } from './utils/index.js';
+import { GatewayIntentBits, Partials } from 'discord.js';
+import { NestProviderCollection } from './utils/index.js';
 import * as providers from './providers/index.js';
 import * as commands from './commands/index.js';
 import * as handlers from './handlers/index.js';
-import EventEmitter from 'events';
 
 @Module({
   imports: [
@@ -27,18 +26,21 @@ import EventEmitter from 'events';
         registerCommandOptions: [{ removeCommandsBefore: true }],
         failOnLogin: true,
       }),
-      setupClientFactory: ((client: Client) => {
-        // Ugly cast required due to https://github.com/discordjs/discord.js/issues/10358
-        (client as unknown as EventEmitter).setMaxListeners(100);
-      }) as any, // Ugly cast to fix "Types of parameters 'client' and 'client' are incompatible."
+      setupClientFactory: (client) => {
+        client.setMaxListeners(100);
+      },
       inject: [ConfigService],
     }),
     DiscordModule.forFeature(),
   ],
-  providers: NestClassCollection.fromInjectables(providers)
-    .concat(NestClassCollection.fromInjectables(commands))
-    .concat(NestClassCollection.fromInjectables(handlers))
+  providers: NestProviderCollection.fromInjectables(providers)
+    .concat(NestProviderCollection.fromInjectables(commands))
+    .concat(NestProviderCollection.fromInjectables(handlers))
     .except(handlers.MusicLinkHandler)
+    .add({
+      provide: 'ISearchEngineProvider',
+      useClass: providers.CompositeSearchEngineProvider,
+    })
     .toArray(),
 })
 export class AppModule {}

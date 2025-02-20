@@ -35,10 +35,10 @@ export class OpenAiProvider {
 
     try {
       const response = await this.#client.chat.completions.create({
-        model: 'gpt-3.5-turbo',
+        model: 'gpt-4o-mini',
         messages: [
           {
-            role: 'system',
+            role: 'developer',
             content: `You will be given JSON or text data. Classify its contents into either "safe" or "unsafe".
 "safe" means the text is appropriate for a general audience.
 "unsafe" means the text is inappropriate for a general audience (e.g. contains profanity, sexual content, hate speech, or other offensive content).
@@ -79,7 +79,7 @@ Only respond with "safe" or "unsafe" — do not include any other text in your r
         n: 1,
         messages: [
           {
-            role: 'system',
+            role: 'developer',
             content: `Summarize the text given to you, following these guidelines:${context ? `\n${context}\n` : ''}
 Your response should be only the summary of the text and must be no longer than 1700 characters. This is a hard limit.
 You should format it suitable for being sent as a Discord message with the limited Markdown support that Discord provides.

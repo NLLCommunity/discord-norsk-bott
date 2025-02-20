@@ -1,4 +1,6 @@
+import { Provider } from '@nestjs/common';
 import { INJECTABLE_WATERMARK } from '@nestjs/common/constants.js';
+import { isObject } from './is-object.js';
 
 export type ClassExports<T extends Record<string, any>> = {
   [K in keyof T]: T[K] extends new (...args: any[]) => any ? K : never;
@@ -9,13 +11,13 @@ export type ClassExportsArray<T extends Record<string, any>> = Array<
 >;
 
 /**
- * An iterable collection of Nest.js injectable classes.
+ * An iterable collection of Nest.js providers.
  */
-export class NestClassCollection<T extends (new (...args: any[]) => any)[]> {
+export class NestProviderCollection<T extends Provider[] = never[]> {
   readonly #providers: T;
 
-  constructor(providers: Iterable<T[number]>) {
-    this.#providers = Array.from(providers) as T;
+  constructor(providers?: Iterable<T[number]>) {
+    this.#providers = providers ? (Array.from(providers) as T) : ([] as any);
   }
 
   /**
@@ -36,10 +38,12 @@ export class NestClassCollection<T extends (new (...args: any[]) => any)[]> {
    */
   static fromInjectables<T extends Record<string, any>>(
     providers: T,
-  ): NestClassCollection<ClassExportsArray<T>> {
-    return new NestClassCollection(
-      Object.values(providers).filter((provider) =>
-        Reflect.getMetadata(INJECTABLE_WATERMARK, provider),
+  ): NestProviderCollection<ClassExportsArray<T>> {
+    return new NestProviderCollection(
+      Object.values(providers).filter(
+        (provider) =>
+          isObject(provider) &&
+          Reflect.getMetadata(INJECTABLE_WATERMARK, provider),
       ),
     );
   }
@@ -56,8 +60,8 @@ export class NestClassCollection<T extends (new (...args: any[]) => any)[]> {
    */
   except<E extends T>(
     ...providers: E
-  ): NestClassCollection<Exclude<T[number], E[number]>[]> {
-    return new NestClassCollection(
+  ): NestProviderCollection<Exclude<T[number], E[number]>[]> {
+    return new NestProviderCollection(
       this.#providers.filter(
         (provider) => !providers.includes(provider),
       ) as Exclude<T[number], E[number]>[],
@@ -67,16 +71,33 @@ export class NestClassCollection<T extends (new (...args: any[]) => any)[]> {
   /**
    * Concatenates the given collection of providers to the current collection.
    */
-  concat<C extends (new (...args: any[]) => any)[]>(
-    collection: NestClassCollection<C> | C,
-  ): NestClassCollection<[...T, ...C]> {
-    return new NestClassCollection<[...T, ...C]>(
+  concat<C extends Provider[]>(
+    collection: NestProviderCollection<C> | C,
+  ): NestProviderCollection<[...T, ...C]> {
+    return new NestProviderCollection<[...T, ...C]>(
       this.#providers.concat(
-        collection instanceof NestClassCollection
+        collection instanceof NestProviderCollection
           ? collection.#providers
           : collection,
       ),
     );
+  }
+
+  /**
+   * Adds the given provider to the collection.
+   */
+  add<P extends Provider>(provider: P): NestProviderCollection<[...T, P]> {
+    return new NestProviderCollection([...this.#providers, provider]) as any;
+  }
+
+  /**
+   * Adds the given provider to the collection if the condition is true.
+   */
+  addIf<P extends Provider>(
+    condition: unknown,
+    provider: P,
+  ): NestProviderCollection<[...T, P]> | NestProviderCollection<T> {
+    return condition ? this.add(provider) : this;
   }
 
   /**
