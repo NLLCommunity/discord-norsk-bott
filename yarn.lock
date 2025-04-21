@@ -3757,6 +3757,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"axios@npm:^1.8.2":
+  version: 1.8.4
+  resolution: "axios@npm:1.8.4"
+  dependencies:
+    follow-redirects: "npm:^1.15.6"
+    form-data: "npm:^4.0.0"
+    proxy-from-env: "npm:^1.1.0"
+  checksum: 10c0/450993c2ba975ffccaf0d480b68839a3b2435a5469a71fa2fb0b8a55cdb2c2ae47e609360b9c1e2b2534b73dfd69e2733a1cf9f8215bee0bcd729b72f801b0ce
+  languageName: node
+  linkType: hard
+
 "babel-jest@npm:^29.7.0":
   version: 29.7.0
   resolution: "babel-jest@npm:29.7.0"
@@ -8656,11 +8667,11 @@ __metadata:
   linkType: hard
 
 "posthog-node@npm:^4.0.1":
-  version: 4.6.0
-  resolution: "posthog-node@npm:4.6.0"
+  version: 4.13.0
+  resolution: "posthog-node@npm:4.13.0"
   dependencies:
-    axios: "npm:^1.7.4"
-  checksum: 10c0/e77f3a33a7784c7efd285898482beb981bb7f61d982932b29567c8c3ec4bdb84ed2b46029e5fc36a850785964a168f789691f29e74dcf1a4163f5a55e0801660
+    axios: "npm:^1.8.2"
+  checksum: 10c0/79b7f0ae2ecab393c80b895d78f023f1f7b411cdbaa48d644f2141a5fab43cc97aa62f1e084492c1a8cc6a5ab082d01d3d674fd13cbabc6dbbf7cbe6df25763d
   languageName: node
   linkType: hard
 
