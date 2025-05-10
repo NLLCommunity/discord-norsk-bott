@@ -2837,13 +2837,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@notionhq/client@npm:^2.2.15":
-  version: 2.3.0
-  resolution: "@notionhq/client@npm:2.3.0"
-  dependencies:
-    "@types/node-fetch": "npm:^2.5.10"
-    node-fetch: "npm:^2.6.1"
-  checksum: 10c0/48af6e0d44c97892374755fbfbca6eb2f27e5ad8baabc511d48ec02cc7d6a1488b1692423ff426cb77c39ac5b4c9bd5498d4b6bc40e295d149ff3d24ce3d8ecc
+"@notionhq/client@npm:^3.0.0":
+  version: 3.0.1
+  resolution: "@notionhq/client@npm:3.0.1"
+  checksum: 10c0/441ff24aa2a3e40e78fd8e9259d33b3bf4006ad58fc4ce51029da149fafbef77ea0b9e63f6531bd37ce5e67527aac8fbe49e91d73cd7898e3c06d84bab280a61
   languageName: node
   linkType: hard
 
@@ -3150,7 +3147,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node-fetch@npm:^2.5.10, @types/node-fetch@npm:^2.6.4":
+"@types/node-fetch@npm:^2.6.4":
   version: 2.6.11
   resolution: "@types/node-fetch@npm:2.6.11"
   dependencies:
@@ -5150,7 +5147,7 @@ __metadata:
     "@nestjs/core": "npm:^11.0.0"
     "@nestjs/schematics": "npm:^11.0.0"
     "@nestjs/testing": "npm:^11.0.0"
-    "@notionhq/client": "npm:^2.2.15"
+    "@notionhq/client": "npm:^3.0.0"
     "@types/fast-levenshtein": "npm:^0.0.4"
     "@types/jest": "npm:^29.5.12"
     "@types/node": "npm:^22.0.0"
