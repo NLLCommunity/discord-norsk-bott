@@ -8882,11 +8882,11 @@ __metadata:
   linkType: hard
 
 "posthog-node@npm:^4.0.1":
-  version: 4.17.1
-  resolution: "posthog-node@npm:4.17.1"
+  version: 4.17.2
+  resolution: "posthog-node@npm:4.17.2"
   dependencies:
     axios: "npm:^1.8.2"
-  checksum: 10c0/31892ae0f03d28039f8081743b61f29dfb4479c0ff2e513a9e335d7872b869d2a30779c99e605a2482c99c7083b9b2bca81d2c3e3bf1d51fc3517de0335dfd52
+  checksum: 10c0/dab37f89bd470929e8308a9fcc2be2d2010dadd368213f91ee95455546b5beaea00009718e999863b9c658830de41b806e7d466531fc56f5bbf66db7d73cea87
   languageName: node
   linkType: hard
 
