@@ -8904,11 +8904,11 @@ __metadata:
   linkType: hard
 
 "posthog-node@npm:^4.0.1":
-  version: 4.17.2
-  resolution: "posthog-node@npm:4.17.2"
+  version: 4.18.0
+  resolution: "posthog-node@npm:4.18.0"
   dependencies:
     axios: "npm:^1.8.2"
-  checksum: 10c0/dab37f89bd470929e8308a9fcc2be2d2010dadd368213f91ee95455546b5beaea00009718e999863b9c658830de41b806e7d466531fc56f5bbf66db7d73cea87
+  checksum: 10c0/aa30427599d15b98357b5a88096a8b38b0812c71af49eb54fce0a46164521c247c3b064973931c3471cf84cb7f0e391bfc5d6174cd038f75f8c02cb8a9626cff
   languageName: node
   linkType: hard
 
