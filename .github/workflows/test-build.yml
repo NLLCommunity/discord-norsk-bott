@@ -7,6 +7,18 @@ on:
   push:
     branches:
       - main
+    paths-ignore:
+      - README.md
+      - .github/workflows/build-image.yml
+      - .github/workflows/lint.yml
+      - Procfile
+      - .prettierrc
+      - renovate.json
+      - template.env
+      - norsk-bott-icon.png
+      - eslint.config.mjs
+      - test/
+      - .vscode/
   merge_group:
 
 jobs:

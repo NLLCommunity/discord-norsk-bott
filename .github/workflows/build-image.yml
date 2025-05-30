@@ -10,6 +10,18 @@ on:
   push:
     branches:
       - main
+    paths-ignore:
+      - README.md
+      - .github/workflows/lint.yml
+      - .github/workflows/test-build.yml
+      - Procfile
+      - .prettierrc
+      - renovate.json
+      - template.env
+      - norsk-bott-icon.png
+      - eslint.config.mjs
+      - test/
+      - .vscode/
 
 concurrency:
   group: build-and-push

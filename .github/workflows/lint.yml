@@ -7,6 +7,10 @@ on:
   push:
     branches:
       - main
+    paths-ignore:
+      - Procfile
+      - template.env
+      - norsk-bott-icon.png
   merge_group:
 
 jobs:
