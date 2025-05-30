@@ -35,7 +35,7 @@
     "graphql": "^16.9.0",
     "graphql-request": "^7.1.0",
     "notion-to-md": "^3.1.1",
-    "openai": "^4.52.7",
+    "openai": "^5.0.0",
     "p-limit": "^6.1.0",
     "posthog-node": "^4.0.1",
     "reflect-metadata": "^0.2.2",
