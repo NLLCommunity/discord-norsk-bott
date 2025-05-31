@@ -22,12 +22,6 @@ import {
 } from '../../providers/index.js';
 import { createi18n } from '../../utils/create-i18n.js';
 
-const norwegianTime = new Intl.DateTimeFormat('no-NO', {
-  timeZone: 'Europe/Oslo',
-  dateStyle: 'long',
-  timeStyle: 'long',
-});
-
 interface Result {
   success: boolean;
   message?: string;
@@ -460,13 +454,11 @@ export class DiscourseSyncSubCommand {
     // new message
 
     const messages: string[] = [];
-    const now = new Date();
+    const unixTimestamp = Math.floor(new Date().getTime() / 1000);
 
     let currentMessage = '';
 
-    content += `\n\nPage ID: ${hash}\nLast synced by ${user} at ${norwegianTime.format(
-      now,
-    )}`;
+    content += `\n\n-# Page ID: ${hash}\n-# Last synced by ${user} at <t:${unixTimestamp}>`;
 
     const lines = content.split('\n');
 
