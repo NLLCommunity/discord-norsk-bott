@@ -3961,17 +3961,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"axios@npm:^1.8.2":
-  version: 1.8.4
-  resolution: "axios@npm:1.8.4"
-  dependencies:
-    follow-redirects: "npm:^1.15.6"
-    form-data: "npm:^4.0.0"
-    proxy-from-env: "npm:^1.1.0"
-  checksum: 10c0/450993c2ba975ffccaf0d480b68839a3b2435a5469a71fa2fb0b8a55cdb2c2ae47e609360b9c1e2b2534b73dfd69e2733a1cf9f8215bee0bcd729b72f801b0ce
-  languageName: node
-  linkType: hard
-
 "babel-jest@npm:^29.7.0":
   version: 29.7.0
   resolution: "babel-jest@npm:29.7.0"
@@ -5078,7 +5067,7 @@ __metadata:
     notion-to-md: "npm:^3.1.1"
     openai: "npm:^5.0.0"
     p-limit: "npm:^6.1.0"
-    posthog-node: "npm:^4.0.1"
+    posthog-node: "npm:^5.0.0"
     prettier: "npm:^3.3.3"
     reflect-metadata: "npm:^0.2.2"
     rxjs: "npm:^7.8.1"
@@ -8861,12 +8850,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"posthog-node@npm:^4.0.1":
-  version: 4.18.0
-  resolution: "posthog-node@npm:4.18.0"
-  dependencies:
-    axios: "npm:^1.8.2"
-  checksum: 10c0/aa30427599d15b98357b5a88096a8b38b0812c71af49eb54fce0a46164521c247c3b064973931c3471cf84cb7f0e391bfc5d6174cd038f75f8c02cb8a9626cff
+"posthog-node@npm:^5.0.0":
+  version: 5.0.0
+  resolution: "posthog-node@npm:5.0.0"
+  checksum: 10c0/8332977743ef4f6d42bfd59f03d6dc105cac8aa63eb65f1919d098b1d367188cd958b250138904a26552e9fc0f21edc377fc7a0a98cdf2e792073c7aa95807ee
   languageName: node
   linkType: hard
 
