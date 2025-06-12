@@ -9380,9 +9380,9 @@ __metadata:
   linkType: hard
 
 "posthog-node@npm:^5.0.0":
-  version: 5.0.0
-  resolution: "posthog-node@npm:5.0.0"
-  checksum: 10c0/8332977743ef4f6d42bfd59f03d6dc105cac8aa63eb65f1919d098b1d367188cd958b250138904a26552e9fc0f21edc377fc7a0a98cdf2e792073c7aa95807ee
+  version: 5.1.0
+  resolution: "posthog-node@npm:5.1.0"
+  checksum: 10c0/f298aa4c6b9ed8fea37f7f55e553df8ff72c66fda2271a62f8f13bbb3f3d849106c2f74f96a9941b63ff6c2262160f552c9ce3886516328690199e9d97c667e5
   languageName: node
   linkType: hard
 
