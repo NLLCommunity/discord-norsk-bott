@@ -9048,8 +9048,8 @@ __metadata:
   linkType: hard
 
 "openai@npm:^5.0.0":
-  version: 5.9.1
-  resolution: "openai@npm:5.9.1"
+  version: 5.9.2
+  resolution: "openai@npm:5.9.2"
   peerDependencies:
     ws: ^8.18.0
     zod: ^3.23.8
@@ -9060,7 +9060,7 @@ __metadata:
       optional: true
   bin:
     openai: bin/cli
-  checksum: 10c0/24d2a5572992979fcac9d5a726899f334c116afdc00efdcbacc1ae133111a93e08ea59ec52acf2a0957e63d5a506f2ae2e055e64dee0bcf0a93737e7fa7439f2
+  checksum: 10c0/29cb1b8d6505a59a315429fe669500685bf035f7c640411f456ea833710ec1088b0ac8a70d4f2f4fe43790e7a0d6dc0a412460f45734265ab0d10dc34d16ace8
   languageName: node
   linkType: hard
 
