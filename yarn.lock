@@ -3038,6 +3038,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@posthog/core@npm:1.0.0":
+  version: 1.0.0
+  resolution: "@posthog/core@npm:1.0.0"
+  checksum: 10c0/bdad9833d61aa0f83a78389c079172e6b92e346cc90c8c23bd586ce35d7b49ae6c7a5bf597656ae472f8371f822c2cab8cafe51ebcd92d583fb36dc0deb19698
+  languageName: node
+  linkType: hard
+
 "@repeaterjs/repeater@npm:^3.0.4":
   version: 3.0.6
   resolution: "@repeaterjs/repeater@npm:3.0.6"
@@ -9304,9 +9311,11 @@ __metadata:
   linkType: hard
 
 "posthog-node@npm:^5.0.0":
-  version: 5.6.0
-  resolution: "posthog-node@npm:5.6.0"
-  checksum: 10c0/38e9e78e50baa190c8617749e11c0c7aa089fc49e75010be359f27fb1304415ab8257195a5ea00ee0de96fe03a517bcda249902f6691676e9e43665a7caf8ca2
+  version: 5.7.0
+  resolution: "posthog-node@npm:5.7.0"
+  dependencies:
+    "@posthog/core": "npm:1.0.0"
+  checksum: 10c0/8c145a2ba648f184936f83c4b11423bcf14702e6c3c2670f5a9cdb483fe767fea0d0628bda3f6b363beb4d8ca55172cfe2f742ecb9ffa74ea4f9ce413dd2944e
   languageName: node
   linkType: hard
 
