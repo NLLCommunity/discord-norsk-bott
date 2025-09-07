@@ -9335,11 +9335,11 @@ __metadata:
   linkType: hard
 
 "posthog-node@npm:^5.0.0":
-  version: 5.8.1
-  resolution: "posthog-node@npm:5.8.1"
+  version: 5.8.2
+  resolution: "posthog-node@npm:5.8.2"
   dependencies:
     "@posthog/core": "npm:1.0.2"
-  checksum: 10c0/8a06154ebd4f7bb352938d10b7eb817ba2dfd0ea3cad428723f0e82244efeeb9eecb38952c65db59ccb23e708e9231101dee9729d4324654e87ad8b085a449af
+  checksum: 10c0/58d1a61b0c2547d9756132ae8e7ff6e546e1c56f7309cb902759f3d213e3de9dac562cc5aff750f97e2a5ccac4e827532c4183460ff024d5c6e9abc356328c87
   languageName: node
   linkType: hard
 
