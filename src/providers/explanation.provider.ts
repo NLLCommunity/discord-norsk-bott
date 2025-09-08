@@ -1,8 +1,8 @@
 import { PassThrough } from 'stream';
 import { Injectable, Logger } from '@nestjs/common';
 import {
+  ChatCompletionMessageFunctionToolCall,
   ChatCompletionMessageParam,
-  ChatCompletionMessageToolCall,
   ChatCompletionTool,
 } from 'openai/resources/index.js';
 import { OpenAiProvider } from './openai.provider.js';
@@ -105,7 +105,7 @@ export class ExplanationProvider {
    */
   async #accumulateToolCalls(
     stream: AsyncIterable<any>,
-  ): Promise<ChatCompletionMessageToolCall[]> {
+  ): Promise<ChatCompletionMessageFunctionToolCall[]> {
     this.#logger.debug('Entering #accumulateToolCalls');
     const finalToolCalls: Record<number, any> = {};
 
@@ -116,6 +116,8 @@ export class ExplanationProvider {
 
       for (const toolCall of toolCalls) {
         const index = toolCall.index;
+        // Only handle function tool calls we declared.
+        if (toolCall.type !== 'function') continue;
         // Initialize if first delta for this tool call index.
         if (!finalToolCalls[index]) {
           // Ensure arguments start as an empty string if not provided.
@@ -147,7 +149,7 @@ export class ExplanationProvider {
    * @param context The explanation context.
    */
   async #processToolCall(
-    toolCall: ChatCompletionMessageToolCall,
+    toolCall: ChatCompletionMessageFunctionToolCall,
     currentMessages: ChatCompletionMessageParam[],
     customStream: PassThrough,
     language: DisplayLanguage,
