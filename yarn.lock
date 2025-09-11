@@ -9507,11 +9507,11 @@ __metadata:
   linkType: hard
 
 "posthog-node@npm:^5.0.0":
-  version: 5.8.3
-  resolution: "posthog-node@npm:5.8.3"
+  version: 5.8.4
+  resolution: "posthog-node@npm:5.8.4"
   dependencies:
     "@posthog/core": "npm:1.0.2"
-  checksum: 10c0/cacce8aeb77a9d84d2b03810e7400bb45fb82c0cc16051df436412e07c54947831653ae61616effa5fa10dad900acd23f78997f5a66ea67dcd2267657fe569d8
+  checksum: 10c0/9d3fd0f54abf98ddf084375d8101ed24c2e281a559c7909a1581f44142aaf09695789c96be9829eb9616b1c5c872a0d9d2e46fc95bd1c38c8bcc0394394ae7c0
   languageName: node
   linkType: hard
 
