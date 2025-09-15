@@ -1442,8 +1442,8 @@ __metadata:
   linkType: hard
 
 "@graphql-codegen/client-preset@npm:^5.0.0":
-  version: 5.0.0
-  resolution: "@graphql-codegen/client-preset@npm:5.0.0"
+  version: 5.0.1
+  resolution: "@graphql-codegen/client-preset@npm:5.0.1"
   dependencies:
     "@babel/helper-plugin-utils": "npm:^7.20.2"
     "@babel/template": "npm:^7.20.7"
@@ -1464,7 +1464,7 @@ __metadata:
   peerDependenciesMeta:
     graphql-sock:
       optional: true
-  checksum: 10c0/cfb9389224979626f82bb459371236ddba89397759b1b23bd3a42f382bfbe033b85c4613f793b14eb9c6105a0447636c7fa6fbc6672ee79d7a2c62734b68e9cd
+  checksum: 10c0/72fb9b5746d721d62ed5133cbca2a411b57152bb8a264664aa722f27c56acabbd22ac826ce80782e1df9affe8ce4a53f0bf826a9cb3fe2ebf69737193be5533f
   languageName: node
   linkType: hard
 
