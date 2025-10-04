@@ -5590,7 +5590,7 @@ __metadata:
     graphql-request: "npm:^7.1.0"
     jest: "npm:^30.0.0"
     notion-to-md: "npm:^3.1.1"
-    openai: "npm:^5.0.0"
+    openai: "npm:^6.0.0"
     p-limit: "npm:^7.0.0"
     posthog-node: "npm:^5.0.0"
     prettier: "npm:^3.3.3"
@@ -9171,12 +9171,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"openai@npm:^5.0.0":
-  version: 5.23.2
-  resolution: "openai@npm:5.23.2"
+"openai@npm:^6.0.0":
+  version: 6.1.0
+  resolution: "openai@npm:6.1.0"
   peerDependencies:
     ws: ^8.18.0
-    zod: ^3.23.8
+    zod: ^3.25 || ^4.0
   peerDependenciesMeta:
     ws:
       optional: true
@@ -9184,7 +9184,7 @@ __metadata:
       optional: true
   bin:
     openai: bin/cli
-  checksum: 10c0/8ee37f37c64fd04a61622c4782d231e8f0245e2d85956d833e43d30946edbf07d5276cd74e09aa5d23006de8da43dad312246a9dd7ca6ca6d65d983fc976ffa6
+  checksum: 10c0/770808d8afbbe084691e65738fc2cbd02f816fd0bd7240346ec55b39e4652532d0a30dd0be3bd2593f53c6035968713a4a51ac34ee4fbc9602c03fb0568a1771
   languageName: node
   linkType: hard
 
