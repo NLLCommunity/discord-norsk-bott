@@ -1166,9 +1166,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@discordjs/builders@npm:^1.12.0":
-  version: 1.12.1
-  resolution: "@discordjs/builders@npm:1.12.1"
+"@discordjs/builders@npm:^1.12.1":
+  version: 1.12.2
+  resolution: "@discordjs/builders@npm:1.12.2"
   dependencies:
     "@discordjs/formatters": "npm:^0.6.1"
     "@discordjs/util": "npm:^1.1.1"
@@ -1177,7 +1177,7 @@ __metadata:
     fast-deep-equal: "npm:^3.1.3"
     ts-mixer: "npm:^6.0.4"
     tslib: "npm:^2.6.3"
-  checksum: 10c0/3b44b87829a71e9fb78bd0289e8aa26452f3aad159a5cf8c66a9e83059f1ba26fb40afe16d00d19ea207f21592f57c606dc59aa6e6e33c1617aef79731a6eedd
+  checksum: 10c0/e28463242c6b804cf84f5e831f2cf81354d3de675a7e21ac1207eb0da24a5c03c68c1fb5b2fbf2bb146ad3277e989c8da7f8e742a3f09594af87b3020449cca2
   languageName: node
   linkType: hard
 
@@ -5617,10 +5617,10 @@ __metadata:
   linkType: soft
 
 "discord.js@npm:^14.15.3":
-  version: 14.23.0
-  resolution: "discord.js@npm:14.23.0"
+  version: 14.23.2
+  resolution: "discord.js@npm:14.23.2"
   dependencies:
-    "@discordjs/builders": "npm:^1.12.0"
+    "@discordjs/builders": "npm:^1.12.1"
     "@discordjs/collection": "npm:1.5.3"
     "@discordjs/formatters": "npm:^0.6.1"
     "@discordjs/rest": "npm:^2.6.0"
@@ -5633,7 +5633,7 @@ __metadata:
     magic-bytes.js: "npm:^1.10.0"
     tslib: "npm:^2.6.3"
     undici: "npm:6.21.3"
-  checksum: 10c0/b0b8b395593206ed666ed7f53d2ccbc7c92ad3c7c57b0c95ed86247d956238c8397831e72e7e024b9f04c042bad921bab38e7381fb78b0a9d09da036929807ce
+  checksum: 10c0/32e62e1fc32628a0f98372298d0ba7d522b9f3123ce394ae0a1964c557c894a646f10c6a639ce7b95fde339e541176cfabb1ee183ba441f3fb2b2d7e5c5116e7
   languageName: node
   linkType: hard
 
