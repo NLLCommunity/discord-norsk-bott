@@ -9251,11 +9251,11 @@ __metadata:
   linkType: hard
 
 "p-limit@npm:^7.0.0":
-  version: 7.1.1
-  resolution: "p-limit@npm:7.1.1"
+  version: 7.2.0
+  resolution: "p-limit@npm:7.2.0"
   dependencies:
     yocto-queue: "npm:^1.2.1"
-  checksum: 10c0/7f17ee5237f161075b25a124acfbe4f99a14605991f4daff866d3dd4c4ca5bdcb852882c4fa8629ca9c1e3fe5aa1af2c1a1b47e89c84db48500bb5c2e0eaa3e1
+  checksum: 10c0/18e5ea305c31fdc0cf5260da7b63adfd46748cd72d4b40a31a13bd23eeece729c9308047fb5d848d7fa006d1b2fc2f36bb0d9dd173a300c38cd6dc1ed3355382
   languageName: node
   linkType: hard
 
