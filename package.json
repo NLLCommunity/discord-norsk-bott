@@ -54,7 +54,7 @@
     "@nestjs/testing": "^11.0.0",
     "@types/fast-levenshtein": "^0.0.4",
     "@types/jest": "^30.0.0",
-    "@types/node": "^22.0.0",
+    "@types/node": "^24.0.0",
     "@types/supertest": "^6.0.2",
     "@typescript-eslint/eslint-plugin": "^8.0.0",
     "@typescript-eslint/parser": "^8.0.0",
@@ -90,7 +90,7 @@
     "testEnvironment": "node"
   },
   "volta": {
-    "node": "22.21.1",
+    "node": "24.11.0",
     "yarn": "4.10.3"
   },
   "engines": {
