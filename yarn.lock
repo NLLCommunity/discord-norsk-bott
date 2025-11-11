@@ -7016,13 +7016,13 @@ __metadata:
   linkType: hard
 
 "graphql-request@npm:^7.1.0":
-  version: 7.3.2
-  resolution: "graphql-request@npm:7.3.2"
+  version: 7.3.3
+  resolution: "graphql-request@npm:7.3.3"
   dependencies:
     "@graphql-typed-document-node/core": "npm:^3.2.0"
   peerDependencies:
     graphql: 14 - 16
-  checksum: 10c0/40c9f98276eeaf9cc35fc0069bf97abbfc5ac285591518d636712d21bfe28475c7660f16043fd40153557ec33b775cb12883dd078243dbcf4267e9fc9874311a
+  checksum: 10c0/ca723d387f54b6d713f82b9640d44f474b9f21433b6a649ddd3bbc797b2abc014f7f912b3abe5285da91aabb263f1eeb373c35c92d25537ff92f1c55bb062cca
   languageName: node
   linkType: hard
 
