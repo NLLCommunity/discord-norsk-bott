@@ -10376,11 +10376,11 @@ __metadata:
   linkType: hard
 
 "posthog-node@npm:^5.0.0":
-  version: 5.14.0
-  resolution: "posthog-node@npm:5.14.0"
+  version: 5.14.1
+  resolution: "posthog-node@npm:5.14.1"
   dependencies:
     "@posthog/core": "npm:1.6.0"
-  checksum: 10c0/ca2d9ac9dfb525a24dc20ed9040e1df519712955542508b88de18341468ae366856c777ed87755af34901ceee10f88b62de09d63697f3d2924403f86db265bd5
+  checksum: 10c0/2725963ad04a2dbd9c9a361d000d2d07c7247508f2571fbfc8a8055d200fd5ead97360c593f68229cdd9364d642905279f996d40a2d28a78c931e1cd7377b8bd
   languageName: node
   linkType: hard
 
