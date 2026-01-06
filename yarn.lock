@@ -10387,11 +10387,11 @@ __metadata:
   linkType: hard
 
 "posthog-node@npm:^5.0.0":
-  version: 5.18.1
-  resolution: "posthog-node@npm:5.18.1"
+  version: 5.19.0
+  resolution: "posthog-node@npm:5.19.0"
   dependencies:
     "@posthog/core": "npm:1.9.0"
-  checksum: 10c0/c4a37c2a03d86009550014da912248048f9c4ee30a673a66bdf09dcca73e1dd149ca8a8fc267c212a66c7717836f953957cd55184c58e47811f3351c81e03d42
+  checksum: 10c0/717758e0c36a280a8fc88660ea3ca2d15636e91e6d0ccf9192b09a4a42e4ff8f6a0e96f29a66c36a75a9aa151504f9ff2a0ce1b41356bdb658ed81dbb55e6680
   languageName: node
   linkType: hard
 
