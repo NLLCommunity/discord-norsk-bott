@@ -10401,11 +10401,11 @@ __metadata:
   linkType: hard
 
 "posthog-node@npm:^5.0.0":
-  version: 5.21.2
-  resolution: "posthog-node@npm:5.21.2"
+  version: 5.22.0
+  resolution: "posthog-node@npm:5.22.0"
   dependencies:
     "@posthog/core": "npm:1.10.0"
-  checksum: 10c0/ea72274352565cbe145a23e4e1718480a00c841df4a1f80b56f47bf74b58c81bb64645e98c0f74c6bf472add1fa0fcd3382dea55fbe335fd43e3288a70189fe9
+  checksum: 10c0/6b1391d2dbb356cb5a6493bfcce1ac7c8304aa2fb6b987de1505f26171aa23520156f74de4d1cb63d6000e1a63937c096e60797d6feab0188e988f354979c2b5
   languageName: node
   linkType: hard
 
