@@ -3800,8 +3800,8 @@ __metadata:
   linkType: hard
 
 "@nestjs/testing@npm:^11.0.0":
-  version: 11.1.12
-  resolution: "@nestjs/testing@npm:11.1.12"
+  version: 11.1.13
+  resolution: "@nestjs/testing@npm:11.1.13"
   dependencies:
     tslib: "npm:2.8.1"
   peerDependencies:
@@ -3814,7 +3814,7 @@ __metadata:
       optional: true
     "@nestjs/platform-express":
       optional: true
-  checksum: 10c0/7f65cc8d0fb7a654ecadf1d8f5a4c0d2112f43cc2a2b59454dcc34b6a25b6280af3ee5a189439e354212d5ba8afd29df67e099bc8387389eb2f93da5c783ad8a
+  checksum: 10c0/25485800881d33260663a7a576e6226c34b4f5068c60a93af92e2895343e640962a4986613f7e85118a77e905a31ef15567a8bfa2f70e0983aade8f4977b2e8a
   languageName: node
   linkType: hard
 
