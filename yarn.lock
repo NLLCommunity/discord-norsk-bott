@@ -10067,8 +10067,8 @@ __metadata:
   linkType: hard
 
 "openai@npm:^6.0.0":
-  version: 6.21.0
-  resolution: "openai@npm:6.21.0"
+  version: 6.22.0
+  resolution: "openai@npm:6.22.0"
   peerDependencies:
     ws: ^8.18.0
     zod: ^3.25 || ^4.0
@@ -10079,7 +10079,7 @@ __metadata:
       optional: true
   bin:
     openai: bin/cli
-  checksum: 10c0/e1898295e791f35ff7892ec6145a52e41233cc703f72eb76f06b57cecdcc68a1d7b43a5615f00af35e66ce984459522cacdb72347e0d67f10afe0802d7852ae1
+  checksum: 10c0/b0dcfce1fcaa84b9c92a00745fcd1bfa7573002d50e7a32dfe91b6e0acd6e950814891cef79de31f406f0454c6042baceb7c3843d9beadbd57148fbe42111a6f
   languageName: node
   linkType: hard
 
