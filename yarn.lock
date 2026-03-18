@@ -10118,8 +10118,8 @@ __metadata:
   linkType: hard
 
 "posthog-node@npm:^5.0.0":
-  version: 5.28.2
-  resolution: "posthog-node@npm:5.28.2"
+  version: 5.28.3
+  resolution: "posthog-node@npm:5.28.3"
   dependencies:
     "@posthog/core": "npm:1.23.4"
   peerDependencies:
@@ -10127,7 +10127,7 @@ __metadata:
   peerDependenciesMeta:
     rxjs:
       optional: true
-  checksum: 10c0/cc5d0619358f4f1b16348f6f76464032d81eaaff5599c7a75bb9c7c237e91479c96d84f759e176489228151c8fbd14ad5de2fb239f27bd0e6d6ca6131b0d6bbd
+  checksum: 10c0/aa135699479c06b0fb0417caa907812a46475e92c31d20287107a153c0132161fcf9427197279f47c8587d601b7487cf938c194dfcfb8ef335e21cfeb8b5fcfb
   languageName: node
   linkType: hard
 
