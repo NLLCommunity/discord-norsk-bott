@@ -5906,8 +5906,8 @@ __metadata:
   linkType: hard
 
 "deepl-node@npm:^1.13.0":
-  version: 1.25.0
-  resolution: "deepl-node@npm:1.25.0"
+  version: 1.26.0
+  resolution: "deepl-node@npm:1.26.0"
   dependencies:
     "@types/node": "npm:>=12.0"
     adm-zip: "npm:^0.5.16"
@@ -5915,7 +5915,7 @@ __metadata:
     form-data: "npm:^3.0.4"
     loglevel: "npm:>=1.6.2"
     uuid: "npm:^8.3.2"
-  checksum: 10c0/3b02cc93ad7832a3e6a113fcab03ca524288ead0d478d8a0bff70e0e5e303ad96d140ecf2452ffa69a1b99fd75ae1e04d0e07352b2c699ed8cdb08d9e0134364
+  checksum: 10c0/b7099600f45f56efee3ebf9ba65cd9ca4f6b7bec50f9ad1445bb0e7f4493133f125e8207523fd35b19ba6de2aa58d800414cc29fd376c041de3d68b3086eaba2
   languageName: node
   linkType: hard
 
