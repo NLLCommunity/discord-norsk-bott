@@ -16,3 +16,4 @@
 
 src/gql
 dist
+*.tsbuildinfo
