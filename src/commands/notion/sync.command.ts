@@ -268,7 +268,7 @@ export class SyncSubCommand {
     } catch (error) {
       return {
         success: false,
-        message: error.message,
+        message: error instanceof Error ? error.message : String(error),
       };
     }
   }
@@ -388,7 +388,7 @@ export class SyncSubCommand {
     } catch (error) {
       return {
         success: false,
-        message: error.message,
+        message: error instanceof Error ? error.message : String(error),
       };
     }
   }
