@@ -3627,19 +3627,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@posthog/core@npm:1.27.5":
-  version: 1.27.5
-  resolution: "@posthog/core@npm:1.27.5"
+"@posthog/core@npm:1.27.6":
+  version: 1.27.6
+  resolution: "@posthog/core@npm:1.27.6"
   dependencies:
-    "@posthog/types": "npm:1.372.1"
-  checksum: 10c0/b050ec78eced0d8152b1dd7c591586daad76da56f64fec9e2cab44447ee5b3c0378b2f69ee9244d5d78814178fc691ddab5f0519d15f9f2f1e76110c60acd0a9
+    "@posthog/types": "npm:1.372.2"
+  checksum: 10c0/b6bbefc50850d5116841d8d89bb5215824b15c3bc23a490872cc5cecad1c4ba149aae5275e6cc644995779a5fa4594e95e341b808dfb3a2346afd3e30aa040fa
   languageName: node
   linkType: hard
 
-"@posthog/types@npm:1.372.1":
-  version: 1.372.1
-  resolution: "@posthog/types@npm:1.372.1"
-  checksum: 10c0/a903ed1e2b486db40733b8e5222537e307eda52e94689dcba9afd2e2d6be1f8eb11323401dc87bd66061ec90614dbdab8fc69dbd9101fae74d3f7179ff5de89b
+"@posthog/types@npm:1.372.2":
+  version: 1.372.2
+  resolution: "@posthog/types@npm:1.372.2"
+  checksum: 10c0/c1fa247389a74a451b83651fc0e10abd9d13a3f726caf28ca4d34c906e38b7814a5cb132bc9928c047a71db76bfe57ef3d99d4232613457e76b7d9eda1a5d4a2
   languageName: node
   linkType: hard
 
@@ -10039,16 +10039,16 @@ __metadata:
   linkType: hard
 
 "posthog-node@npm:^5.0.0":
-  version: 5.30.4
-  resolution: "posthog-node@npm:5.30.4"
+  version: 5.30.5
+  resolution: "posthog-node@npm:5.30.5"
   dependencies:
-    "@posthog/core": "npm:1.27.5"
+    "@posthog/core": "npm:1.27.6"
   peerDependencies:
     rxjs: ^7.0.0
   peerDependenciesMeta:
     rxjs:
       optional: true
-  checksum: 10c0/3c623c5a178f1969dbbff4887ee8f266faf356e7ad4cdd6dab838065b7ae6a15950d1eb85acc571c65c176437534c47d4dfc814988f0d4ba19cbedcb1460b1c4
+  checksum: 10c0/6fd2ff46ef8dde90897114711b20f5e87ac69cda7bda2ee2214d381aba555f0cfce53acce4230776875121910a3295a6ca3d7ef062b75cf330c7608ce87cde05
   languageName: node
   linkType: hard
 
