@@ -3559,9 +3559,9 @@ __metadata:
   linkType: hard
 
 "@notionhq/client@npm:^5.0.0":
-  version: 5.21.0
-  resolution: "@notionhq/client@npm:5.21.0"
-  checksum: 10c0/e0759a8674594955a9bf6f93f5ff6285faaed4f2092ef30b0092286bcde7f36e8329ebc01804c50791617d407fc6f5d1c5cf60d150f09301822569fc1b4dcad6
+  version: 5.27.0
+  resolution: "@notionhq/client@npm:5.27.0"
+  checksum: 10c0/adb49e9dc16794293a10acd9c49fdb38606f5b89fea93b1ba1b130a4a2f75e0fd5fb38b675d87567eb66e09825acd0c89ca9178c1b9c4258ae01b0f21e373b7c
   languageName: node
   linkType: hard
 
