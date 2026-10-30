@@ -3628,19 +3628,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@posthog/core@npm:1.29.2":
-  version: 1.29.2
-  resolution: "@posthog/core@npm:1.29.2"
+"@posthog/core@npm:^1.62.0":
+  version: 1.62.0
+  resolution: "@posthog/core@npm:1.62.0"
   dependencies:
-    "@posthog/types": "npm:1.373.5"
-  checksum: 10c0/eb598df780c90838d1fad7f135e0c6d3a3a505182902778543b5e10d0588057b032c618baf45cb58bb19efb80b0dcd88af9f328886524a3d99bafde90b59e02f
+    "@posthog/types": "npm:^1.418.0"
+  checksum: 10c0/b6f46ee816ec4d5dc503e76a9a08e22890710260da838cb9fbede730653757c3c53ac69dd3c0b39ca8be2be683f689934ce909d9cdf178f63a0c1aef1864e9a1
   languageName: node
   linkType: hard
 
-"@posthog/types@npm:1.373.5":
-  version: 1.373.5
-  resolution: "@posthog/types@npm:1.373.5"
-  checksum: 10c0/5627050abb167a9b6b8c419be5f6b1933ad32107154eaff58c4c8f54b3e97ee3a41444bbb64db726fdc80d0ca15e644ab74d5c9890f517be0e3060a5e40bdcd9
+"@posthog/types@npm:^1.418.0":
+  version: 1.418.0
+  resolution: "@posthog/types@npm:1.418.0"
+  checksum: 10c0/da758637983f0027ffd118097619abacde4d4b0a3c06433319ffa5440b920a91c5f220a52b9c651f7b2408a9cb39dfe87168a115e4d16ac5e951e806ed879b99
   languageName: node
   linkType: hard
 
@@ -10040,16 +10040,19 @@ __metadata:
   linkType: hard
 
 "posthog-node@npm:^5.0.0":
-  version: 5.34.2
-  resolution: "posthog-node@npm:5.34.2"
+  version: 5.61.0
+  resolution: "posthog-node@npm:5.61.0"
   dependencies:
-    "@posthog/core": "npm:1.29.2"
+    "@posthog/core": "npm:^1.62.0"
   peerDependencies:
+    "@opentelemetry/api": ^1.2.0
     rxjs: ^7.0.0
   peerDependenciesMeta:
+    "@opentelemetry/api":
+      optional: true
     rxjs:
       optional: true
-  checksum: 10c0/d0a0b5cca6263f203b20403d42edd9e270dbe929861b1601a75a3930bfbf6eb683e87e4fc3b3bc3ca41b0a88b7b9aa9a46c0e195abac87dbe798f8b6262ca5c7
+  checksum: 10c0/a160dceab7fedee23ec7da3096c6be191dc0717ac060b3c725dd98d7ef6273eeb12169574481dbfa9ce9dd8a668ebb9e6c5522f5f4e15f1ee1acaa5d8a7526cf
   languageName: node
   linkType: hard
 
