@@ -3628,19 +3628,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@posthog/core@npm:1.29.2":
-  version: 1.29.2
-  resolution: "@posthog/core@npm:1.29.2"
+"@posthog/core@npm:^1.67.3":
+  version: 1.67.3
+  resolution: "@posthog/core@npm:1.67.3"
   dependencies:
-    "@posthog/types": "npm:1.373.5"
-  checksum: 10c0/eb598df780c90838d1fad7f135e0c6d3a3a505182902778543b5e10d0588057b032c618baf45cb58bb19efb80b0dcd88af9f328886524a3d99bafde90b59e02f
+    "@posthog/types": "npm:^1.425.0"
+  checksum: 10c0/fac572c22c23b1710aa0513ae2edaa62164e609bdd2d07b64956b058de9023dcd1a5bdf974abe7d29aefea1d6589d3a61cb2bb32ab001268998b59bcb0532643
   languageName: node
   linkType: hard
 
-"@posthog/types@npm:1.373.5":
-  version: 1.373.5
-  resolution: "@posthog/types@npm:1.373.5"
-  checksum: 10c0/5627050abb167a9b6b8c419be5f6b1933ad32107154eaff58c4c8f54b3e97ee3a41444bbb64db726fdc80d0ca15e644ab74d5c9890f517be0e3060a5e40bdcd9
+"@posthog/types@npm:^1.425.0":
+  version: 1.425.1
+  resolution: "@posthog/types@npm:1.425.1"
+  checksum: 10c0/19aba316d9a2ba9b5a6ae51add61659527273368076194d77b69a15f8e98b76cb63f49c69770f5a223e6c4f07812ed32b33b64b96b2a5325d981c44d16ebe612
   languageName: node
   linkType: hard
 
@@ -10040,16 +10040,22 @@ __metadata:
   linkType: hard
 
 "posthog-node@npm:^5.0.0":
-  version: 5.34.2
-  resolution: "posthog-node@npm:5.34.2"
+  version: 5.73.1
+  resolution: "posthog-node@npm:5.73.1"
   dependencies:
-    "@posthog/core": "npm:1.29.2"
+    "@posthog/core": "npm:^1.67.3"
   peerDependencies:
+    "@opentelemetry/api": ^1.2.0
+    "@react-email/render": ^2.1.0
     rxjs: ^7.0.0
   peerDependenciesMeta:
+    "@opentelemetry/api":
+      optional: true
+    "@react-email/render":
+      optional: true
     rxjs:
       optional: true
-  checksum: 10c0/d0a0b5cca6263f203b20403d42edd9e270dbe929861b1601a75a3930bfbf6eb683e87e4fc3b3bc3ca41b0a88b7b9aa9a46c0e195abac87dbe798f8b6262ca5c7
+  checksum: 10c0/00b034885938ab512a35f831906e186f8911f2438dd22a9d9769e63ae15d7aef91f50a58753b0a58f54e108f0ad62649ae3071c1fb96516fdb4c4827a6a195ab
   languageName: node
   linkType: hard
 
